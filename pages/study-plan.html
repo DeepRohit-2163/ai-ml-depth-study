@@ -4,114 +4,113 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>60-Day Study Plan · AI/ML Depth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="../css/style.css" />
   <style>
     .plan-layout {
-      max-width: 1000px; margin: 0 auto;
-      padding: 40px 40px 80px;
+      max-width: 1020px; margin: 0 auto;
+      padding: 52px 44px 80px;
     }
-    .plan-header { margin-bottom: 32px; }
-    .plan-header h1 { margin-bottom: 8px; }
-    .plan-header p { color: var(--text-muted); font-size: 0.9rem; }
+    .plan-header { margin-bottom: 36px; }
+    .plan-header h1 { margin-bottom: 10px; }
+    .plan-header p {
+      font-family: 'IBM Plex Serif', serif;
+      color: var(--text-muted); font-size: 0.94rem; line-height: 1.7;
+    }
 
     .honesty-box {
-      background: rgba(247,129,102,0.07);
-      border: 1px solid rgba(247,129,102,0.25);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 32px;
+      background: rgba(251,113,133,0.05);
+      border: 1px solid rgba(251,113,133,0.2);
+      border-left: 3px solid var(--accent3);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      padding: 20px 24px;
+      margin-bottom: 36px;
     }
-    .honesty-box h3 { color: var(--accent3); margin-bottom: 8px; }
-    .honesty-box p { color: var(--text-muted); font-size: 0.875rem; line-height: 1.7; }
+    .honesty-box h3 {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--accent3); margin-bottom: 10px;
+      font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .honesty-box p {
+      font-family: 'IBM Plex Serif', serif;
+      color: var(--text-body); font-size: 0.93rem; line-height: 1.82;
+    }
 
     /* PHASE BLOCKS */
-    .phase-block { margin-bottom: 40px; }
+    .phase-block { margin-bottom: 48px; }
     .phase-header {
       display: flex; align-items: center; gap: 14px;
-      margin-bottom: 16px;
+      margin-bottom: 18px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-soft);
     }
     .phase-badge {
-      padding: 4px 12px; border-radius: 99px;
-      font-size: 0.75rem; font-weight: 700;
-      letter-spacing: 0.05em;
+      font-family: 'IBM Plex Mono', monospace;
+      padding: 3px 12px; border-radius: 99px;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.07em;
     }
-    .phase-title { font-size: 1.1rem; font-weight: 600; }
-    .phase-days { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+    .phase-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 600; }
+    .phase-days { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
 
     /* DAY ROWS */
-    .day-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    .day-table { width: 100%; border-collapse: collapse; }
     .day-table th {
       text-align: left;
-      font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--text-dim);
-      padding: 8px 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.64rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-dim); padding: 8px 14px;
       border-bottom: 1px solid var(--border);
     }
-    .day-row {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
+    .day-row { border-bottom: 1px solid var(--border-soft); transition: background 0.12s; }
     .day-row:hover { background: var(--surface); }
-    .day-row td { padding: 10px 12px; font-size: 0.875rem; vertical-align: top; }
+    .day-row td { padding: 11px 14px; vertical-align: top; }
     .day-num {
-      font-weight: 600; color: var(--text-muted);
-      white-space: nowrap; width: 80px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
+      white-space: nowrap; width: 72px;
     }
-    .day-topic { font-weight: 500; color: var(--text); }
-    .day-focus { color: var(--text-muted); font-size: 0.82rem; }
-    .day-outcome { color: var(--text-muted); font-size: 0.82rem; }
+    .day-topic { font-family: 'IBM Plex Serif', serif; font-weight: 500; color: var(--text); font-size: 0.9rem; }
+    .day-focus { color: var(--text-muted); font-size: 0.82rem; line-height: 1.55; }
+    .day-outcome { color: var(--text-muted); font-size: 0.82rem; font-style: italic; line-height: 1.55; }
     .day-link a {
-      color: var(--accent); font-size: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--accent); font-size: 0.75rem;
       text-decoration: none; white-space: nowrap;
+      padding: 3px 8px;
+      background: rgba(107,163,245,0.08); border-radius: 4px;
     }
-    .day-link a:hover { text-decoration: underline; }
-
-    .day-row input[type=checkbox] {
-      width: 16px; height: 16px; cursor: pointer;
-      accent-color: var(--accent2);
-    }
-    .day-row.done .day-topic { text-decoration: line-through; color: var(--text-muted); }
+    .day-link a:hover { background: rgba(107,163,245,0.15); text-decoration: none; }
+    .day-row input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent2); }
+    .day-row.done .day-topic { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
     .day-row.done .day-num   { color: var(--accent2); }
 
     /* PHASE COLOURS */
-    .pb-1 { background: rgba(88,166,255,0.15);  color: var(--c1); }
-    .pb-2 { background: rgba(63,185,80,0.15);   color: var(--c2); }
-    .pb-3 { background: rgba(247,129,102,0.15); color: var(--c3); }
-    .pb-4 { background: rgba(210,168,255,0.15); color: var(--c4); }
-    .pb-5 { background: rgba(255,166,87,0.15);  color: var(--c5); }
-    .pb-6 { background: rgba(121,192,255,0.15); color: var(--c6); }
-    .pb-7 { background: rgba(63,185,80,0.15);   color: var(--c2); }
+    .pb-1 { background: rgba(107,163,245,0.12); color: var(--c1); }
+    .pb-2 { background: rgba(74,222,128,0.12);  color: var(--c2); }
+    .pb-3 { background: rgba(251,113,133,0.12); color: var(--c3); }
+    .pb-4 { background: rgba(196,181,253,0.12); color: var(--c4); }
+    .pb-5 { background: rgba(251,146,60,0.12);  color: var(--c5); }
+    .pb-6 { background: rgba(56,189,248,0.12);  color: var(--c6); }
+    .pb-7 { background: rgba(74,222,128,0.12);  color: var(--c2); }
 
     /* RULE CARD */
-    .rules-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px; margin-bottom: 32px;
-    }
-    .rule-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 16px;
-    }
-    .rule-card .rule-num { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
-    .rule-card h4 { font-size: 0.85rem; font-weight: 600; margin: 4px 0; color: var(--text); text-transform: none; letter-spacing: 0; }
-    .rule-card p  { font-size: 0.8rem; color: var(--text-muted); }
+    .rules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .rule-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .rule-card .rule-num { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+    .rule-card h4 { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 600; margin: 4px 0 8px; color: var(--text); text-transform: none; letter-spacing: 0; }
+    .rule-card p  { font-family: 'IBM Plex Serif', serif; font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; }
 
     /* OVERALL PLAN BAR */
-    .plan-progress-bar {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px; margin-bottom: 32px;
-    }
-    .ppb-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .ppb-label { font-size: 0.85rem; font-weight: 600; }
-    .ppb-pct { font-size: 0.85rem; color: var(--accent); font-weight: 700; }
-    .ppb-track { height: 8px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+    .plan-progress-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 36px; }
+    .ppb-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .ppb-label { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 600; }
+    .ppb-pct { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--accent); font-weight: 600; }
+    .ppb-track { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
     .ppb-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.5s; }
 
     @media (max-width: 768px) {
-      .plan-layout { padding: 24px 16px 60px; }
+      .plan-layout { padding: 28px 20px 60px; }
       .day-focus, .day-outcome { display: none; }
     }
   </style>
