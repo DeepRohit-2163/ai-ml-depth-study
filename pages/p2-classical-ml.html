@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classical ML · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html" class="active">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Pillar 2</div>
+        <a href="#linreg">Linear Regression</a>
+        <a href="#logreg">Logistic Regression</a>
+        <a href="#trees">Decision Trees</a>
+        <a href="#rf">Random Forests</a>
+        <a href="#boost">Gradient Boosting / XGBoost</a>
+        <a href="#svm">SVMs &amp; Kernel Trick</a>
+        <a href="#cluster">Clustering</a>
+        <a href="#reg">Regularization</a>
+        <a href="#eval">Model Evaluation</a>
+      </aside>
+
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-critical" style="margin-bottom:12px;display:inline-flex;">Pillar 2 · Classical ML · CRITICAL</span>
+          <h1>Classical ML</h1>
+          <p style="margin-top:8px;">Amazon's 2025 Bar Raiser asked candidates to manually compute Entropy, Gini Index, derive logistic regression loss, and explain L1 vs L2 — <em>in the same round as LoRA and Flash Attention</em>. Don't treat this as "old stuff." It's your foundation and it will be tested.</p>
+        </div>
+
+        <!-- LINEAR REGRESSION -->
+        <div class="depth-section" id="linreg">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">⟵</div>Linear Regression</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Linear regression finds the best-fit hyperplane through data by minimizing the sum of squared errors. "Best fit" has an exact mathematical definition and a closed-form solution. Understanding when that solution works and when gradient descent is better is a common MNC depth probe.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Model</strong>: ŷ = Xθ (matrix form). <strong>Loss</strong>: MSE = (1/n)·‖y - Xθ‖²</p>
+            <p style="margin-top:8px;"><strong>Normal equation (closed form)</strong>: Set ∇L = 0 → θ* = (XᵀX)⁻¹Xᵀy. Exact solution. Requires XᵀX to be invertible (features not perfectly collinear). O(n³) cost to invert — infeasible when n (features) is large.</p>
+            <p style="margin-top:8px;"><strong>Assumptions</strong>: Linearity, independence of errors, homoscedasticity (constant variance of errors), normality of errors (for inference, not prediction). When violated: predictions still work, but confidence intervals break.</p>
+            <p style="margin-top:8px;"><strong>R² (coefficient of determination)</strong>: Fraction of variance explained by the model. R² = 1 - SS_res/SS_tot. R² = 1 → perfect fit. R² = 0 → model does no better than predicting the mean. <em>Caution</em>: R² always increases with more features (use adjusted R²).</p>
+            <p style="margin-top:8px;"><strong>Multicollinearity</strong>: When features are correlated, XᵀX becomes near-singular. Coefficient estimates become unstable (high variance). Fix: remove correlated features, PCA, or add L2 regularization (Ridge).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Derive the normal equation from scratch. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>L(θ) = ‖y - Xθ‖² = (y - Xθ)ᵀ(y - Xθ). Expand:</p>
+              <div class="math">L = yᵀy - 2θᵀXᵀy + θᵀXᵀXθ</div>
+              <p>Take gradient w.r.t. θ and set to zero:</p>
+              <div class="math">∇L = -2Xᵀy + 2XᵀXθ = 0  →  XᵀXθ = Xᵀy  →  θ* = (XᵀX)⁻¹Xᵀy</div>
+              <p>This is unique when XᵀX is invertible (features linearly independent). When not invertible (rank-deficient), use pseudoinverse or add regularization: θ* = (XᵀX + λI)⁻¹Xᵀy (Ridge regression). The λI term also makes the matrix always invertible.</p>
+            </div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> When does gradient descent beat the normal equation? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Use GD when: (1) n (features) &gt; ~10,000 because O(n³) inversion becomes too slow, (2) data doesn't fit in memory (use mini-batch SGD), (3) problem is non-linear (no closed form exists), (4) online learning — new data arrives continuously. Use normal equation when: n is small, you want the exact global optimum, and memory is not a constraint. In deep learning, there's never a closed form — always GD.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-linreg" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- LOGISTIC REGRESSION -->
+        <div class="depth-section" id="logreg">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">σ</div>Logistic Regression &amp; Loss Function</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Asked This Directly (2025)</h3>
+            <p style="font-size:0.875rem;">"Write the loss function for logistic regression and prove that it has a global minimum." This is a real question from Amazon's Applied Scientist interview. Know this cold.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Model</strong>: P(y=1|x) = σ(wᵀx + b) where σ(z) = 1/(1+e⁻ᶻ). Output is a probability (0-1).</p>
+            <p style="margin-top:8px;"><strong>Why sigmoid?</strong> We want outputs ∈ (0,1) that represent probabilities. Sigmoid is the canonical "squash to probability" function. It's also the CDF of the logistic distribution. Under the Bernoulli likelihood model, sigmoid emerges naturally.</p>
+            <p style="margin-top:8px;"><strong>Loss function (cross-entropy / log-loss)</strong>: Derived from maximizing the Bernoulli likelihood:</p>
+            <div class="math">L = -1/n · Σ [y_i·log(ŷ_i) + (1-y_i)·log(1-ŷ_i)]</div>
+            <p style="margin-top:8px;"><strong>Why not MSE for classification?</strong> MSE with sigmoid activations creates a non-convex loss surface with vanishing gradients near 0 and 1. Cross-entropy remains convex and gives larger gradients when predictions are confidently wrong.</p>
+            <p style="margin-top:8px;"><strong>Convexity (global minimum)</strong>: The log-loss is a convex function of w. Proof: the Hessian ∇²L = XᵀDX where D = diag(ŷ_i(1-ŷ_i)) ≥ 0 (positive semi-definite). A PSD Hessian means the function is convex — any local minimum is the global minimum. GD will always find the global optimum (given sufficient iterations and learning rate).</p>
+            <p style="margin-top:8px;"><strong>Class imbalance handling</strong>: Class weights in loss: L = -Σ [w_pos·y·log(ŷ) + w_neg·(1-y)·log(1-ŷ)]. Or use oversampling (SMOTE), undersampling, or threshold tuning post-training.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Prove that logistic regression's log-loss has a global minimum (convexity proof). <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Loss: L(w) = -Σ [y_i·log σ(wᵀx_i) + (1-y_i)·log(1-σ(wᵀx_i))]. Compute gradient:</p>
+              <div class="math">∇L = -Σ (y_i - σ(wᵀx_i)) · x_i = Xᵀ(σ(Xw) - y)</div>
+              <p>Compute Hessian:</p>
+              <div class="math">∇²L = Xᵀ D X  where D = diag(σ(wᵀx_i)·(1-σ(wᵀx_i)))</div>
+              <p>Since σ(z)∈(0,1), each diagonal entry of D > 0. Therefore D is positive definite, and ∇²L = XᵀDX is positive semi-definite (PSD). A PSD Hessian means L is convex. For a convex function, every local minimum is a global minimum. Therefore logistic regression's loss has a global minimum, and GD converges to it.</p>
+            </div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why can't you use MSE instead of cross-entropy for logistic regression? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Two reasons: (1) <strong>Non-convexity</strong>: MSE + sigmoid creates a non-convex loss surface with many local minima — GD may not converge to the best solution. (2) <strong>Vanishing gradients</strong>: When the model is confidently wrong (ŷ ≈ 0 but y=1), the sigmoid saturates and its gradient → 0. MSE loss gradient = (ŷ-y)·σ'(z) → near 0. Learning stalls. Cross-entropy loss gradient = (ŷ-y) — no σ'(z) term — so gradients stay large when predictions are wrong. This is why cross-entropy is the correct loss for classification under MLE.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-logreg" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- DECISION TREES -->
+        <div class="depth-section" id="trees">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">🌲</div>Decision Trees (Entropy, Gini, IG)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Asked This Directly (2025)</h3>
+            <p style="font-size:0.875rem;">"Manually calculate Entropy, Gini Index, and Information Gain for dataset splits." This was a live calculation question in Amazon's ML Deep Dive round. Practice doing these by hand.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Splitting criterion goal</strong>: Find the split that best separates classes. "Best" = most purity = least entropy/Gini after the split.</p>
+            <p style="margin-top:8px;"><strong>Entropy</strong>: H(S) = -Σ p_i·log₂(p_i). Max (most impure) when all classes equally likely. Zero when perfectly pure.</p>
+            <p style="margin-top:8px;"><strong>Information Gain</strong>: IG(S,A) = H(S) - Σ_v (|S_v|/|S|)·H(S_v). How much entropy is reduced by splitting on attribute A. Choose the attribute with highest IG.</p>
+            <p style="margin-top:8px;"><strong>Gini Index</strong>: Gini(S) = 1 - Σ p_i². Ranges 0 (pure) to 0.5 (binary equally split). Computationally faster than entropy (no log). Used by default in sklearn's CART for Random Forest.</p>
+            <p style="margin-top:8px;"><strong>Bias of IG</strong>: Information Gain favors features with many distinct values (e.g., IDs). Fix: use Gain Ratio = IG(S,A) / H(A).</p>
+            <p style="margin-top:8px;"><strong>Stopping criteria</strong>: Max depth, min samples per leaf, min impurity decrease, or pure nodes. <strong>Pruning</strong>: Pre-prune (stop early) or post-prune (grow full tree, then remove nodes that don't improve validation performance).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Manually compute Gini and Information Gain for a binary split. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Root: 10 examples, 6 positive, 4 negative. Split A produces: Left={4+, 0-}, Right={2+, 4-}.</p>
+              <div class="math">H(Root) = -(0.6·log₂0.6 + 0.4·log₂0.4) = 0.971 bits
+H(Left) = -(1·log₂1 + 0) = 0 bits (pure)
+H(Right) = -(0.333·log₂0.333 + 0.667·log₂0.667) = 0.918 bits
+IG = 0.971 - (4/10·0 + 6/10·0.918) = 0.971 - 0.551 = 0.42 bits</div>
+              <div class="math">Gini(Root) = 1 - (0.6² + 0.4²) = 1 - 0.52 = 0.48
+Gini(Left) = 0 (pure)
+Gini(Right) = 1 - (0.333² + 0.667²) = 0.444
+Weighted Gini after split = (4/10·0 + 6/10·0.444) = 0.267</div>
+              <p>Lower weighted Gini = better split. Compare this value across all candidate splits to choose the best.</p>
+            </div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why do decision trees overfit and how do you fix it? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>An unbounded decision tree will grow until every leaf is pure — memorizing the training data (zero train error). This is extreme overfitting: the model has learned noise, not signal. Fixes: (1) <strong>Max depth</strong>: limit how deep the tree grows. (2) <strong>Min samples per leaf</strong>: don't split a node with fewer than k examples. (3) <strong>Pre-pruning</strong>: stop if IG of best split &lt; threshold. (4) <strong>Post-pruning (cost-complexity)</strong>: grow full tree, then remove subtrees that don't improve performance on a holdout set. (5) <strong>Use ensembles</strong>: Random Forest (bagging) or Gradient Boosting — the high variance of individual trees averages out.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-trees" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- RANDOM FORESTS -->
+        <div class="depth-section" id="rf">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">🌳</div>Random Forests &amp; Bagging</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Bagging (Bootstrap Aggregating)</strong>: Train k models, each on a bootstrap sample (sampling with replacement) of the training data. Average predictions (regression) or majority vote (classification). Reduces variance without increasing bias. Each model sees ~63.2% of original data (some points duplicated, ~36.8% never seen = OOB).</p>
+            <p style="margin-top:8px;"><strong>Random Forest</strong> = Bagging + Feature Subsampling. At each split, only consider a random subset of √n_features features. This decorrelates the trees — if one feature is very strong, plain bagging would make all trees similar (correlated). Decorrelated trees → bigger variance reduction when averaged.</p>
+            <p style="margin-top:8px;"><strong>OOB (Out-of-Bag) error</strong>: Each tree is trained on a bootstrap sample. The ~36.8% left-out samples are the OOB set for that tree. Average OOB error across all trees = free validation estimate without a separate validation set.</p>
+            <p style="margin-top:8px;"><strong>Feature importance</strong>: Average decrease in impurity (Gini/entropy) when a feature is used for a split, averaged across all trees. Or: permutation importance — permute a feature's values and measure degradation in OOB accuracy.</p>
+            <p style="margin-top:8px;"><strong>When RF fails</strong>: Extrapolation (RF can't predict outside the range of training values). Very noisy labels. When features have very different scales (trees are scale-invariant but RF with many features may have issues). High cardinality categorical features.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why does feature subsampling in RF reduce variance more than plain bagging? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>In plain bagging, if one feature is highly predictive, nearly all trees will split on it at the top. The trees are correlated. Variance of average of correlated variables = ρσ² + (1-ρ)σ²/n, where ρ is the correlation. When ρ is high, averaging many correlated trees barely reduces variance. Feature subsampling forces each tree to consider different features at each split — trees diverge, reducing ρ. Lower ρ → better variance reduction from averaging. This is why RF often outperforms plain bagging despite each individual tree being slightly worse (it hasn't seen all features).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Bagging vs Boosting — when do you use each? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Bagging</strong>: Trains models independently in parallel. Reduces variance. Best when base model is high-variance (e.g., deep decision trees). Works well when you have a complex but noisy dataset and risk of overfitting. RF is robust and hard to overfit with more trees. <strong>Boosting</strong>: Trains models sequentially, each correcting the previous one's errors. Reduces bias (and variance). Best when base model is high-bias (shallow trees = weak learners). XGBoost/LightGBM typically outperform RF on structured tabular data. However, boosting can overfit with too many rounds on noisy data — needs careful tuning of learning rate and regularization. Rule of thumb: RF first (robust, less tuning), XGBoost when you need to squeeze out more performance.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-rf" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- GRADIENT BOOSTING -->
+        <div class="depth-section" id="boost">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">⬆</div>Gradient Boosting &amp; XGBoost</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Critical Depth Probe</h3>
+            <p style="font-size:0.875rem;">MNC interviewers specifically ask: "Why does XGBoost use second-order gradients?" and "What's the difference between GBDT and Random Forest?" Know the math, not just the name.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Gradient Boosting idea</strong>: Build an additive model F(x) = Σ f_t(x). Each new tree f_t fits the <em>negative gradient</em> of the loss function at the current ensemble's predictions — i.e., the residuals (for MSE loss). Each tree corrects what the previous ensemble got wrong.</p>
+            <div class="math">F_t(x) = F_{t-1}(x) + η·f_t(x)   where f_t fits -∂L/∂F_{t-1}</div>
+            <p style="margin-top:8px;"><strong>Why "gradient" boosting?</strong> The residuals in MSE are exactly the negative gradient of MSE w.r.t. predictions. Gradient boosting generalizes this to any differentiable loss function — fit the negative gradient regardless of what the loss is.</p>
+            <p style="margin-top:8px;"><strong>XGBoost key innovation — second-order gradients (Taylor expansion)</strong>: Instead of using only the first-order gradient (like vanilla GBDT), XGBoost uses a second-order Taylor approximation of the loss:</p>
+            <div class="math">L ≈ Σ [g_i·f(x_i) + (1/2)·h_i·f(x_i)²] + Ω(f)</div>
+            <p>where g_i = ∂L/∂ŷ_i (first-order gradient) and h_i = ∂²L/∂ŷ_i² (second-order/Hessian). This gives a more accurate approximation → can take larger steps → converges faster. Also allows closed-form solution for optimal leaf weights.</p>
+            <p style="margin-top:8px;"><strong>Regularization in XGBoost</strong>: Ω(f) = γ·T + (λ/2)·‖w‖² where T = number of leaves, w = leaf weights. Penalizes tree complexity directly in the objective — this is why XGBoost rarely overfits with proper tuning.</p>
+            <p style="margin-top:8px;"><strong>Key hyperparameters</strong>: n_estimators (trees), learning_rate (η, shrinks each tree's contribution), max_depth, subsample (row sampling per tree), colsample_bytree (feature sampling), lambda (L2), alpha (L1).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Why does XGBoost use second-order gradients and what advantage does that give? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Vanilla GBDT uses first-order gradient (steepest descent direction) which is locally linear. XGBoost uses a second-order Taylor approximation which includes curvature information. Benefits: (1) <strong>More accurate step</strong>: First-order only knows "go this direction." Second-order also knows "how sharply curved is the loss here?" → can take an optimally-sized step (like Newton's method). (2) <strong>Closed-form optimal leaf weights</strong>: With the second-order approximation, optimal weight for each leaf is w* = -G_j/(H_j + λ) where G_j = sum of first-order gradients in leaf j, H_j = sum of Hessians. No line search needed. (3) <strong>Hardware efficiency</strong>: The approximation allows pre-computing g_i and h_i, then solving the tree structure problem efficiently. (4) <strong>Better handling of non-MSE losses</strong>: First-order assumes loss is linear in leaf outputs. Second-order handles arbitrary convex losses more accurately.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-boost" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- SVM -->
+        <div class="depth-section" id="svm">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">↕</div>SVMs &amp; The Kernel Trick</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Core idea</strong>: Find the hyperplane that separates classes with the maximum margin. The margin is the distance between the hyperplane and the closest points of each class (support vectors). Maximum margin → best generalization.</p>
+            <p style="margin-top:8px;"><strong>Hard margin SVM</strong> (linearly separable data): Maximize 2/‖w‖ subject to y_i(wᵀx_i + b) ≥ 1. Equivalent to minimizing ‖w‖² (quadratic programming problem). Only possible when data is perfectly separable.</p>
+            <p style="margin-top:8px;"><strong>Soft margin SVM</strong>: Allows some misclassification via slack variables ξ_i ≥ 0. Objective: min ‖w‖²/2 + C·Σξ_i. C controls tradeoff: large C → penalize misclassification heavily (low bias, high variance). Small C → allow more violations (high bias, low variance).</p>
+            <p style="margin-top:8px;"><strong>Kernel trick</strong>: SVM only uses dot products between data points (via the dual formulation). The kernel function K(x_i, x_j) = φ(x_i)ᵀφ(x_j) computes the dot product in a high-dimensional feature space <em>without explicitly computing φ(x)</em>. This allows non-linear decision boundaries at linear computational cost.</p>
+            <p style="margin-top:8px;"><strong>Common kernels</strong>: Linear: K(x,z) = xᵀz. Polynomial: K(x,z) = (xᵀz + c)^d. RBF/Gaussian: K(x,z) = exp(-γ‖x-z‖²). RBF maps to infinite-dimensional space — can fit any function given enough data (infinite capacity).</p>
+            <p style="margin-top:8px;"><strong>SVM vs Neural Nets (2024)</strong>: SVMs dominated 2000s; now largely replaced by deep learning for high-dimensional data. SVMs still useful for: small datasets, clear margin structure, interpretability, when you need a convex optimization guarantee.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why does the kernel trick work without computing the feature map? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>In SVM's dual form, the optimization and prediction only require dot products between training examples: K(x_i, x_j) = φ(x_i)ᵀφ(x_j). The Mercer kernel computes this value directly without computing φ(x_i) or φ(x_j) separately. For the RBF kernel: K(x,z) = exp(-γ‖x-z‖²). This corresponds to an infinite-dimensional feature space φ(x), but we never compute that vector — we just evaluate the kernel function on the original inputs. Cost: O(n·d) per kernel evaluation, not O(∞) for the feature map. The key insight: the Representer Theorem guarantees the optimal solution lies in the span of kernel evaluations at training points, so we never need the explicit feature map.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-svm" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- CLUSTERING -->
+        <div class="depth-section" id="cluster">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">◎</div>Clustering (k-means, DBSCAN)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Scenario Question (2025)</h3>
+            <p style="font-size:0.875rem;">"What do you do when you don't know the number of clusters?" — Amazon directly asked this in a scenario-based ML round. Know DBSCAN, elbow method, and silhouette score.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>k-means algorithm</strong>: (1) Initialize k centroids (randomly or k-means++). (2) Assign each point to nearest centroid. (3) Recompute centroids as mean of assigned points. (4) Repeat until convergence. Minimizes: Σ Σ ‖x - μ_k‖². Converges to local minimum — sensitive to initialization. k-means++ initialization reduces this problem.</p>
+            <p style="margin-top:8px;"><strong>Convergence guarantee</strong>: k-means always converges (objective is non-increasing each step) but to a local, not global minimum. Inertia (within-cluster sum of squares) is the objective.</p>
+            <p style="margin-top:8px;"><strong>When k is unknown</strong>: (1) <strong>Elbow method</strong>: Plot inertia vs k. Find the "elbow" — diminishing returns point. Subjective. (2) <strong>Silhouette score</strong>: For each point, s = (b-a)/max(a,b) where a = mean distance to same-cluster points, b = mean distance to nearest other-cluster points. Range [-1, 1]. s→1 = well-clustered. Pick k that maximizes average silhouette. (3) <strong>Gap statistic</strong>: Compares inertia to a random null distribution. More principled than elbow.</p>
+            <p style="margin-top:8px;"><strong>DBSCAN</strong>: Density-Based Spatial Clustering of Applications with Noise. No need to specify k. Parameters: ε (neighborhood radius), minPts (min neighbors to be core point). Core point: has ≥ minPts neighbors within ε. Clusters = connected components of core points + their neighbors. Points not reachable from any core point → noise. Handles arbitrary shapes, robust to outliers.</p>
+            <p style="margin-top:8px;"><strong>k-means vs DBSCAN</strong>: k-means: spherical clusters, requires k, sensitive to outliers. DBSCAN: arbitrary shapes, automatic k, identifies outliers, but sensitive to ε and minPts choice. For high-dimensional data: both suffer from curse of dimensionality.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Your data has clusters of different shapes and you don't know k. Which algorithm and why? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Use DBSCAN. Reasons: (1) k-means assumes convex/spherical clusters — it will force circular boundaries even on crescent or ring-shaped data. (2) k-means requires specifying k up front — if unknown, you'd need to run elbow/silhouette analysis across many values of k, which is expensive. (3) DBSCAN discovers clusters of arbitrary shapes by following density gradients. (4) DBSCAN automatically labels outliers as noise — useful if data has anomalies. Caveat: DBSCAN needs ε and minPts tuning. If clusters have very different densities, HDBSCAN (hierarchical DBSCAN) handles this better by varying ε adaptively.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-cluster" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- REGULARIZATION -->
+        <div class="depth-section" id="reg">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">λ</div>Regularization (L1, L2, Elastic Net)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Asked This (2025)</h3>
+            <p style="font-size:0.875rem;">"What's the difference between L1 and L2 regularization? Why does L1 give sparse weights but L2 doesn't?" This was tested hands-on in Amazon's 2025 ML Deep Dive round. Know the geometric AND probabilistic explanation.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Why regularize?</strong> Without regularization, the model fits training data too closely (memorizes noise = overfitting). Regularization adds a penalty for complexity, trading some training accuracy for better generalization.</p>
+            <p style="margin-top:8px;"><strong>L2 (Ridge)</strong>: Loss + λ·Σw_j². Penalizes large weights. Gradient: -λ·2w_j → shrinks weights proportionally toward zero but never exactly to zero (derivative never zero unless w=0). Solution: θ* = (XᵀX + λI)⁻¹Xᵀy. Probabilistic interpretation: Gaussian prior on weights.</p>
+            <p style="margin-top:8px;"><strong>L1 (Lasso)</strong>: Loss + λ·Σ|w_j|. Gradient: -λ·sign(w_j). When w_j is small, the constant gradient magnitude λ·sign(w_j) can push it all the way to exactly 0. Result: <strong>sparse weights</strong> — feature selection built in. Probabilistic interpretation: Laplace prior on weights.</p>
+            <p style="margin-top:8px;"><strong>Geometric explanation for sparsity</strong>: Optimization = minimize loss subject to constraint on weight norm. L1 constraint = diamond shape (corners on axes). L2 constraint = sphere. The loss function's contours are ellipses centered at the unconstrained minimum. The first point where ellipses touch the L1 diamond is usually a corner (on an axis) → one or more weights = 0. The L2 sphere has no corners → the ellipses touch it on a curved surface → weights shrink but don't zero.</p>
+            <p style="margin-top:8px;"><strong>Elastic Net</strong>: λ₁·Σ|w| + λ₂·Σw². Combines sparsity (L1) with stability under correlated features (L2). Preferred when features are highly correlated (L1 arbitrarily picks one; Elastic Net can keep groups).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Explain mathematically why L1 drives weights to exactly zero but L2 only shrinks them. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Consider a single weight w with loss L(w) + λ·|w| (L1) vs L(w) + λ·w² (L2).</p>
+              <p><strong>L2</strong>: ∂/∂w [L(w) + λw²] = ∂L/∂w + 2λw = 0 → solution moves w toward 0 proportionally. For w to be exactly 0, we need ∂L/∂w = 0 at w=0 (unlikely unless L itself has minimum at 0).</p>
+              <p><strong>L1</strong>: ∂/∂w [L(w) + λ|w|] is subgradient = ∂L/∂w + λ·sign(w). When w > 0: ∂L/∂w + λ = 0 → needs ∂L/∂w = -λ to stay non-zero. When w < 0: ∂L/∂w - λ = 0 → needs ∂L/∂w = +λ. If |∂L/∂w| &lt; λ (i.e., the data doesn't provide enough gradient signal for this feature), the optimal solution is w = 0. The subgradient at w=0 includes the interval [-λ, λ], so 0 is a valid minimum whenever ∂L/∂w ∈ [-λ, λ]. This is why unimportant features (whose loss gradient is small) get exactly zeroed by L1 but only shrunk by L2.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-reg" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- MODEL EVALUATION -->
+        <div class="depth-section" id="eval">
+          <h2><div class="depth-icon" style="background:rgba(63,185,80,0.15);color:var(--c2)">📊</div>Model Evaluation &amp; Bias-Variance</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Bias-Variance Decomposition</strong>: Expected test error = Bias² + Variance + Irreducible noise. Bias: error from wrong assumptions (underfitting — model too simple). Variance: error from sensitivity to training data fluctuations (overfitting — model too complex). Can't simultaneously minimize both — the tradeoff. Regularization, ensemble methods, and proper model complexity selection manage this tradeoff.</p>
+            <div class="math">E[(y - ŷ)²] = [E[ŷ] - y_true]² + E[(ŷ - E[ŷ])²] + σ²_noise</div>
+            <p style="margin-top:8px;"><strong>Precision vs Recall</strong>: Precision = TP/(TP+FP) — of all predicted positives, how many are correct? Recall = TP/(TP+FN) — of all actual positives, how many did we catch? F1 = 2·(P·R)/(P+R) harmonic mean. Use precision when false positives are costly (spam filter: don't block legitimate email). Use recall when false negatives are costly (cancer detection: don't miss cancer).</p>
+            <p style="margin-top:8px;"><strong>AUC-ROC</strong>: Area Under the Receiver Operating Characteristic curve (TPR vs FPR at all thresholds). AUC = 0.5: random classifier. AUC = 1.0: perfect. AUC = probability that model ranks a random positive higher than a random negative. Insensitive to class imbalance — use AUC-PR (precision-recall) when imbalance is severe.</p>
+            <p style="margin-top:8px;"><strong>Cross-Validation</strong>: k-fold: split data into k folds, train on k-1, validate on 1, rotate. Average over k folds. Higher k = lower bias (more data used for training) but higher variance and computational cost. Leave-one-out (k=n): lowest bias, highest variance, expensive. For small datasets: use k=5 or k=10. Time-series: always use time-based split (never shuffle — data leakage).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Your model has high training accuracy but poor test accuracy. Walk me through your diagnosis. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>This is high variance / overfitting. Systematic diagnosis: (1) <strong>Check the gap</strong>: How large is train vs validation error? Large gap → overfitting. (2) <strong>Learning curves</strong>: Plot train/val error vs training size. If they don't converge, more data could help. (3) <strong>Model complexity</strong>: Reduce — lower max_depth, fewer features, smaller model. (4) <strong>Regularization</strong>: Add L1/L2, dropout (NNs), early stopping. (5) <strong>Data</strong>: More training data is the best overfitting fix — variance decreases as n increases. (6) <strong>Feature engineering</strong>: Remove irrelevant features that the model is memorizing noise from. (7) <strong>Ensemble</strong>: Bag multiple models to average out variance. Rule: if model has too many parameters relative to data → high variance → reduce capacity or add more data.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> When is AUC-ROC misleading and what do you use instead? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>AUC-ROC is misleading under severe class imbalance. Example: 99% negative, 1% positive. A model that scores all negatives slightly higher than positives gets high AUC but is useless (never detects positives at any useful threshold). Why: ROC uses FPR = FP/(FP+TN). With many negatives, FPR denominator is huge → FPR stays small even with many FPs → ROC curve looks good. Fix: Use <strong>AUC-PR</strong> (Precision-Recall curve). PR directly measures performance on the minority (positive) class. Under imbalance, a random classifier has AUC-PR ≈ prevalence (e.g., 0.01), so improvements are meaningful relative to this baseline. Also useful: F1 at the operating threshold, and Matthews Correlation Coefficient (MCC) which accounts for all four confusion matrix cells.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p2-eval" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

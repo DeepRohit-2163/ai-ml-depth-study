@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math & Stats Foundations · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html" class="active">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <!-- SIDEBAR -->
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Pillar 1</div>
+        <a href="#linalg">Linear Algebra</a>
+        <a href="#prob">Probability</a>
+        <a href="#mle">MLE / MAP / Bayes</a>
+        <a href="#opt">Optimization</a>
+        <a href="#info">Information Theory</a>
+      </aside>
+
+      <!-- CONTENT -->
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-medium" style="margin-bottom:12px;display:inline-flex;">Pillar 1 · Math &amp; Stats</span>
+          <h1>Math &amp; Stats Foundations</h1>
+          <p style="margin-top:8px;">These aren't just prerequisites — they're the weapons you use to explain <em>why</em> every algorithm works. Interviewers at MNCs use these to probe one level deeper than any definition.</p>
+          <button class="mark-btn" style="margin-top:16px;" data-topic-id="p1-all">Mark Pillar as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- LINEAR ALGEBRA -->
+        <!-- ============================== -->
+        <div class="depth-section" id="linalg">
+          <h2>
+            <div class="depth-icon" style="background:rgba(88,166,255,0.15);color:var(--c1)">∑</div>
+            Linear Algebra for ML
+          </h2>
+
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Linear algebra is the language of data transformations. Every matrix multiplication is a function that stretches, rotates, or projects data. Understanding this geometrically is what separates people who can answer "what does PCA do" from people who can answer "why does PCA use eigenvectors."</p>
+          </div>
+
+          <h3 style="margin-bottom:12px;margin-top:20px;">The Core Concepts</h3>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;">
+            <p><strong>Dot product</strong> — measures similarity/alignment between vectors. In ML: how much does vector a "agree" with vector b. If perpendicular, dot product = 0 (no similarity). This is the foundation of attention scores.</p>
+            <p style="margin-top:8px;"><strong>Matrix multiplication (Av)</strong> — a linear transformation. A stretches/rotates v. In deep learning, every layer does <code>Wx + b</code>; W is the transformation matrix. The output is the data projected into a new space.</p>
+            <p style="margin-top:8px;"><strong>Eigenvalues / eigenvectors</strong> — vectors that don't change direction when a matrix transforms them (only scaled by λ). <em>Why this matters:</em> PCA finds the directions of maximum variance — these are the eigenvectors of the covariance matrix. The eigenvalue tells you how much variance exists in that direction.</p>
+            <p style="margin-top:8px;"><strong>SVD (A = UΣVᵀ)</strong> — decomposes any matrix into three interpretable pieces: U (left singular vectors = output space basis), Σ (singular values = scaling, importance), Vᵀ (right singular vectors = input space basis). Generalization of eigen-decomp to non-square matrices. Used in: word embeddings, recommendation systems, image compression.</p>
+            <p style="margin-top:8px;"><strong>Norm</strong> — L1 = sum of absolute values (Manhattan), L2 = Euclidean length. L1 norm of gradient → sparse updates. L2 norm of weights → regularization.</p>
+          </div>
+
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is a matrix? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>A matrix is a linear transformation between vector spaces. Multiplying a vector by matrix A maps it from one space to another — stretching and rotating it. This is not just a data structure: <strong>every neural network layer is a matrix multiply that transforms the data into a new representation.</strong></p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why does PCA use eigenvectors? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>PCA finds the directions (in feature space) along which data varies the most. These directions are the eigenvectors of the <strong>covariance matrix</strong>. The eigenvalue λ associated with each eigenvector tells you exactly how much variance exists along that direction. By picking the top-k eigenvectors (largest λ), you retain the most information in k dimensions. The geometric interpretation: eigenvectors are the axes of the data's natural coordinate system.</p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What does SVD tell you that eigen-decomposition doesn't? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Eigen-decomposition only works on square, diagonalizable matrices. SVD works on <em>any</em> m×n matrix. A = UΣVᵀ decomposes it into: U (orthonormal basis for the column/output space), Σ (diagonal matrix of singular values — the "importance" of each dimension), Vᵀ (orthonormal basis for the row/input space). In a recommendation matrix, U is users, V is items, and Σ tells you how important each latent factor is. Truncated SVD (keeping only top-k singular values) gives you the best rank-k approximation — provably optimal by the Eckart–Young theorem.</p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> How is dot-product attention related to linear algebra geometry? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Attention scores are dot products between query and key vectors: <code>QKᵀ</code>. A high dot product means the vectors are nearly aligned — i.e., the query and key "agree" strongly. After softmax, this becomes a convex combination (weighted sum) of the value vectors V. Geometrically: attention is asking "which other positions in the sequence are pointing in the same direction as me?" and then moving toward those positions' values. The √d_k scaling prevents the dot products from growing too large (which would push softmax into saturation where gradients vanish).</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p1-linalg" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- PROBABILITY -->
+        <!-- ============================== -->
+        <div class="depth-section" id="prob">
+          <h2>
+            <div class="depth-icon" style="background:rgba(88,166,255,0.15);color:var(--c1)">P</div>
+            Probability &amp; Distributions
+          </h2>
+
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Every ML model is fundamentally a probability machine — it outputs a distribution over outcomes (even if hidden under a loss function). Understanding probability is what lets you explain <em>why</em> your model's outputs mean what they mean, and what assumptions you've baked in.</p>
+          </div>
+
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Bayes' theorem</strong>: P(A|B) = P(B|A)·P(A) / P(B). The posterior is proportional to likelihood × prior. In ML: updating beliefs about model parameters (A) given observed data (B).</p>
+            <p style="margin-top:8px;"><strong>Gaussian (Normal) distribution</strong>: Bell curve. Characterized by μ (mean) and σ² (variance). Central Limit Theorem: sum of many independent random variables → Gaussian. This is why assuming Gaussian noise in regression is often valid (noise is sum of many small independent errors).</p>
+            <p style="margin-top:8px;"><strong>Bernoulli</strong>: Binary outcomes (0 or 1). P(X=1) = p. The foundation of logistic regression's output layer.</p>
+            <p style="margin-top:8px;"><strong>Categorical / Softmax</strong>: Generalization of Bernoulli to k classes. Softmax converts logits to probabilities that sum to 1.</p>
+            <p style="margin-top:8px;"><strong>Expectation E[X]</strong>: Weighted average of all possible values. Loss functions are expectations: we minimize E[L(y, ŷ)] over the data distribution.</p>
+            <p style="margin-top:8px;"><strong>Variance Var[X] = E[X²] - E[X]²</strong>: Spread of a distribution. High variance = model output changes a lot with small data changes = overfitting signal.</p>
+          </div>
+
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> State Bayes' theorem and give a concrete ML use case. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>P(θ|data) = P(data|θ)·P(θ) / P(data). In Naive Bayes spam filtering: P(spam|words) ∝ P(words|spam)·P(spam). The likelihood P(words|spam) is estimated from training data, the prior P(spam) is the base rate of spam, and the posterior P(spam|words) is what we want for classification. The "naive" assumption is that words are conditionally independent given the class.</p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why is the Gaussian distribution so common in ML assumptions? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Three reasons: (1) <strong>Central Limit Theorem</strong> — if noise is the sum of many small independent factors, it converges to Gaussian regardless of each factor's distribution. (2) <strong>Mathematical convenience</strong> — Gaussian has nice conjugate priors, closed-form integrals, and is fully characterized by just μ and σ². (3) <strong>Maximum entropy</strong> — among all distributions with known mean and variance, the Gaussian has maximum entropy (makes the fewest additional assumptions). Assuming Gaussian noise in linear regression leads directly to least-squares loss (MSE) as the correct objective under MLE.</p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What does variance mean for a model's predictions, not just a distribution? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>High model variance means the model's predictions change substantially when trained on different subsets of the training data. It's the "sensitivity to the specific training set" part of the bias-variance tradeoff. Mathematically, for a model ŷ, variance = E[(ŷ - E[ŷ])²] over different training samples. A decision tree with no max-depth has high variance: each tree looks very different. The expected test error = bias² + variance + irreducible noise. Reducing variance usually means adding a constraint (regularization, dropout, ensemble averaging).</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p1-prob" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- MLE / MAP -->
+        <!-- ============================== -->
+        <div class="depth-section" id="mle">
+          <h2>
+            <div class="depth-icon" style="background:rgba(88,166,255,0.15);color:var(--c1)">L</div>
+            MLE / MAP / Bayesian Inference
+          </h2>
+
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">MLE, MAP, and full Bayesian inference are three answers to the same question: <em>"Given data, what should my model parameters be?"</em> They differ in whether they use prior beliefs and whether they give a point estimate or a distribution. Understanding these unifies how loss functions are derived — not invented.</p>
+          </div>
+
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>MLE (Maximum Likelihood Estimation)</strong>: Find θ that maximizes P(data|θ). No prior. For linear regression with Gaussian noise: maximizing likelihood = minimizing MSE. For logistic regression with Bernoulli outputs: maximizing likelihood = minimizing cross-entropy loss. MLE is the "let the data speak" approach — it can overfit with small datasets.</p>
+            <div class="math">θ_MLE = argmax P(data|θ) = argmin -log P(data|θ)</div>
+            <p style="margin-top:8px;"><strong>MAP (Maximum A Posteriori)</strong>: Find θ that maximizes P(θ|data) = P(data|θ)·P(θ). Includes a prior P(θ). With Gaussian prior on weights: MAP = MLE + L2 regularization (Ridge regression). With Laplace prior: MAP = MLE + L1 regularization. <em>This is why regularization has a probabilistic interpretation: it's a prior belief that weights should be small.</em></p>
+            <div class="math">θ_MAP = argmax P(data|θ)·P(θ) = argmin -log P(data|θ) - log P(θ)</div>
+            <p style="margin-top:8px;"><strong>Full Bayesian</strong>: Instead of a point estimate, compute the full posterior distribution P(θ|data) ∝ P(data|θ)·P(θ). At prediction time, integrate over all θ (marginalization). Gives uncertainty estimates but is computationally expensive. Approximated by: variational inference, MCMC, Laplace approximation.</p>
+          </div>
+
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Show why minimizing MSE is equivalent to maximizing likelihood under Gaussian noise. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Assume y = f(x;θ) + ε where ε ~ N(0, σ²). Then:</p>
+              <div class="math">P(y|x,θ) = N(f(x;θ), σ²) = (1/√2πσ²) · exp(-(y - f(x;θ))² / 2σ²)</div>
+              <p>Log-likelihood over n samples:</p>
+              <div class="math">log L = -n·log(√2πσ²) - (1/2σ²) · Σ(y_i - ŷ_i)²</div>
+              <p>Maximizing log L = minimizing Σ(y_i - ŷ_i)² = <strong>MSE</strong>. The Gaussian noise assumption is baked into choosing MSE as your loss. If noise is Laplacian → MLE gives MAE instead.</p>
+            </div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Show why L2 regularization = Gaussian prior on weights (MAP). <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>MAP: θ* = argmax log P(data|θ) + log P(θ). With Gaussian prior P(θ) = N(0, τ²):</p>
+              <div class="math">log P(θ) = -θ²/2τ² + const</div>
+              <p>So MAP objective = maximize [log P(data|θ) - λ·‖θ‖²] where λ = 1/2τ². Minimizing the negative: <strong>loss + λ‖θ‖² = L2 regularized loss</strong>. The regularization strength λ is the inverse of the prior variance: stronger prior (smaller τ²) → larger λ → heavier regularization. With Laplace prior P(θ) ∝ exp(-|θ|/b), log P(θ) = -|θ|/b → L1 regularization.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p1-mle" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- OPTIMIZATION -->
+        <!-- ============================== -->
+        <div class="depth-section" id="opt">
+          <h2>
+            <div class="depth-icon" style="background:rgba(88,166,255,0.15);color:var(--c1)">▽</div>
+            Optimization &amp; Gradient Descent
+          </h2>
+
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Training a model = finding the lowest point in the loss landscape. Gradient descent is the algorithm that does it: follow the steepest downhill direction, repeatedly. The subtleties — learning rate, batch size, saddle points, convergence — are what interviewers probe because they reveal whether you understand what's actually happening during training.</p>
+          </div>
+
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Gradient Descent update rule</strong>: θ ← θ - α·∇L(θ). α = learning rate. ∇L points uphill → subtract to go downhill. Key: gradient gives direction, not step size. α controls step size.</p>
+            <p style="margin-top:8px;"><strong>BGD vs SGD vs Mini-batch</strong>: Batch GD: use all data per update (smooth convergence, expensive per step). SGD: one sample per update (noisy but cheap, can escape local minima). Mini-batch: standard — balance of smoothness and speed. Noise in SGD is actually regularizing.</p>
+            <p style="margin-top:8px;"><strong>Learning rate too high</strong>: overshoots, loss diverges. <strong>Too low</strong>: slow convergence, may get stuck. Solution: learning rate schedules (warmup → cosine decay), adaptive methods (Adam).</p>
+            <p style="margin-top:8px;"><strong>Convexity</strong>: If the loss surface is convex (single bowl), GD converges to the global minimum. Logistic regression and linear regression are convex. Neural networks are non-convex — many local minima, saddle points. In practice, flat minima (wide valleys) generalize better than sharp minima.</p>
+            <p style="margin-top:8px;"><strong>Closed-form vs GD</strong>: Linear regression has a closed-form normal equation θ = (XᵀX)⁻¹Xᵀy. Exact answer but O(n³) to invert — infeasible for large n features or huge datasets. GD: O(n·d) per step, scales to billions of parameters. Use GD when n or d is large.</p>
+          </div>
+
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> When is the closed-form solution better than gradient descent? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Closed-form (normal equation) is better when: (1) features n is small (matrix inversion is O(n³), becomes impractical when n > ~10k), (2) you need the exact optimal solution, (3) you can afford the memory for XᵀX. GD is better when: (1) dataset is too large to fit in memory (use stochastic/mini-batch), (2) n is very large (n³ inversion is infeasible), (3) the problem is non-convex (no closed form exists), (4) online learning where data arrives incrementally.</p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why does noise in SGD help generalization? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>SGD gradient is a noisy estimate of the true gradient. This noise serves two purposes: (1) <strong>Escape local minima / saddle points</strong> — deterministic GD would get stuck; stochastic noise kicks it out. (2) <strong>Implicit regularization toward flat minima</strong> — noise naturally biases convergence toward wider valleys in the loss surface. Sharp minima overfit: a small perturbation in input → large change in loss. Flat minima generalize: the same perturbation has little effect. The magnitude of SGD noise is proportional to batch-size⁻¹/², so smaller batches = more noise = stronger implicit regularization.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p1-opt" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- INFORMATION THEORY -->
+        <!-- ============================== -->
+        <div class="depth-section" id="info">
+          <h2>
+            <div class="depth-icon" style="background:rgba(88,166,255,0.15);color:var(--c1)">H</div>
+            Information Theory (Entropy, KL Divergence)
+          </h2>
+
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Information theory quantifies uncertainty, surprise, and the cost of communicating information. In ML it's essential: cross-entropy loss, KL divergence in VAEs, mutual information in feature selection, and Gini/entropy in decision trees — all from these foundations.</p>
+          </div>
+
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Entropy H(P)</strong>: Average surprise (bits) in a probability distribution. For a fair coin: H = 1 bit. For a biased coin (P=1 → always heads): H = 0 (no surprise).</p>
+            <div class="math">H(P) = -Σ p(x) · log p(x)</div>
+            <p style="margin-top:8px;"><strong>Cross-entropy H(P,Q)</strong>: Average bits needed to encode outcomes from P using a code optimized for Q. If your model Q ≠ true distribution P, you pay extra bits. Minimizing cross-entropy = making Q as close to P as possible.</p>
+            <div class="math">H(P,Q) = -Σ p(x) · log q(x)</div>
+            <p style="margin-top:8px;"><strong>KL Divergence D_KL(P‖Q)</strong>: Extra bits needed because you use Q when P is true. Always ≥ 0. D_KL(P‖Q) = H(P,Q) - H(P). Asymmetric: D_KL(P‖Q) ≠ D_KL(Q‖P). In VAEs: KL divergence regularizes the latent space to stay close to N(0,1).</p>
+            <div class="math">D_KL(P‖Q) = Σ p(x) · log(p(x)/q(x))</div>
+            <p style="margin-top:8px;"><strong>Information Gain (used in Decision Trees)</strong>: IG(S,A) = H(S) - Σ(|S_v|/|S|)·H(S_v). How much entropy is reduced by splitting on attribute A. Pick the split that gives maximum IG = maximum uncertainty reduction.</p>
+            <p style="margin-top:8px;"><strong>Gini Index</strong>: Gini(S) = 1 - Σ p_i². Measures impurity. Gini = 0 when perfectly pure (all one class). Slightly faster to compute than entropy; used by default in scikit-learn's Random Forest.</p>
+          </div>
+
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Manually compute the entropy of a node with 5 positive and 5 negative examples. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>P(+) = 0.5, P(-) = 0.5.</p>
+              <div class="math">H = -(0.5·log₂0.5 + 0.5·log₂0.5) = -(0.5·(-1) + 0.5·(-1)) = 1.0 bit</div>
+              <p>Maximum entropy for binary = 1 bit (perfectly uncertain). A pure node (all one class) has H = 0. This is the quantity decision trees try to minimize after each split.</p>
+            </div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why is KL divergence asymmetric and which direction matters in VAEs? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>D_KL(P‖Q) = "cost of coding P using Q" ≠ D_KL(Q‖P). Asymmetry has real consequences: D_KL(P‖Q) = ∞ wherever Q=0 but P≠0 — it forces Q to cover all of P's support (mean-seeking). D_KL(Q‖P) can be 0 by concentrating Q where P is large (mode-seeking). In VAEs, we minimize D_KL(q(z|x) ‖ p(z)) where p(z) = N(0,1). This uses the reverse KL — q (encoder posterior) is mode-seeking toward the prior. This is intentional: it encourages the encoder to produce compact, unimodal distributions for each input. The forward KL would force coverage of the entire N(0,1) which isn't what we want per input.</p></div>
+          </div>
+
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why does minimizing cross-entropy equal minimizing KL divergence from the true distribution? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>D_KL(P‖Q) = H(P,Q) - H(P). Since H(P) (true data entropy) is fixed (doesn't depend on model parameters), minimizing D_KL(P‖Q) over θ is equivalent to minimizing cross-entropy H(P,Q). So when you minimize cross-entropy loss in classification, you are making the model distribution Q as close to the true label distribution P as possible in KL divergence. Cross-entropy is the practical, computable proxy for KL divergence.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p1-info" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+      </div><!-- /topic-content -->
+    </div><!-- /topic-layout -->
+  </div>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

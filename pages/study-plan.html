@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>60-Day Study Plan · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .plan-layout {
+      max-width: 1000px; margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+    .plan-header { margin-bottom: 32px; }
+    .plan-header h1 { margin-bottom: 8px; }
+    .plan-header p { color: var(--text-muted); font-size: 0.9rem; }
+
+    .honesty-box {
+      background: rgba(247,129,102,0.07);
+      border: 1px solid rgba(247,129,102,0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+    .honesty-box h3 { color: var(--accent3); margin-bottom: 8px; }
+    .honesty-box p { color: var(--text-muted); font-size: 0.875rem; line-height: 1.7; }
+
+    /* PHASE BLOCKS */
+    .phase-block { margin-bottom: 40px; }
+    .phase-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .phase-badge {
+      padding: 4px 12px; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .phase-title { font-size: 1.1rem; font-weight: 600; }
+    .phase-days { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* DAY ROWS */
+    .day-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .day-table th {
+      text-align: left;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .day-row {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    .day-row:hover { background: var(--surface); }
+    .day-row td { padding: 10px 12px; font-size: 0.875rem; vertical-align: top; }
+    .day-num {
+      font-weight: 600; color: var(--text-muted);
+      white-space: nowrap; width: 80px;
+    }
+    .day-topic { font-weight: 500; color: var(--text); }
+    .day-focus { color: var(--text-muted); font-size: 0.82rem; }
+    .day-outcome { color: var(--text-muted); font-size: 0.82rem; }
+    .day-link a {
+      color: var(--accent); font-size: 0.8rem;
+      text-decoration: none; white-space: nowrap;
+    }
+    .day-link a:hover { text-decoration: underline; }
+
+    .day-row input[type=checkbox] {
+      width: 16px; height: 16px; cursor: pointer;
+      accent-color: var(--accent2);
+    }
+    .day-row.done .day-topic { text-decoration: line-through; color: var(--text-muted); }
+    .day-row.done .day-num   { color: var(--accent2); }
+
+    /* PHASE COLOURS */
+    .pb-1 { background: rgba(88,166,255,0.15);  color: var(--c1); }
+    .pb-2 { background: rgba(63,185,80,0.15);   color: var(--c2); }
+    .pb-3 { background: rgba(247,129,102,0.15); color: var(--c3); }
+    .pb-4 { background: rgba(210,168,255,0.15); color: var(--c4); }
+    .pb-5 { background: rgba(255,166,87,0.15);  color: var(--c5); }
+    .pb-6 { background: rgba(121,192,255,0.15); color: var(--c6); }
+    .pb-7 { background: rgba(63,185,80,0.15);   color: var(--c2); }
+
+    /* RULE CARD */
+    .rules-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px; margin-bottom: 32px;
+    }
+    .rule-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+    }
+    .rule-card .rule-num { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+    .rule-card h4 { font-size: 0.85rem; font-weight: 600; margin: 4px 0; color: var(--text); text-transform: none; letter-spacing: 0; }
+    .rule-card p  { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* OVERALL PLAN BAR */
+    .plan-progress-bar {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; margin-bottom: 32px;
+    }
+    .ppb-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .ppb-label { font-size: 0.85rem; font-weight: 600; }
+    .ppb-pct { font-size: 0.85rem; color: var(--accent); font-weight: 700; }
+    .ppb-track { height: 8px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+    .ppb-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.5s; }
+
+    @media (max-width: 768px) {
+      .plan-layout { padding: 24px 16px 60px; }
+      .day-focus, .day-outcome { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html" class="active">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+
+  <div id="search-overlay">
+    <div id="search-box">
+      <input id="search-input-big" type="text" placeholder="Search any topic, algorithm, concept…" />
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="plan-layout">
+
+      <div class="plan-header">
+        <h1>60-Day Study Plan</h1>
+        <p>1–2 focused hours/day · Targeting Product MNCs · Both tracks: AI Engineer + ML Core · Weighted for where you actually failed</p>
+      </div>
+
+      <!-- PLAN PROGRESS -->
+      <div class="plan-progress-bar">
+        <div class="ppb-row">
+          <span class="ppb-label">Plan Completion</span>
+          <span class="ppb-pct" id="plan-pct">0 / 60 days checked</span>
+        </div>
+        <div class="ppb-track"><div class="ppb-fill" id="plan-fill" style="width:0%"></div></div>
+      </div>
+
+      <!-- BRUTAL HONESTY -->
+      <div class="honesty-box">
+        <h3>⚠ The Honest Rules</h3>
+        <p>
+          <strong style="color:var(--text)">You don't fail because you don't know enough topics. You fail because you answer at API level when the interviewer probes one level deeper.</strong><br><br>
+          Rule: For every topic below, don't just read — close the page and explain it out loud as if the interviewer just asked "okay but WHY does that work?" If you can't answer that follow-up from memory, you haven't learned it yet. The "Interrogation" section on each topic page is the actual exam.
+        </p>
+      </div>
+
+      <!-- STUDY RULES -->
+      <p class="section-label">How to use this plan</p>
+      <div class="rules-grid">
+        <div class="rule-card"><div class="rule-num">01</div><h4>Read → Explain → Drill</h4><p>For each day: read the topic page, then close it and explain the concept out loud. Then open the Interrogation section and answer every question before revealing the answer.</p></div>
+        <div class="rule-card"><div class="rule-num">02</div><h4>Mark only when you can explain</h4><p>Use the "Mark as Mastered" button on each topic page only when you can answer the depth-probe questions without looking. Not when you feel you've read enough.</p></div>
+        <div class="rule-card"><div class="rule-num">03</div><h4>Don't skip Phase 1</h4><p>The math/classical ML topics are tested even in GenAI-heavy rounds at Amazon and Deloitte. Candidates who skip these get caught on Entropy/Gini calculations and L1 vs L2 derivations.</p></div>
+        <div class="rule-card"><div class="rule-num">04</div><h4>Days 57-60 are non-negotiable</h4><p>Mock interrogation mode. Pick any topic, open a blank doc, and write out the full depth-probe answer chain as if an Amazon bar-raiser is asking. No cheating.</p></div>
+      </div>
+
+      <hr />
+
+      <!-- ====================================================== -->
+      <!-- PHASE 1: MATH FOUNDATIONS -->
+      <!-- ====================================================== -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-1">Phase 1</span>
+          <div>
+            <div class="phase-title">Math & Stats Foundations</div>
+            <div class="phase-days">Days 1–10 · ~2 hrs/day · These unlock everything else</div>
+          </div>
+        </div>
+        <table class="day-table">
+          <thead><tr><th>✓</th><th>Day</th><th>Topic</th><th>Focus</th><th>Exam Outcome</th><th>Page</th></tr></thead>
+          <tbody id="phase1-body">
+            <tr class="day-row" data-day="1"><td><input type="checkbox" data-day="1"/></td><td class="day-num">Day 1</td><td class="day-topic">Linear Algebra for ML</td><td class="day-focus">Dot products, matrix multiply, eigenvectors/values, SVD — why each matters for ML</td><td class="day-outcome">Explain why PCA uses eigenvectors; what SVD does to a matrix</td><td class="day-link"><a href="p1-math.html#linalg">→ Open</a></td></tr>
+            <tr class="day-row" data-day="2"><td><input type="checkbox" data-day="2"/></td><td class="day-num">Day 2</td><td class="day-topic">Probability & Distributions</td><td class="day-focus">Bayes' theorem, conditional prob, Gaussian/Bernoulli/Categorical, expectation, variance</td><td class="day-outcome">Derive Bayes' theorem; explain the Gaussian bell curve from first principles</td><td class="day-link"><a href="p1-math.html#prob">→ Open</a></td></tr>
+            <tr class="day-row" data-day="3"><td><input type="checkbox" data-day="3"/></td><td class="day-num">Day 3</td><td class="day-topic">MLE / MAP / Bayesian Inference</td><td class="day-focus">Maximum likelihood estimation, prior/posterior, how MLE → MSE for Gaussian noise</td><td class="day-outcome">Show why minimizing MSE = maximizing likelihood under Gaussian noise assumption</td><td class="day-link"><a href="p1-math.html#mle">→ Open</a></td></tr>
+            <tr class="day-row" data-day="4"><td><input type="checkbox" data-day="4"/></td><td class="day-num">Day 4</td><td class="day-topic">Optimization & Gradient Descent</td><td class="day-focus">Gradient descent variants (SGD/mini-batch), learning rate intuition, convexity, saddle points</td><td class="day-outcome">When is closed-form solution better than GD? When does GD diverge?</td><td class="day-link"><a href="p1-math.html#opt">→ Open</a></td></tr>
+            <tr class="day-row" data-day="5"><td><input type="checkbox" data-day="5"/></td><td class="day-num">Day 5</td><td class="day-topic">Information Theory</td><td class="day-focus">Entropy, cross-entropy, KL divergence, mutual information, Gini index</td><td class="day-outcome">Manually compute entropy for a dataset split; explain KL divergence direction asymmetry</td><td class="day-link"><a href="p1-math.html#info">→ Open</a></td></tr>
+            <tr class="day-row" data-day="6"><td><input type="checkbox" data-day="6"/></td><td class="day-num">Days 6–7</td><td class="day-topic">Revision + Depth Interrogation</td><td class="day-focus">Open the Interrogation section on ALL 5 math topics. Answer every Q without reading</td><td class="day-outcome">Can answer any depth-probe chain on math foundations without notes</td><td class="day-link"><a href="p1-math.html">→ Math</a></td></tr>
+            <tr class="day-row" data-day="8"><td><input type="checkbox" data-day="8"/></td><td class="day-num">Days 8–10</td><td class="day-topic">Overflow + Buffer</td><td class="day-focus">Catch up on any math topic you couldn't explain out loud. No rushing ahead</td><td class="day-outcome">All 5 math topics marked Mastered</td><td class="day-link"><a href="p1-math.html">→ Math</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- PHASE 2: CLASSICAL ML -->
+      <!-- ====================================================== -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-2">Phase 2</span>
+          <div>
+            <div class="phase-title">Classical ML — The Foundation Amazon & Deloitte Still Test</div>
+            <div class="phase-days">Days 11–22 · ~2 hrs/day · Critical weight — tested even in GenAI rounds</div>
+          </div>
+        </div>
+        <table class="day-table">
+          <thead><tr><th>✓</th><th>Day</th><th>Topic</th><th>Focus</th><th>Exam Outcome</th><th>Page</th></tr></thead>
+          <tbody>
+            <tr class="day-row" data-day="11"><td><input type="checkbox" data-day="11"/></td><td class="day-num">Day 11</td><td class="day-topic">Linear Regression (derivations)</td><td class="day-focus">Normal equation, MSE loss, closed form vs GD, R², assumptions</td><td class="day-outcome">Derive the normal equation; explain when it's better than gradient descent</td><td class="day-link"><a href="p2-classical-ml.html#linreg">→ Open</a></td></tr>
+            <tr class="day-row" data-day="12"><td><input type="checkbox" data-day="12"/></td><td class="day-num">Day 12</td><td class="day-topic">Logistic Regression & Loss</td><td class="day-focus">Sigmoid, log-loss derivation, why cross-entropy, global minimum proof, class imbalance</td><td class="day-outcome">Write the loss function and prove it has a global minimum — this is an Amazon question</td><td class="day-link"><a href="p2-classical-ml.html#logreg">→ Open</a></td></tr>
+            <tr class="day-row" data-day="13"><td><input type="checkbox" data-day="13"/></td><td class="day-num">Day 13</td><td class="day-topic">Decision Trees</td><td class="day-focus">Information Gain, Gini Index, Entropy — compute manually, stopping criteria, pruning</td><td class="day-outcome">Manually compute IG and Gini for a given split (Amazon asked this in 2025)</td><td class="day-link"><a href="p2-classical-ml.html#trees">→ Open</a></td></tr>
+            <tr class="day-row" data-day="14"><td><input type="checkbox" data-day="14"/></td><td class="day-num">Day 14</td><td class="day-topic">Random Forests & Bagging</td><td class="day-focus">Bootstrap aggregation, feature subsampling, OOB error, bagging vs boosting</td><td class="day-outcome">When would RF outperform a single deep tree? When would it not?</td><td class="day-link"><a href="p2-classical-ml.html#rf">→ Open</a></td></tr>
+            <tr class="day-row" data-day="15"><td><input type="checkbox" data-day="15"/></td><td class="day-num">Days 15–16</td><td class="day-topic">Gradient Boosting & XGBoost</td><td class="day-focus">Additive model, residuals, second-order Taylor expansion (why XGBoost uses it), GBDT vs RF</td><td class="day-outcome">Explain why XGBoost uses second-order gradients and what advantage that gives</td><td class="day-link"><a href="p2-classical-ml.html#boost">→ Open</a></td></tr>
+            <tr class="day-row" data-day="17"><td><input type="checkbox" data-day="17"/></td><td class="day-num">Day 17</td><td class="day-topic">SVMs & Kernel Trick</td><td class="day-focus">Margin maximization, support vectors, kernel trick intuition, soft margin</td><td class="day-outcome">Explain why the kernel trick works without computing the feature map explicitly</td><td class="day-link"><a href="p2-classical-ml.html#svm">→ Open</a></td></tr>
+            <tr class="day-row" data-day="18"><td><input type="checkbox" data-day="18"/></td><td class="day-num">Day 18</td><td class="day-topic">Clustering (k-means, DBSCAN)</td><td class="day-focus">k-means convergence proof, elbow method, what when clusters unknown — DBSCAN</td><td class="day-outcome">What do you do when you don't know k? How does DBSCAN handle arbitrary shapes?</td><td class="day-link"><a href="p2-classical-ml.html#cluster">→ Open</a></td></tr>
+            <tr class="day-row" data-day="19"><td><input type="checkbox" data-day="19"/></td><td class="day-num">Day 19</td><td class="day-topic">Regularization (L1, L2)</td><td class="day-focus">Why L1 gives sparsity, L2 shrinks weights, elastic net, weight decay</td><td class="day-outcome">Why does L1 zero weights but L2 doesn't? Geometric + mathematical explanation</td><td class="day-link"><a href="p2-classical-ml.html#reg">→ Open</a></td></tr>
+            <tr class="day-row" data-day="20"><td><input type="checkbox" data-day="20"/></td><td class="day-num">Day 20</td><td class="day-topic">Model Evaluation & Bias-Variance</td><td class="day-focus">Bias-variance decomposition, cross-validation, precision/recall/F1, AUC-ROC, confusion matrix</td><td class="day-outcome">Derive bias-variance decomposition; explain why high-k CV is better for small datasets</td><td class="day-link"><a href="p2-classical-ml.html#eval">→ Open</a></td></tr>
+            <tr class="day-row" data-day="21"><td><input type="checkbox" data-day="21"/></td><td class="day-num">Days 21–22</td><td class="day-topic">Classical ML Interrogation Drill</td><td class="day-focus">All 9 Classical ML topics — answer depth-probe chains blind</td><td class="day-outcome">All 9 Classical ML topics marked Mastered</td><td class="day-link"><a href="p2-classical-ml.html">→ Classical ML</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PHASE 3: DEEP LEARNING -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-3">Phase 3</span>
+          <div>
+            <div class="phase-title">Deep Learning Internals</div>
+            <div class="phase-days">Days 23–30 · ~2 hrs/day · The part people skip for APIs — don't</div>
+          </div>
+        </div>
+        <table class="day-table">
+          <thead><tr><th>✓</th><th>Day</th><th>Topic</th><th>Focus</th><th>Exam Outcome</th><th>Page</th></tr></thead>
+          <tbody>
+            <tr class="day-row" data-day="23"><td><input type="checkbox" data-day="23"/></td><td class="day-num">Day 23</td><td class="day-topic">Backpropagation & Chain Rule</td><td class="day-focus">Forward/backward pass, chain rule, vanishing gradients in deep nets</td><td class="day-outcome">Trace gradients through a 3-layer network by hand</td><td class="day-link"><a href="p3-deep-learning.html#backprop">→ Open</a></td></tr>
+            <tr class="day-row" data-day="24"><td><input type="checkbox" data-day="24"/></td><td class="day-num">Day 24</td><td class="day-topic">Optimizers: SGD → Adam → AdamW</td><td class="day-focus">Momentum, RMSprop, Adam (m1/m2 estimates), weight decay decoupling in AdamW</td><td class="day-outcome">"Don't just say I used AdamW — explain weight decay decoupling" (Amazon 2025)</td><td class="day-link"><a href="p3-deep-learning.html#opt">→ Open</a></td></tr>
+            <tr class="day-row" data-day="25"><td><input type="checkbox" data-day="25"/></td><td class="day-num">Day 25</td><td class="day-topic">BatchNorm vs LayerNorm</td><td class="day-focus">What each normalizes, why BatchNorm breaks with small batch / at inference, why Transformers use LayerNorm</td><td class="day-outcome">When does BatchNorm fail? Why do LLMs always use LayerNorm? (Amazon asked this)</td><td class="day-link"><a href="p3-deep-learning.html#norm">→ Open</a></td></tr>
+            <tr class="day-row" data-day="26"><td><input type="checkbox" data-day="26"/></td><td class="day-num">Day 26</td><td class="day-topic">Dropout & NN Regularization</td><td class="day-focus">Dropout as ensemble, test-time scaling, inverted dropout, weight decay</td><td class="day-outcome">Why does dropout scale activations at test time? What's the Bayesian interpretation?</td><td class="day-link"><a href="p3-deep-learning.html#reg">→ Open</a></td></tr>
+            <tr class="day-row" data-day="27"><td><input type="checkbox" data-day="27"/></td><td class="day-num">Day 27</td><td class="day-topic">CNNs</td><td class="day-focus">Convolution math, padding/stride/receptive field, pooling, parameter sharing intuition</td><td class="day-outcome">Calculate the output size of a conv layer given kernel/stride/padding</td><td class="day-link"><a href="p3-deep-learning.html#cnn">→ Open</a></td></tr>
+            <tr class="day-row" data-day="28"><td><input type="checkbox" data-day="28"/></td><td class="day-num">Day 28</td><td class="day-topic">RNNs, LSTMs & Vanishing Gradients</td><td class="day-focus">RNN unroll, BPTT, vanishing/exploding gradient cause, LSTM gates and why they help</td><td class="day-outcome">Why does the LSTM forget gate solve vanishing gradients but a plain RNN can't?</td><td class="day-link"><a href="p3-deep-learning.html#rnn">→ Open</a></td></tr>
+            <tr class="day-row" data-day="29"><td><input type="checkbox" data-day="29"/></td><td class="day-num">Day 29</td><td class="day-topic">Activation Functions</td><td class="day-focus">Sigmoid/tanh problems, ReLU/dead neurons, GELU (used in BERT/GPT), SiLU</td><td class="day-outcome">Why did GELU replace ReLU in Transformers? What's dead ReLU and how do you fix it?</td><td class="day-link"><a href="p3-deep-learning.html#activ">→ Open</a></td></tr>
+            <tr class="day-row" data-day="30"><td><input type="checkbox" data-day="30"/></td><td class="day-num">Day 30</td><td class="day-topic">DL Interrogation Drill</td><td class="day-focus">All 7 DL topics — blind depth-probe answers</td><td class="day-outcome">All 7 DL topics marked Mastered</td><td class="day-link"><a href="p3-deep-learning.html">→ Deep Learning</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PHASE 4: TRANSFORMERS -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-4">Phase 4</span>
+          <div>
+            <div class="phase-title">Transformers & LLMs — The Heaviest Interview Block</div>
+            <div class="phase-days">Days 31–42 · ~2 hrs/day · Most weight at both product MNCs and AI startups</div>
+          </div>
+        </div>
+        <table class="day-table">
+          <thead><tr><th>✓</th><th>Day</th><th>Topic</th><th>Focus</th><th>Exam Outcome</th><th>Page</th></tr></thead>
+          <tbody>
+            <tr class="day-row" data-day="31"><td><input type="checkbox" data-day="31"/></td><td class="day-num">Days 31–32</td><td class="day-topic">Attention Mechanism (Q/K/V math)</td><td class="day-focus">Scaled dot-product, softmax, why divide by √d_k, O(N²) complexity</td><td class="day-outcome">Derive attention formula; explain what happens if you remove the √d_k scaling</td><td class="day-link"><a href="p4-transformers.html#attn">→ Open</a></td></tr>
+            <tr class="day-row" data-day="33"><td><input type="checkbox" data-day="33"/></td><td class="day-num">Day 33</td><td class="day-topic">Multi-Head Attention</td><td class="day-focus">Why multiple heads, what each head can learn, head dimension math</td><td class="day-outcome">What does each attention head actually learn? Why not one big head?</td><td class="day-link"><a href="p4-transformers.html#mha">→ Open</a></td></tr>
+            <tr class="day-row" data-day="34"><td><input type="checkbox" data-day="34"/></td><td class="day-num">Day 34</td><td class="day-topic">Positional Encodings (sin/cos, RoPE)</td><td class="day-focus">Why Transformers need position info, sin/cos formula, RoPE rotation, ALiBi</td><td class="day-outcome">Why do we need positional encodings at all? What breaks without them?</td><td class="day-link"><a href="p4-transformers.html#pos">→ Open</a></td></tr>
+            <tr class="day-row" data-day="35"><td><input type="checkbox" data-day="35"/></td><td class="day-num">Day 35</td><td class="day-topic">BERT vs GPT Architecture</td><td class="day-focus">Encoder-only vs decoder-only, masked LM vs causal LM, use cases, token journey</td><td class="day-outcome">Trace a single token through a GPT layer from input embedding to logit (Amazon asked this)</td><td class="day-link"><a href="p4-transformers.html#arch">→ Open</a></td></tr>
+            <tr class="day-row" data-day="36"><td><input type="checkbox" data-day="36"/></td><td class="day-num">Days 36–37</td><td class="day-topic">KV Cache & Inference Optimization</td><td class="day-focus">Why KV cache exists, what's cached, memory vs latency trade-offs, multi-query attention</td><td class="day-outcome">Explain KV cache memory growth with sequence length; what breaks at long contexts</td><td class="day-link"><a href="p4-transformers.html#kvcache">→ Open</a></td></tr>
+            <tr class="day-row" data-day="38"><td><input type="checkbox" data-day="38"/></td><td class="day-num">Day 38</td><td class="day-topic">Flash Attention & Sparse Attention</td><td class="day-focus">IO-aware attention, tiling, why Flash Attention doesn't save FLOPs but saves memory/time</td><td class="day-outcome">What problem does Flash Attention solve? How is it different from sparse attention?</td><td class="day-link"><a href="p4-transformers.html#flash">→ Open</a></td></tr>
+            <tr class="day-row" data-day="39"><td><input type="checkbox" data-day="39"/></td><td class="day-num">Day 39</td><td class="day-topic">Tokenization & Vocabulary</td><td class="day-focus">BPE, WordPiece, SentencePiece, vocab size trade-offs, out-of-vocab problem</td><td class="day-outcome">Why does vocabulary size affect model quality? What's the trade-off?</td><td class="day-link"><a href="p4-transformers.html#token">→ Open</a></td></tr>
+            <tr class="day-row" data-day="40"><td><input type="checkbox" data-day="40"/></td><td class="day-num">Day 40</td><td class="day-topic">Scaling Laws & Emergent Abilities</td><td class="day-focus">Chinchilla scaling, compute-optimal training, what "emergence" actually means</td><td class="day-outcome">What is Chinchilla's finding? Why was GPT-3 undertrained?</td><td class="day-link"><a href="p4-transformers.html#scale">→ Open</a></td></tr>
+            <tr class="day-row" data-day="41"><td><input type="checkbox" data-day="41"/></td><td class="day-num">Days 41–42</td><td class="day-topic">Transformer Interrogation Drill</td><td class="day-focus">All 8 Transformer topics — blind depth-probe answers</td><td class="day-outcome">All 8 Transformer topics marked Mastered</td><td class="day-link"><a href="p4-transformers.html">→ Transformers</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PHASE 5: GENAI STACK -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-5">Phase 5</span>
+          <div>
+            <div class="phase-title">GenAI Stack — RAG · Fine-Tuning · Agents</div>
+            <div class="phase-days">Days 43–54 · ~2 hrs/day · The single biggest differentiator for AI Engineer roles</div>
+          </div>
+        </div>
+        <table class="day-table">
+          <thead><tr><th>✓</th><th>Day</th><th>Topic</th><th>Focus</th><th>Exam Outcome</th><th>Page</th></tr></thead>
+          <tbody>
+            <tr class="day-row" data-day="43"><td><input type="checkbox" data-day="43"/></td><td class="day-num">Days 43–44</td><td class="day-topic">RAG Architecture (end-to-end)</td><td class="day-focus">Chunking strategies, embedding, vector DB, retrieval, reranking, generation, full pipeline</td><td class="day-outcome">Design a RAG system for customer support + evaluation — the #1 most-asked AI Engineer question</td><td class="day-link"><a href="p5-genai.html#rag">→ Open</a></td></tr>
+            <tr class="day-row" data-day="45"><td><input type="checkbox" data-day="45"/></td><td class="day-num">Day 45</td><td class="day-topic">Embeddings & Vector Databases</td><td class="day-focus">Cosine vs dot product vs Euclidean, HNSW indexing, approximate nearest neighbor</td><td class="day-outcome">Why is cosine similarity preferred for text embeddings? What's HNSW?</td><td class="day-link"><a href="p5-genai.html#embed">→ Open</a></td></tr>
+            <tr class="day-row" data-day="46"><td><input type="checkbox" data-day="46"/></td><td class="day-num">Day 46</td><td class="day-topic">Retrieval: Dense, Sparse & Hybrid</td><td class="day-focus">BM25 (sparse), dense retrieval, hybrid search, reciprocal rank fusion, rerankers</td><td class="day-outcome">When would sparse retrieval outperform dense? How does hybrid fusion work?</td><td class="day-link"><a href="p5-genai.html#ret">→ Open</a></td></tr>
+            <tr class="day-row" data-day="47"><td><input type="checkbox" data-day="47"/></td><td class="day-num">Day 47</td><td class="day-topic">RAG Failure Modes & Evals</td><td class="day-focus">Hallucination, retrieval irrelevance, chunk boundary problems, RAGAS metrics</td><td class="day-outcome">Systematically debug a RAG pipeline that gives wrong answers — Deloitte/Amazon scenario</td><td class="day-link"><a href="p5-genai.html#ragfail">→ Open</a></td></tr>
+            <tr class="day-row" data-day="48"><td><input type="checkbox" data-day="48"/></td><td class="day-num">Day 48</td><td class="day-topic">SFT & Fine-Tuning Fundamentals</td><td class="day-focus">When to fine-tune vs RAG, SFT data format, catastrophic forgetting, PEFT overview</td><td class="day-outcome">When is fine-tuning better than RAG? When does RAG win? (Very common scenario question)</td><td class="day-link"><a href="p5-genai.html#sft">→ Open</a></td></tr>
+            <tr class="day-row" data-day="49"><td><input type="checkbox" data-day="49"/></td><td class="day-num">Day 49</td><td class="day-topic">LoRA / QLoRA (rank decomposition)</td><td class="day-focus">Low-rank decomposition math, why it works, rank choice, 4-bit quantization, NF4</td><td class="day-outcome">"Don't just say I used LoRA — explain the rank decomposition matrices" (Amazon 2025)</td><td class="day-link"><a href="p5-genai.html#lora">→ Open</a></td></tr>
+            <tr class="day-row" data-day="50"><td><input type="checkbox" data-day="50"/></td><td class="day-num">Day 50</td><td class="day-topic">RLHF, DPO & GRPO</td><td class="day-focus">Reward model → PPO pipeline, DPO direct preference, GRPO (used in DeepSeek-R1)</td><td class="day-outcome">What problem does DPO solve that RLHF has? What's the reward model in RLHF?</td><td class="day-link"><a href="p5-genai.html#rlhf">→ Open</a></td></tr>
+            <tr class="day-row" data-day="51"><td><input type="checkbox" data-day="51"/></td><td class="day-num">Day 51</td><td class="day-topic">AI Agents & ReAct Pattern</td><td class="day-focus">Tool use, ReAct loop (reason+act), agent vs chain, planning, failure modes</td><td class="day-outcome">Design an agent that can answer questions using tools — Deloitte 2025 scenario question</td><td class="day-link"><a href="p5-genai.html#agents">→ Open</a></td></tr>
+            <tr class="day-row" data-day="52"><td><input type="checkbox" data-day="52"/></td><td class="day-num">Day 52</td><td class="day-topic">Agent Memory & Multi-Agent Systems</td><td class="day-focus">Short-term/long-term/episodic memory, agent communication, orchestration patterns</td><td class="day-outcome">How do multiple agents share memory? What's the difference between orchestrator and subagent?</td><td class="day-link"><a href="p5-genai.html#mem">→ Open</a></td></tr>
+            <tr class="day-row" data-day="53"><td><input type="checkbox" data-day="53"/></td><td class="day-num">Day 53</td><td class="day-topic">Prompt Engineering & Chain-of-Thought</td><td class="day-focus">CoT, few-shot, zero-shot, structured output, context window management</td><td class="day-outcome">When does CoT help? When does it hurt? What's the failure mode of long prompts?</td><td class="day-link"><a href="p5-genai.html#prompt">→ Open</a></td></tr>
+            <tr class="day-row" data-day="54"><td><input type="checkbox" data-day="54"/></td><td class="day-num">Day 54</td><td class="day-topic">GenAI Stack Interrogation Drill</td><td class="day-focus">All 10 GenAI topics — blind depth-probe answers</td><td class="day-outcome">All 10 GenAI topics marked Mastered</td><td class="day-link"><a href="p5-genai.html">→ GenAI Stack</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PHASE 6: SYSTEM DESIGN -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-6">Phase 6</span>
+          <div>
+            <div class="phase-title">ML System Design</div>
+            <div class="phase-days">Days 55–57 · ~2 hrs/day · Framework + scenarios</div>
+          </div>
+        </div>
+        <table class="day-table">
+          <thead><tr><th>✓</th><th>Day</th><th>Topic</th><th>Focus</th><th>Exam Outcome</th><th>Page</th></tr></thead>
+          <tbody>
+            <tr class="day-row" data-day="55"><td><input type="checkbox" data-day="55"/></td><td class="day-num">Day 55</td><td class="day-topic">ML Design Framework (6 steps)</td><td class="day-focus">Problem def → data → model → train/eval → deploy → wrap-up. Time allocation</td><td class="day-outcome">Walk through any ML design problem using the framework without prompting</td><td class="day-link"><a href="p6-system-design.html#frame">→ Open</a></td></tr>
+            <tr class="day-row" data-day="56"><td><input type="checkbox" data-day="56"/></td><td class="day-num">Day 56</td><td class="day-topic">GenAI System Design (5 dimensions)</td><td class="day-focus">LLM awareness, modular pipeline, cost-conscious, safety/governance, communication</td><td class="day-outcome">Design a production RAG system with cost, latency, and guardrails — full walkthrough</td><td class="day-link"><a href="p6-system-design.html#genai">→ Open</a></td></tr>
+            <tr class="day-row" data-day="57"><td><input type="checkbox" data-day="57"/></td><td class="day-num">Day 57</td><td class="day-topic">Debugging a Failing GenAI Pipeline</td><td class="day-focus">Systematic variable isolation, hallucination vs retrieval vs generation failure, metrics</td><td class="day-outcome">"Your RAG chatbot gives wrong answers in prod — debug it" — step-by-step answer</td><td class="day-link"><a href="p6-system-design.html#debug">→ Open</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PHASE 7: MOCK INTERROGATION -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge pb-7">Phase 7</span>
+          <div>
+            <div class="phase-title">Mock Interrogation — The Final Exam</div>
+            <div class="phase-days">Days 58–60 · This is the most important phase. Don't skip it.</div>
+          </div>
+        </div>
+        <div class="concept-box">
+          <h3 style="margin-bottom:8px;">How to run a mock interrogation session</h3>
+          <p style="font-size:0.875rem;line-height:1.8;">
+            1. Open a blank doc or grab a piece of paper.<br>
+            2. Pick a topic at random from any pillar.<br>
+            3. Imagine an Amazon bar-raiser is sitting across from you. They ask: <em>"Walk me through [topic]."</em><br>
+            4. Write or speak the full answer — intuition, math, trade-offs, when it breaks.<br>
+            5. They push back: <em>"Okay but WHY does [mechanism] work?"</em> Answer without notes.<br>
+            6. Check against the Interrogation section. Mark any gap.<br>
+            7. Repeat for 5–7 topics per session.<br><br>
+            <strong style="color:var(--accent)">Day 58:</strong> Classical ML + Math topics (the ones that trip you in GenAI rounds)<br>
+            <strong style="color:var(--accent)">Day 59:</strong> Transformers + GenAI Stack (heaviest weight at MNCs)<br>
+            <strong style="color:var(--accent)">Day 60:</strong> Full mock — 2 system design questions timed at 45 min each
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /plan-layout -->
+  </div><!-- /page -->
+
+  <script src="../js/app.js"></script>
+  <script>
+    const PLAN_KEY = 'aiml_plan_days';
+
+    function getPlanDays() {
+      try { return JSON.parse(localStorage.getItem(PLAN_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function updatePlanProgress() {
+      const days = getPlanDays();
+      const checked = Object.values(days).filter(Boolean).length;
+      const total = 60;
+      const pct = Math.round(checked / total * 100);
+      document.getElementById('plan-pct').textContent = `${checked} / ${total} days checked`;
+      document.getElementById('plan-fill').style.width = pct + '%';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const days = getPlanDays();
+
+      document.querySelectorAll('input[type=checkbox][data-day]').forEach(cb => {
+        const d = cb.dataset.day;
+        cb.checked = !!days[d];
+        const row = cb.closest('.day-row');
+        if (cb.checked) row.classList.add('done');
+
+        cb.addEventListener('change', () => {
+          const data = getPlanDays();
+          data[d] = cb.checked;
+          localStorage.setItem(PLAN_KEY, JSON.stringify(data));
+          const r = cb.closest('.day-row');
+          r.classList.toggle('done', cb.checked);
+          updatePlanProgress();
+        });
+      });
+
+      updatePlanProgress();
+    });
+  </script>
+</body>
+</html>

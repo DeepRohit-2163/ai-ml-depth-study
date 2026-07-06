@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transformers & LLMs · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html" class="active">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Pillar 4</div>
+        <a href="#attn">Attention Mechanism</a>
+        <a href="#mha">Multi-Head Attention</a>
+        <a href="#pos">Positional Encodings</a>
+        <a href="#arch">BERT vs GPT</a>
+        <a href="#kvcache">KV Cache</a>
+        <a href="#flash">Flash Attention</a>
+        <a href="#token">Tokenization</a>
+        <a href="#scale">Scaling Laws</a>
+      </aside>
+
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-critical" style="margin-bottom:12px;display:inline-flex;">Pillar 4 · Transformers &amp; LLMs · CRITICAL</span>
+          <h1>Transformers &amp; LLMs</h1>
+          <p style="margin-top:8px;">The heaviest interview block at both product MNCs and AI startups. Amazon's 2025 Bar Raiser probed: attention O(N²) complexity, Flash/Sparse Attention, BERT vs GPT, masked vs causal LM, and tracing a single token through transformer layers — all in one 75-minute round.</p>
+        </div>
+
+        <!-- ATTENTION -->
+        <div class="depth-section" id="attn">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">Q</div>Attention Mechanism (Q/K/V math)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Attention lets each position in a sequence "look at" all other positions to decide what information it needs. Q = "what am I looking for?" K = "what information do I have?" V = "what I'll share if selected." The score QKᵀ measures relevance; softmax turns scores into weights; the output is a weighted blend of V vectors.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Scaled dot-product attention formula</strong>:</p>
+            <div class="math">Attention(Q, K, V) = softmax(QKᵀ / √d_k) · V</div>
+            <p style="margin-top:8px;">Q ∈ ℝ^(n×d_k), K ∈ ℝ^(n×d_k), V ∈ ℝ^(n×d_v). QKᵀ ∈ ℝ^(n×n) — the attention weight matrix.</p>
+            <p style="margin-top:8px;"><strong>Why scale by √d_k?</strong> With high d_k, dot products grow large in magnitude (variance = d_k). Large values → softmax outputs near 0 or 1 → sparse distribution → near-zero gradients for most keys → slow/no learning. Dividing by √d_k keeps variance ~1 → softmax stays in useful gradient range. This is why the scale factor is critical, not cosmetic.</p>
+            <p style="margin-top:8px;"><strong>O(N²) complexity</strong>: Computing QKᵀ for sequence length N: N×N matrix. Both time and memory are O(N²·d_k). For N=1000: 1M attention scores. For N=100k (long documents): 10B scores — infeasible. This is why context length is a limitation and why Flash/Sparse attention exist.</p>
+            <p style="margin-top:8px;"><strong>Causal (masked) attention</strong>: In GPT-style decoders, each token can only attend to past tokens, not future. Achieved by masking future positions: set upper triangle of QKᵀ to -∞ before softmax → softmax output → 0 for future positions. This enables autoregressive generation: generate token by token, each attending to all previous.</p>
+            <p style="margin-top:8px;"><strong>What do Q, K, V actually represent?</strong> All three are linear projections of the same input (self-attention): Q = X·W_Q, K = X·W_K, V = X·W_V. The projection matrices W_Q, W_K, W_V are learned. Different heads learn different projections → can attend to different types of relationships simultaneously.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> What happens if you remove the √d_k scaling factor? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Without scaling, dot products QKᵀ have variance = d_k. For d_k=64: std ≈ 8. Softmax of values like [8, -3, 6, -5] is nearly a one-hot vector: one attention weight ≈ 1, rest ≈ 0. This means: (1) <strong>Gradient vanishing</strong>: softmax derivative ≈ 0 for non-attended positions → most attention weights receive near-zero gradients → slow learning. (2) <strong>Loss of soft attention</strong>: Instead of a weighted blend of V, you get a nearly hard selection. This is information-poor. (3) <strong>Training instability</strong>: Very sharp attention distributions early in training can create feedback loops. The scaling keeps Var(Q·K) ≈ 1 regardless of d_k, keeping the softmax in its informative gradient region.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Trace a single token through a complete transformer layer (Amazon asked this). <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Input: token embedding x ∈ ℝ^d (d=768 for BERT-base).</p>
+              <div class="math">1. x̃ = LayerNorm(x)                          [pre-norm variant]
+2. Q=x̃·W_Q, K=x̃·W_K, V=x̃·W_V              [project to Q/K/V, each ℝ^(d_k)]
+3. scores = QKᵀ / √d_k                      [n×n matrix for sequence of n tokens]
+4. scores = mask(scores)                    [causal: -inf for future positions]
+5. weights = softmax(scores)                [n×n attention weights]
+6. attn_out = weights · V                   [weighted sum of values]
+7. attn_out = concat(heads) · W_O           [multi-head: concat all heads, project]
+8. x = x + attn_out                         [residual connection]
+9. x̃ = LayerNorm(x)                         [pre-norm for FFN]
+10. ffn_out = GELU(x̃·W_1 + b_1)·W_2 + b_2  [FFN: d→4d→d, 2 linear layers]
+11. x = x + ffn_out                          [residual connection]
+Output: x ∈ ℝ^d for this token position</div>
+              <p>Repeat across L layers. Final output fed to task head (classification) or language model head (softmax over vocab).</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-attn" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- MULTI-HEAD ATTENTION -->
+        <div class="depth-section" id="mha">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">H</div>Multi-Head Attention &amp; Why It Works</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Multi-head attention formula</strong>:</p>
+            <div class="math">MultiHead(Q,K,V) = Concat(head_1,...,head_h) · W_O
+where head_i = Attention(Q·W_Q_i, K·W_K_i, V·W_V_i)</div>
+            <p>Each head uses its own W_Q_i ∈ ℝ^(d×d_k), W_K_i ∈ ℝ^(d×d_k), W_V_i ∈ ℝ^(d×d_v) where d_k = d_v = d/h. So 8 heads with d=512 → d_k=64 per head. Concatenated output is d → projected back to d via W_O.</p>
+            <p style="margin-top:8px;"><strong>Why multiple heads instead of one big head?</strong> A single attention head computes a single weighted blend of values — it can focus on one type of relationship at a time. Multiple heads can simultaneously attend to: syntactic dependencies (subject-verb), semantic relationships (coreference), positional patterns, rare/specialized patterns. Each head learns a different subspace projection. Information is richer because different aspects of the input contribute independently.</p>
+            <p style="margin-top:8px;"><strong>Computational cost</strong>: Multi-head is NOT more expensive than single-head with the same total dimension. Single head with d_model dimensions: O(N²·d_model). Multi-head with h heads of d_k=d_model/h each: h × O(N²·d_k) = O(N²·d_model). Same compute. The heads are parallelized across the GPU.</p>
+            <p style="margin-top:8px;"><strong>What heads actually learn (empirically)</strong>: Positional heads, rare-token heads, syntactic dependency heads. Some heads are redundant and can be pruned without loss. In large models, different layers develop different specializations (lower layers: syntax, higher layers: semantics).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> If multi-head attention has the same compute as single-head, why not just use one big head? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Same compute, but very different expressiveness. One head with d_model dimensions projects Q, K, V into a single d_model-dimensional space and learns one attention pattern. Multiple heads each project into a lower-dimensional subspace (d_k = d_model/h) and learn different patterns simultaneously. The subspace constraint is a feature, not a bug: it forces each head to specialize. Concatenating heads allows the model to attend to many different types of information in parallel — positional, semantic, syntactic — and combine them via W_O. A single large head would try to learn all these patterns in one attention distribution, but a single softmax distribution can only focus on one dominant pattern per query position. The mathematical reason: rank of single-head attention = rank of QKᵀ/√d_k is limited. Multi-head, after concatenation, spans a richer subspace. Ablation studies confirm: removing heads hurts performance less than removing the same fraction of parameters elsewhere.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-mha" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- POSITIONAL ENCODINGS -->
+        <div class="depth-section" id="pos">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">📍</div>Positional Encodings (sin/cos, RoPE)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Classic Depth Probe</h3>
+            <p style="font-size:0.875rem;">"Why do we need positional encodings at all? What would happen without them?" — standard transformer depth probe. Know the answer from first principles.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Why Transformers need position info</strong>: Attention is permutation-equivariant — if you shuffle the input tokens, you get the same output (just shuffled). This means a Transformer has no inherent notion of "first word" vs "last word" without additional position information. NLP is order-dependent ("dog bites man" ≠ "man bites dog"), so positions must be injected.</p>
+            <p style="margin-top:8px;"><strong>Sinusoidal positional encodings (original Transformer)</strong>:</p>
+            <div class="math">PE(pos, 2i)   = sin(pos / 10000^(2i/d_model))
+PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))</div>
+            <p>Different frequencies for different dimensions. Low dimensions: high frequency (alternates every few positions). High dimensions: low frequency (changes slowly over long sequences). Properties: unique encoding per position, predictable relative distances, can generalize to longer sequences than seen during training (extrapolation is imperfect). PE is added to token embeddings, not concatenated.</p>
+            <p style="margin-top:8px;"><strong>Learned absolute positional embeddings</strong>: Just a lookup table: PE(pos) = embedding table[pos]. Used in BERT, original GPT. Simpler but can't extrapolate beyond max training length.</p>
+            <p style="margin-top:8px;"><strong>RoPE (Rotary Position Embedding)</strong>: Used in LLaMA, GPT-NeoX, Falcon. Instead of adding position info to embeddings, rotate the Q and K vectors by a rotation matrix that depends on position. The key property: dot product Q_pos1 · K_pos2 depends only on relative position (pos1 - pos2), not absolute positions. This is better for generalization to longer sequences. Combined with YaRN or dynamic NTK scaling, RoPE models can extend to longer contexts at inference than trained on.</p>
+            <p style="margin-top:8px;"><strong>ALiBi (Attention with Linear Biases)</strong>: Instead of encoding positions in embeddings, add a bias to attention scores: score -= m·(key_pos - query_pos). m is a head-specific slope. Simpler, naturally handles longer sequences at inference.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What breaks if you remove positional encodings entirely? Give a concrete example. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Without PE: the Transformer is a "bag of words" model that's order-invariant. "The cat sat on the mat" and "The mat sat on the cat" would produce identical representations for each token (different arrangement, same set). Concrete failure: (1) <strong>Language modeling</strong>: predicting "the" after "cat sat on the" requires knowing "the" was the most recent context, not just that these words appear together. Without position: can't distinguish which tokens are recent. (2) <strong>Coreference</strong>: "John said he was tired" — "he" refers to "John" because it comes after. Without position ordering, "he" could refer to anything. (3) <strong>Syntax</strong>: verb agreement requires knowing which noun is subject (determined by position). Experiments confirm: Transformers trained without PE show degraded performance on order-sensitive tasks but surprisingly retain much capability for bag-of-words tasks, showing that attention alone captures some positional information implicitly through content — but far less effectively.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-pos" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- BERT vs GPT -->
+        <div class="depth-section" id="arch">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">⚖</div>BERT vs GPT Architecture</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Asked This (2025)</h3>
+            <p style="font-size:0.875rem;">"Explain BERT vs GPT architectural and use-case differences. Masked vs causal language modeling. Trace a single token through a GPT layer." All from Amazon's 2025 ML Deep Dive Bar Raiser round.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>BERT (Bidirectional Encoder Representations from Transformers)</strong>: Encoder-only. Bidirectional — each token attends to ALL other tokens (left and right). Pre-training: Masked Language Modeling (MLM) — randomly mask 15% of tokens, predict them from context. Also: Next Sentence Prediction (NSP). Not autoregressive — can't generate text token by token. Best for: classification, NER, Q&A (reading comprehension), semantic similarity — tasks requiring full context understanding.</p>
+            <div class="math">BERT: attention mask = all-ones (full bidirectional)
+MLM: predict masked tokens using full left+right context</div>
+            <p style="margin-top:8px;"><strong>GPT (Generative Pre-trained Transformer)</strong>: Decoder-only. Causal/autoregressive — each token attends only to previous tokens (upper triangle of attention matrix is masked). Pre-training: Causal Language Modeling (CLM) — predict next token given all previous. Can generate text by sampling one token at a time and feeding it back as input. Best for: text generation, summarization, code generation, chat, in-context learning.</p>
+            <div class="math">GPT: attention mask = lower triangular (causal)
+CLM: predict x_t given x_1,...,x_{t-1}</div>
+            <p style="margin-top:8px;"><strong>Why causal masking enables generation</strong>: If a model attends to future tokens during training, at inference it can't — future tokens don't exist yet. Causal training means the model only sees what's available at inference → autoregressive generation is consistent with training.</p>
+            <p style="margin-top:8px;"><strong>T5, BART (Encoder-Decoder)</strong>: Encoder processes input bidirectionally; decoder generates output autoregressively, attending to encoder output via cross-attention. Best for: seq2seq — translation, summarization with explicit input-output separation.</p>
+            <p style="margin-top:8px;"><strong>Modern trend</strong>: Decoder-only models (GPT style) dominate. Few-shot in-context learning is a GPT strength — the causal attention allows earlier tokens to "set up" the task for later tokens. BERT-style models are still preferred for discriminative tasks.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why can't BERT generate text? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>BERT's attention is bidirectional — each token attends to all others including future tokens. During pre-training (MLM), the model learns to predict masked tokens using context from both sides. To generate text token by token, you need to predict token t given only tokens 1..t-1 (you don't have t+1..n yet). BERT was never trained on this causal objective — it expects to see all context. If you try to generate autoregressively with BERT, the model will see placeholder/empty future positions, which is a distribution mismatch from training (where there's always a rich full context). It can't generate coherently. GPT was trained with the causal objective from the start — each position predicts the next given only the left context → generation is natural and consistent with training.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-arch" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- KV CACHE -->
+        <div class="depth-section" id="kvcache">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">💾</div>KV Cache &amp; Inference Optimization</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Asked This (2025)</h3>
+            <p style="font-size:0.875rem;">"Attention complexity O(N²) and optimization strategies — Sparse Attention and Flash Attention mechanisms." This appeared directly in Amazon's 2025 ML Challenge Bar Raiser round.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>The problem without KV cache</strong>: Generating token t+1 requires computing attention over all t previous tokens. Without caching, for each new token you'd re-compute K and V for ALL previous positions (re-running the encoder for the entire prefix). For token t in a sequence of length T, that's O(T·d) compute per token, O(T²) total → extremely slow for long sequences.</p>
+            <p style="margin-top:8px;"><strong>KV Cache solution</strong>: At each generation step, cache the K and V vectors for all previous positions. When generating the new token, only compute Q for the new token, then attend over cached K and V. Cost per new token: O(T·d_k) instead of O(T²). Memory: O(T·n_layers·n_heads·d_k) to store the cache.</p>
+            <div class="math">Without KV cache: O(T²) total attention compute
+With KV cache:    O(T) per token, O(T²) total but amortized across time</div>
+            <p style="margin-top:8px;"><strong>KV cache memory growth</strong>: For LLaMA-7B, 4k context: KV cache ≈ 4GB. For 100k context: KV cache ≈ 100GB — larger than the model itself. This is why long context is expensive. Solutions: (1) Quantized KV cache (4-bit → 4× reduction). (2) Multi-Query Attention (MQA): multiple Q heads share a single K/V head — reduces KV cache size by h×. (3) Grouped Query Attention (GQA): G groups of Q heads share K/V — balance between MQA and full MHA. LLaMA-2 uses GQA. (4) Sliding window attention: only cache last W tokens (used in Mistral).</p>
+            <p style="margin-top:8px;"><strong>Prefill vs Decode</strong>: Prefill phase — process the entire prompt in parallel (full attention, O(N²), but parallelized → fast). Decode phase — generate tokens one at a time (O(N) per token with KV cache). Prefill is compute-bound; decode is memory-bandwidth-bound (reading KV cache from HBM).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why does KV cache memory grow with sequence length, and what's the implication for production serving? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>KV cache stores, for each layer and each token, the key and value vectors: 2 × n_layers × n_heads × d_k floats per token. For LLaMA-2 7B (32 layers, 32 heads, d_k=128, float16): 2×32×32×128×2 bytes = 524,288 bytes ≈ 0.5MB per token. At 4k tokens: 2GB. At 32k tokens: 16GB. Implications for production: (1) <strong>Batch size constrained by KV cache</strong>: With 40GB GPU, you can't serve many users with long contexts simultaneously — each user's KV cache occupies GPU memory. (2) <strong>PagedAttention (vLLM)</strong>: Manages KV cache like virtual memory pages — pages in/out to CPU, enables larger effective batch sizes. (3) <strong>Latency depends on cache size</strong>: Reading large KV cache is memory-bandwidth-bound — throughput limited by HBM bandwidth, not compute. This is why reducing KV cache (MQA, GQA, quantization) matters so much for inference cost.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-kvcache" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- FLASH ATTENTION -->
+        <div class="depth-section" id="flash">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">⚡</div>Flash Attention &amp; Sparse Attention</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>The memory problem with standard attention</strong>: QKᵀ is an N×N matrix. For N=4096: 4096² × 2 bytes ≈ 32MB per layer per head. With many layers and heads: GB of memory just for attention matrices. Plus: writing/reading this matrix to/from HBM (GPU memory) is slow — the bottleneck is I/O, not compute.</p>
+            <p style="margin-top:8px;"><strong>Flash Attention (Dao et al., 2022)</strong>: IO-aware algorithm that computes attention without materializing the full N×N matrix. Key idea: tile the Q, K, V matrices into blocks that fit in fast SRAM (GPU on-chip memory). Process blocks sequentially, using online softmax normalization (incrementally updating the normalization factor). Never write the N×N attention matrix to HBM.</p>
+            <div class="math">Flash Attention: same math, different memory access pattern
+- O(N) memory instead of O(N²)
+- 2-4× faster wall-clock time (due to fewer HBM reads/writes)
+- SAME output as standard attention (exact, not approximate)</div>
+            <p style="margin-top:8px;"><strong>What Flash Attention does NOT do</strong>: Does not reduce FLOPs (still O(N²) multiply-adds). Does not approximate — exact same output. The speedup comes entirely from avoiding expensive HBM round-trips. Flash Attention 2 adds parallelism across sequence length; Flash Attention 3 adds FP8 support.</p>
+            <p style="margin-top:8px;"><strong>Sparse Attention</strong>: Instead of attending to all N positions, each query attends to only a subset (e.g., local window + strided global tokens). Reduces complexity to O(N·√N) or O(N·log N). Examples: Longformer (sliding window + global tokens), BigBird (random + sliding window + global), Mistral (sliding window attention). Does approximate the full attention — trades some quality for longer context.</p>
+            <p style="margin-top:8px;"><strong>Flash vs Sparse</strong>: Flash Attention = exact attention, faster I/O. Sparse Attention = approximate attention, fewer FLOPs. For most production LLMs: Flash Attention is used (no quality degradation). Sparse Attention used when context length is very long (100k+) and quality tradeoff is acceptable.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Flash Attention doesn't reduce FLOPs. So why is it faster? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Modern GPUs are compute-bound at small N and memory-bandwidth-bound at large N. Standard attention: compute QKᵀ (O(N²) FLOPs) → write N×N matrix to HBM (O(N²) memory) → read it back for softmax → write again → read for V multiply → write output. Each HBM round-trip for a 4096×4096 matrix takes ~1ms on A100 (HBM bandwidth ~2TB/s). With 32 layers × 32 heads: many GB of HBM traffic just for attention matrices. Flash Attention: tiles Q, K, V into SRAM (shared memory, ~192KB on A100, access ~19TB/s effective). Computes full tile × tile attention in SRAM, uses online softmax to avoid multiple passes. Never writes the N×N matrix to HBM. I/O complexity: O(N²/M) where M is SRAM size. At large N: ~2-4× fewer HBM bytes transferred → 2-4× wall-clock speedup despite identical FLOP count. The bottleneck shifts from memory bandwidth to compute, which is the intended state for a well-optimized GPU kernel.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-flash" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- TOKENIZATION -->
+        <div class="depth-section" id="token">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">T</div>Tokenization &amp; Vocabulary</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Why not character-level?</strong> Sequences become very long → O(N²) attention cost explodes. Also: harder to learn word-level semantics from character sequences — requires longer-range dependencies.</p>
+            <p style="margin-top:8px;"><strong>Why not word-level?</strong> Vocabulary explosion — English has ~500k+ words. Each word is a parameter row in the embedding table and softmax head → huge model. Out-of-vocabulary problem: novel words, names, typos, code → UNK token → information loss.</p>
+            <p style="margin-top:8px;"><strong>BPE (Byte Pair Encoding)</strong>: Start with character vocabulary. Iteratively merge most frequent adjacent pair → new token. Repeat until desired vocab size. "lower" → ["l","o","w","e","r"] → merge common pairs → ["low","er"]. GPT-2, GPT-3, LLaMA use BPE. Handles rare words by decomposing into subword units.</p>
+            <p style="margin-top:8px;"><strong>WordPiece</strong>: Similar to BPE but merges maximize log likelihood of training data (not raw frequency). Used by BERT. Marks non-initial subwords with ##: "playing" → ["play","##ing"].</p>
+            <p style="margin-top:8px;"><strong>Vocabulary size trade-offs</strong>: Larger vocab (100k+): each token encodes more text → shorter sequences → cheaper attention. But: larger embedding table, larger output softmax head, rarer tokens have less training data → worse embeddings. Smaller vocab (10k): longer sequences, cheaper per-token but more tokens per document. GPT-2: 50k vocab. LLaMA: 32k vocab. GPT-4: ~100k estimated. Modern trend: larger vocabs to handle multilingual text efficiently.</p>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-token" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- SCALING LAWS -->
+        <div class="depth-section" id="scale">
+          <h2><div class="depth-icon" style="background:rgba(210,168,255,0.15);color:var(--c4)">📈</div>Scaling Laws &amp; Emergent Abilities</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Kaplan et al. (2020) scaling laws</strong>: Language model loss scales as a power law with model size N, dataset size D, and compute budget C. Loss ∝ N^(-α), D^(-β), C^(-γ). This means: given a fixed compute budget, you can predict the optimal model size and dataset size.</p>
+            <p style="margin-top:8px;"><strong>Chinchilla (Hoffmann et al., 2022)</strong>: Key finding — GPT-3 (175B params, ~300B tokens) was significantly undertrained. Optimal compute allocation: for compute budget C, optimal model size N* ∝ √C and optimal tokens D* ∝ √C. The ratio N*/D* ≈ 1 (tokens ≈ params). Chinchilla 70B trained on 1.4T tokens outperforms GPT-3 175B trained on 300B tokens. Implication: many large models are params-rich but data-poor — training longer on more tokens is more efficient than making the model bigger.</p>
+            <p style="margin-top:8px;"><strong>Emergent abilities</strong>: Capabilities that are absent at small scale but appear sharply at large scale — not a smooth improvement. Examples: multi-step arithmetic, chain-of-thought reasoning, few-shot in-context learning. Debate: are these truly emergent or just the result of metric choices? Some argue better metrics show smooth improvement. Regardless: larger models qualitatively unlock capabilities (following complex instructions, code generation) that smaller models fail at even with fine-tuning.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What was Chinchilla's main finding and how did it change how we train LLMs? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Chinchilla (DeepMind, 2022) showed that for a given compute budget, you should spend roughly equal compute on parameters and tokens — each should scale proportionally with compute budget (both ∝ √C). GPT-3 (175B params, 300B tokens) used 175B/300B ≈ 0.58 tokens per param — undertrained. Chinchilla 70B was trained on 1.4T tokens (20× more tokens, ½ the params) and outperformed GPT-3 on most benchmarks at 40% the inference cost. Impact: (1) Smaller models trained longer now preferred over huge models trained briefly. (2) LLaMA 1 (Meta, 2023) took this seriously: 7B model trained on 1T tokens outperforms GPT-3 on many tasks. (3) Data becomes as important as parameters. (4) Inference cost matters — a smaller, well-trained model is cheaper to run than a larger undertrained one at same benchmark performance.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p4-scale" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GenAI Stack · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html" class="active">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Pillar 5</div>
+        <a href="#rag">RAG Architecture</a>
+        <a href="#embed">Embeddings &amp; Vector DBs</a>
+        <a href="#ret">Retrieval: Dense/Sparse/Hybrid</a>
+        <a href="#ragfail">RAG Failure Modes &amp; Evals</a>
+        <a href="#sft">SFT &amp; Fine-Tuning</a>
+        <a href="#lora">LoRA / QLoRA</a>
+        <a href="#rlhf">RLHF, DPO &amp; GRPO</a>
+        <a href="#agents">AI Agents &amp; ReAct</a>
+        <a href="#mem">Agent Memory</a>
+        <a href="#prompt">Prompt Engineering</a>
+      </aside>
+
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-critical" style="margin-bottom:12px;display:inline-flex;">Pillar 5 · GenAI Stack · CRITICAL</span>
+          <h1>GenAI Stack</h1>
+          <p style="margin-top:8px;">The #1 most-asked AI Engineer question in 2025-26: "Design a RAG system for customer support — how do you evaluate it?" Deloitte (India, 2025) spent 45/60 minutes of its technical round on RAG + agents alone. Know this pillar deeper than any other.</p>
+        </div>
+
+        <!-- RAG -->
+        <div class="depth-section" id="rag">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">🔍</div>RAG Architecture (end-to-end)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">The #1 Most-Asked AI Engineer Question (2025-26)</h3>
+            <p style="font-size:0.875rem;">"Design a RAG system for customer support + how do you evaluate it" — reported across Amazon, Deloitte, Capgemini, and AI startups. Know every component and its failure modes.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Why RAG?</strong> LLMs hallucinate when asked about facts they weren't trained on (recent events, proprietary docs). Fine-tuning is expensive and static. RAG grounds the LLM in external, retrievable knowledge — cheaper to update, auditable, and reduces hallucination.</p>
+            <p style="margin-top:8px;"><strong>Full RAG pipeline</strong>:</p>
+            <div class="math">1. INDEXING (offline):
+   Documents → Chunking → Embedding model → Vector DB
+
+2. RETRIEVAL (online, per query):
+   Query → Embedding → Vector search → Top-k chunks
+   [Optional: reranker, hybrid search]
+
+3. GENERATION:
+   System prompt + retrieved chunks + user query → LLM → Answer</div>
+            <p style="margin-top:8px;"><strong>Chunking strategies</strong>: Fixed-size chunks (512 tokens, simple but splits context mid-sentence). Sentence-based chunking (preserves sentences, variable size). Semantic chunking (split where embedding similarity drops — preserves meaning). Recursive character splitting (fallback split on newlines → sentences → words). Parent-child chunking: index small chunks (for precision), retrieve parent chunks (for context). Optimal chunk size depends on: document type, query length, LLM context window, latency budget.</p>
+            <p style="margin-top:8px;"><strong>Embedding models</strong>: text-embedding-ada-002 (OpenAI), BGE-M3 (multilingual), E5-large, GTE. Domain-specific documents may need fine-tuned embeddings. Embedding model must match between indexing and retrieval (same model, same preprocessing).</p>
+            <p style="margin-top:8px;"><strong>Vector databases</strong>: Pinecone (managed, fast), Weaviate (hybrid search built-in), Qdrant (open-source, fast filtering), Chroma (local dev), pgvector (Postgres extension — good for existing Postgres users). Selection criteria: latency, scale, filtering support, hybrid search, cost, managed vs self-hosted.</p>
+            <p style="margin-top:8px;"><strong>Advanced RAG patterns</strong>: HyDE (Hypothetical Document Embeddings) — generate a hypothetical answer, embed it, use for retrieval. Step-back prompting — retrieve more general context first. Query expansion — rewrite query multiple ways, merge results. Multi-hop RAG — iterative retrieval for complex questions. GraphRAG — build a knowledge graph, traverse it for structured multi-hop reasoning.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Design a complete RAG system for a customer support chatbot. Include evaluation. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p><strong>Indexing pipeline:</strong> Scrape support docs + tickets. Chunk: semantic chunking (≈300 tokens) with 50-token overlap. Embed with BGE-M3 (multilingual). Store in Qdrant with metadata (doc_id, date, category, product). Index: HNSW for ANN search.</p>
+              <p style="margin-top:8px;"><strong>Retrieval:</strong> User query → rewrite with LLM for clarity → embed → hybrid search (dense + BM25 sparse via Reciprocal Rank Fusion) → reranker (cross-encoder like BGE-reranker-large) → top-5 chunks.</p>
+              <p style="margin-top:8px;"><strong>Generation:</strong> System prompt with instructions, retrieved chunks with source metadata, user query → GPT-4 or LLaMA-3 → answer with citations.</p>
+              <p style="margin-top:8px;"><strong>Evaluation (RAGAS metrics):</strong>
+              <br>• Faithfulness: does the answer claim only what the retrieved context says? (LLM-judge)
+              <br>• Answer Relevance: is the answer relevant to the question? (embedding similarity)
+              <br>• Context Recall: do retrieved chunks cover the ground truth answer? (needs labeled data)
+              <br>• Context Precision: are retrieved chunks actually useful? (LLM-judge)
+              <br>• Human eval: sample 5% of queries, review by support agents weekly.</p>
+              <p style="margin-top:8px;"><strong>Production concerns:</strong> Latency target &lt;2s end-to-end. Cache embeddings for common queries. Monitor retrieved context quality. Guardrails: PII detection, topic restriction, abuse detection. Feedback loop: thumbs up/down to collect examples for continuous improvement.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-rag" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- EMBEDDINGS -->
+        <div class="depth-section" id="embed">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">→</div>Embeddings &amp; Vector Databases</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>What is an embedding?</strong> A dense vector representation of meaning. Similar texts → similar vectors (close in embedding space). Produced by a neural network trained to capture semantic meaning (contrastive learning, MLM, next-sentence tasks).</p>
+            <p style="margin-top:8px;"><strong>Similarity metrics</strong>:
+            <br><strong>Cosine similarity</strong>: cos(θ) = (a·b)/(‖a‖‖b‖). Measures angle between vectors, not magnitude. Best for text embeddings: magnitude encodes token frequency/length, not semantic similarity. Scale-invariant.
+            <br><strong>Dot product</strong>: a·b = ‖a‖‖b‖·cos(θ). Includes magnitude — if vectors are normalized, same as cosine. Used in ANN indexes where pre-normalization is done.
+            <br><strong>Euclidean distance (L2)</strong>: ‖a-b‖. Sensitive to magnitude. Appropriate when magnitude carries meaning (rare in text embeddings). Common in image embeddings.</p>
+            <p style="margin-top:8px;"><strong>HNSW (Hierarchical Navigable Small World)</strong>: Graph-based ANN index. Multiple layers: top layers are sparse long-range connections, bottom layers are dense local connections. Search: start at top layer, greedily traverse to target, descend to lower layers for refinement. O(log N) search complexity. Used by Qdrant, Pinecone, Weaviate. ef_construction controls index quality (higher = better but slower build). ef controls search quality (higher = more accurate but slower query).</p>
+            <p style="margin-top:8px;"><strong>IVF (Inverted File Index)</strong>: K-means cluster the vectors. At query time, search only the nearest C clusters (out of K). Speed vs recall tradeoff: higher C = more accurate, slower. Used in Faiss, often combined with PQ (Product Quantization) for memory compression.</p>
+            <p style="margin-top:8px;"><strong>Metadata filtering</strong>: Filter before or after ANN search. Pre-filtering: reduce search space by metadata (only search product=X docs) → faster but may miss relevant results. Post-filtering: search broadly, filter results → can miss results if top-k all filtered out. Qdrant/Weaviate support efficient pre-filtering with payload indexes.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why is cosine similarity preferred over Euclidean distance for text embeddings? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Text embeddings encode semantic meaning in the direction of the vector, not the magnitude. Short texts and long texts about the same topic should be similar — but their embedding magnitudes may differ (longer text → larger magnitude due to more tokens averaged or summed). Euclidean distance would penalize this magnitude difference: two semantically identical but differently-sized texts would have large L2 distance. Cosine similarity ignores magnitude (normalizes by ‖a‖‖b‖) — measures only the angle between vectors. Practically: if you normalize all embeddings to unit length (‖e‖=1), then cosine similarity = dot product, and you can use maximally fast inner product search (FAISS IP index, HNSW with inner product). This is why most embedding APIs return normalized vectors and recommend cosine/dot product similarity.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-embed" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- RETRIEVAL -->
+        <div class="depth-section" id="ret">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">🎯</div>Retrieval: Dense, Sparse &amp; Hybrid</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Dense retrieval</strong>: Query → embedding → ANN search → top-k chunks. Captures semantic similarity — "automobile" matches "car." Requires a good embedding model. Weaker for: exact keyword matching, rare terms, specialized jargon (out-of-distribution for the embedding model).</p>
+            <p style="margin-top:8px;"><strong>Sparse retrieval (BM25)</strong>: Bag-of-words TF-IDF variant. BM25 score:</p>
+            <div class="math">BM25(q,d) = Σ IDF(qi) · (f(qi,d)·(k1+1)) / (f(qi,d) + k1·(1-b+b·|d|/avgdl))</div>
+            <p>IDF: inverse document frequency (rare terms weighted more). f(qi,d): term frequency in document. k1, b: saturation parameters. Advantages: exact keyword match, handles rare/technical terms well, no embedding model needed, fast with inverted index. Weaknesses: no semantic understanding (misses synonyms, paraphrases).</p>
+            <p style="margin-top:8px;"><strong>Hybrid search</strong>: Combine dense and sparse results. Most effective approach for production RAG. Methods:
+            <br>• Reciprocal Rank Fusion (RRF): RRF_score(d) = Σ 1/(k + rank_i(d)) for each retriever i. k=60 is standard. Simple, no hyperparameters per corpus. Merges rank lists without score normalization.
+            <br>• Weighted fusion: normalize scores, weighted sum. Requires careful weight tuning per domain.
+            <br>• Two-stage: BM25 first (cheap, high recall), then re-rank retrieved set with embedding model.</p>
+            <p style="margin-top:8px;"><strong>Rerankers</strong>: After retrieving top-k candidates, use a cross-encoder (model takes [query, document] jointly → relevance score). More expensive (can't pre-compute) but more accurate. Examples: BGE-reranker-large, Cohere Rerank, FlashRank. Typical pipeline: retrieve top-100 with ANN, rerank to top-5 with cross-encoder.</p>
+            <p style="margin-top:8px;"><strong>When to use each</strong>: Technical docs with jargon → more weight on BM25. General Q&A → more weight on dense. Production default → hybrid with reranker.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> When would sparse retrieval outperform dense retrieval? Give a real example. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Sparse (BM25) outperforms dense when: (1) <strong>Rare or technical terms</strong>: Query contains "FAISS IndexIVFPQ" — a dense embedding model trained on general text may not embed this specific term well. BM25 will directly match the exact string. (2) <strong>Jargon, product names, error codes</strong>: "Error 0x8007000D" — no semantic paraphrase exists; exact match is the only valid retrieval. (3) <strong>Very short queries</strong>: "LLM" as a query → dense embedding is ambiguous (could be lawyer, language model, etc.). Sparse retrieval with document-level IDF weighting may surface more relevant documents. (4) <strong>Out-of-distribution domains</strong>: Legal, medical, financial documents — if the embedding model was not trained on this domain, its semantic representations are unreliable. BM25 doesn't care about training distribution. Real example: a pharmaceutical RAG system for drug interaction queries with complex chemical names would initially fail on dense retrieval alone — hybrid significantly outperforms.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-ret" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- RAG FAILURES -->
+        <div class="depth-section" id="ragfail">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">⚠</div>RAG Failure Modes &amp; Evals</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Deloitte / Amazon Scenario (2025)</h3>
+            <p style="font-size:0.875rem;">"Your RAG chatbot gives wrong answers in production — debug it." This is a systematic variable-isolation question. Interviewers are looking for a senior-level diagnosis framework, not guesses.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>The debugging framework — isolate the variable first</strong>:</p>
+            <div class="math">Step 1: Check retrieved chunks — are they relevant?
+       NO → Retrieval problem (embedding, chunking, index)
+      YES → Step 2
+
+Step 2: Is the answer faithful to the retrieved chunks?
+       NO → Generation problem (hallucination, LLM issue)
+      YES → Step 3
+
+Step 3: Are the retrieved chunks correct but incomplete?
+       YES → RAG design problem (chunk size, missing docs)
+       NO → The answer is actually correct, or user expectations wrong</div>
+            <p style="margin-top:8px;"><strong>Retrieval failure modes</strong>:
+            <br>• Wrong chunks retrieved → check embedding quality, chunk size (too large/small), similarity threshold
+            <br>• Query-document mismatch → try HyDE, query expansion, or reranker
+            <br>• Missing relevant documents → check ingestion pipeline, document freshness
+            <br>• Metadata filter too restrictive → retrieved set too small</p>
+            <p style="margin-top:8px;"><strong>Generation failure modes</strong>:
+            <br>• Hallucination — LLM adds facts not in context → use faithfulness eval + lower temperature
+            <br>• Context ignored — LLM answers from parametric memory instead of context → stronger system prompt, or use a fine-tuned model
+            <br>• Lost in the middle — attention to middle chunks is weaker for long contexts → reorder chunks (most relevant first and last), reduce k
+            <br>• Verbosity / formatting issues → output parser, structured output</p>
+            <p style="margin-top:8px;"><strong>RAGAS evaluation metrics</strong> (automated, no labels required for some):
+            <br>• <strong>Faithfulness</strong>: Answer claims supported by context? LLM-judge asks "is claim X in the context?"
+            <br>• <strong>Answer Relevance</strong>: Answer addresses the question? Generate reverse questions from answer, embed, compare to original query.
+            <br>• <strong>Context Recall</strong>: Retrieved context covers the ground truth? Requires labeled answers.
+            <br>• <strong>Context Precision</strong>: Are retrieved chunks useful? Fraction of chunks that contain relevant info.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Your RAG customer support bot gives confident but wrong answers. Walk through your production debugging process. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Step 1 — Sample failing queries</strong>: Pull 20-50 examples where the answer was wrong (from user feedback, thumbs down, escalations). Don't debug hypothetically.</p>
+            <p><strong>Step 2 — Log the retrieved context</strong>: For each failing query, log exactly which chunks were retrieved. This is the critical split: if retrieved chunks DON'T contain the right answer → retrieval problem. If they DO → generation problem.</p>
+            <p><strong>Step 3 (Retrieval failure)</strong>: Run embedding similarity analysis — are failed queries embedding close to irrelevant documents? Test: query expansion (paraphrase, HyDE), adjust chunk size, check if relevant documents are even in the index, enable hybrid search, lower similarity threshold (but monitor precision drop).</p>
+            <p><strong>Step 4 (Generation failure)</strong>: Check faithfulness — LLM is adding facts not in context. Interventions: (a) Stronger system prompt: "Answer ONLY using the provided context. If the answer is not in the context, say 'I don't know.'" (b) Lower temperature. (c) Switch to a model with better instruction following. (d) Add citation requirement: force the model to quote the context sentence it's drawing from.</p>
+            <p><strong>Step 5 — Monitor regressions</strong>: After each change, run RAGAS evaluation on a labeled test set to check that fixing one failure mode didn't introduce another. Set up automated eval as a pre-deployment CI check.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-ragfail" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- SFT -->
+        <div class="depth-section" id="sft">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">🎓</div>SFT &amp; Fine-Tuning Fundamentals</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Common Scenario Question</h3>
+            <p style="font-size:0.875rem;">"When should you fine-tune instead of using RAG? When does RAG win?" — Asked at Amazon and Deloitte. Have a clear mental model of the decision tree.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Supervised Fine-Tuning (SFT)</strong>: Continue training a pre-trained model on labeled (instruction, response) pairs. Updates all (or a subset of) model weights. The model learns to follow specific instructions, respond in a particular style, or develop domain expertise.</p>
+            <p style="margin-top:8px;"><strong>SFT data format (instruction tuning)</strong>: {"instruction": "Summarize...", "input": "Text...", "output": "Summary..."} or conversational format: [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]. Data quality >> quantity. 1k high-quality examples often beats 100k noisy ones (LIMA paper).</p>
+            <p style="margin-top:8px;"><strong>Catastrophic forgetting</strong>: Fine-tuning on domain data can overwrite general capabilities. Model may lose its ability to follow general instructions, reason, or answer out-of-domain questions. Mitigation: mix domain data with general instruction-following data, use LoRA (modifies fewer weights → less forgetting), careful learning rate (lower than pre-training), early stopping.</p>
+            <p style="margin-top:8px;"><strong>Fine-tune vs RAG decision tree</strong>:</p>
+            <div class="math">Use RAG when:
+  - Knowledge changes frequently (news, product updates)
+  - Need source citations / auditability
+  - Limited labeled examples
+  - Need to cover a large corpus the model can't memorize
+  - Data is sensitive (don't want in model weights)
+
+Use Fine-tuning when:
+  - Need specific style/tone/format consistently
+  - Task requires reasoning patterns not in base model
+  - Latency-critical (no retrieval step)
+  - Proprietary domain vocabulary the base model doesn't understand
+  - Want to reduce prompt length (embed knowledge in weights)
+
+Best: RAG + fine-tuned model (fine-tune for format/style, RAG for facts)</div>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> When does fine-tuning outperform RAG, and vice versa? Give one concrete scenario each. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Fine-tuning wins</strong>: Legal contract review — you need the model to extract specific clause types, flag non-standard terms, and output structured JSON every time, consistently. The output format is complex and specific. A few thousand labeled contracts + SFT teaches the model this structured output pattern reliably. RAG would add latency and doesn't help with the output format. The legal knowledge is relatively static (contract law doesn't change weekly).</p>
+            <p style="margin-top:8px;"><strong>RAG wins</strong>: Customer support for a SaaS product — product features change with every release, pricing updates monthly, bug statuses change daily. Fine-tuning on this data would be obsolete within a week of training. RAG pulls from the always-updated knowledge base → always accurate. Additionally, citations let support agents verify the answer source. No labeled (question, answer) pairs needed — just the product docs.</p>
+            <p style="margin-top:8px;"><strong>Best of both</strong>: SFT to teach format and reasoning style (how to structure a support answer, how to handle uncertainty) + RAG to supply current factual content. This is what production-grade systems typically use.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-sft" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- LORA -->
+        <div class="depth-section" id="lora">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">⊗</div>LoRA / QLoRA (rank decomposition math)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Quote (2025)</h3>
+            <p style="font-size:0.875rem;">"Don't just say 'I used LoRA.' Explain the rank decomposition matrices." This is a direct Amazon Applied Scientist Bar Raiser quote from 2025. Know the math behind it.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>The problem LoRA solves</strong>: Full fine-tuning a 7B model requires storing gradients and optimizer states for 7B parameters → needs ~56GB for mixed precision training. Unaffordable for most setups. PEFT (Parameter-Efficient Fine-Tuning) methods update only a small fraction of parameters.</p>
+            <p style="margin-top:8px;"><strong>LoRA core idea</strong>: Instead of updating weight matrix W ∈ ℝ^(d×k) directly, represent the update ΔW as a low-rank decomposition:</p>
+            <div class="math">W' = W + ΔW = W + B·A
+where A ∈ ℝ^(r×k), B ∈ ℝ^(d×r), rank r << min(d,k)</div>
+            <p>During training: W is frozen. Only A and B are updated. Parameter count: d·k (original) → r·k + d·r = r(d+k) (LoRA). For d=k=4096, r=8: original = 16.7M params, LoRA = 65.5k params (250× fewer). After training: merge B·A into W for zero-inference overhead.</p>
+            <p style="margin-top:8px;"><strong>Why low-rank works</strong>: The hypothesis (supported empirically) is that the weight update ΔW lies in a low-dimensional subspace — fine-tuning doesn't need to update the full weight space, just a small task-specific direction. The intrinsic dimensionality of fine-tuning is much lower than the model size.</p>
+            <p style="margin-top:8px;"><strong>Initialization</strong>: A initialized from Gaussian, B initialized to zero → ΔW = B·A = 0 at start → fine-tuning begins at the pre-trained weights (no perturbation at start). LoRA scale factor α/r applied to ΔW (α usually = r, so scaling = 1).</p>
+            <p style="margin-top:8px;"><strong>Rank choice</strong>: r=1 → very aggressive compression, captures only one direction of update. r=64 → more capacity, closer to full fine-tuning. Typical: r=4 to r=32. Higher r: better performance, more parameters. Finding: most fine-tuning tasks work well with r ≤ 16 — the update subspace is genuinely low-dimensional.</p>
+            <p style="margin-top:8px;"><strong>QLoRA</strong>: Quantize the base model to 4-bit (NF4 — Normal Float 4, optimized for normally distributed weights) before applying LoRA. Reduces base model memory footprint by 4×. Train LoRA adapters in 16-bit precision. Result: fine-tune a 65B model on a single A100 80GB GPU (vs 640GB for full FP16 fine-tuning). NF4 uses a quantization scheme where quantization levels are spaced to match the distribution of pretrained LLM weights (normal distribution).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Explain exactly what the rank decomposition matrices A and B represent in LoRA. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>LoRA models the weight update as ΔW = B·A. Geometrically: A (r×k matrix) projects the k-dimensional input down to an r-dimensional subspace. B (d×r matrix) projects back up from r to d dimensions. The composition B·A is a rank-r matrix — it can only represent r independent directions of change in the weight space. Think of it as: the fine-tuning task only needs to modify r "directions" of the weight matrix (e.g., r=8 directions out of 4096). A finds those r relevant input directions, B determines how to mix them into the output. Training only adjusts these 2r·d parameters. Why does this work? The fine-tuning update ΔW can often be well-approximated by a low-rank matrix because the "knowledge" being added (e.g., "speak in formal English") lives in a low-dimensional manifold in weight space. This is the intrinsic dimensionality hypothesis — confirmed by the fact that rank 8 often matches rank 4096 in downstream task performance.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-lora" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- RLHF -->
+        <div class="depth-section" id="rlhf">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">🏆</div>RLHF, DPO &amp; GRPO</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>The alignment problem</strong>: SFT teaches the model to mimic training examples. But good examples ≠ aligned behavior. We want: helpful, harmless, honest. This requires comparing responses and optimizing for human preference — RLHF.</p>
+            <p style="margin-top:8px;"><strong>RLHF Pipeline (3 stages)</strong>:
+            <br><strong>Stage 1 — SFT</strong>: Fine-tune base model on high-quality (instruction, response) pairs. Get a good starting point.
+            <br><strong>Stage 2 — Reward Model (RM)</strong>: Collect human preference data: for each prompt, generate 2+ responses, human picks the better one. Train a classifier (Bradley-Terry model) to predict which response is preferred. RM(x, y) → scalar score.
+            <br><strong>Stage 3 — PPO</strong>: Use the reward model as the reward function. Apply Proximal Policy Optimization (RL algorithm) to update the SFT model to maximize RM score while staying close to the SFT model (KL penalty):</p>
+            <div class="math">Objective = E[RM(x,y)] - β·KL(π_θ || π_SFT)</div>
+            <p>The KL term prevents reward hacking — the model drifting too far from the SFT baseline.</p>
+            <p style="margin-top:8px;"><strong>Problems with RLHF</strong>: Complex 3-stage pipeline. PPO is unstable and requires careful hyperparameter tuning. Reward model can be hacked (model generates text that scores high but isn't actually better). Expensive: requires human annotation + separate RM training + RL training.</p>
+            <p style="margin-top:8px;"><strong>DPO (Direct Preference Optimization)</strong>: Eliminates the reward model entirely. Directly optimizes the policy on preference data using a closed-form relationship between the optimal policy and the reward function:</p>
+            <div class="math">DPO loss = -log σ(β·log(π_θ(y_w|x)/π_ref(y_w|x)) - β·log(π_θ(y_l|x)/π_ref(y_l|x)))</div>
+            <p>y_w = preferred response, y_l = rejected response. No RM needed. More stable than PPO. Used in: LLaMA-2, Mistral, Zephyr. Simpler = easier to reproduce.</p>
+            <p style="margin-top:8px;"><strong>GRPO (Group Relative Policy Optimization)</strong>: Used in DeepSeek-R1. Instead of a learned reward model, uses verifiable rewards (for math: is the answer correct?). Samples multiple responses per prompt, computes group-relative advantage (each response's reward relative to the group mean). More stable than PPO for reasoning tasks.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What problem does DPO solve that RLHF (with PPO) has? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>No reward model needed</strong>: RLHF requires training a separate reward model — another model, another training run, another source of error. If the RM has biases (e.g., prefers verbose answers), the RL model will exploit them. DPO directly uses the preference data without an RM intermediary. (2) <strong>Training stability</strong>: PPO is notoriously unstable — sensitive to learning rate, batch size, KL coefficient, clipping range. A bad hyperparameter → reward hacking, collapsed training. DPO is a standard supervised loss (binary cross-entropy on preferences) — much more stable and reproducible. (3) <strong>Simplicity</strong>: RLHF = 3 stages (SFT + RM + PPO). DPO = 2 stages (SFT + DPO). Fewer moving parts = easier to debug and scale. Trade-off: DPO implicitly assumes the reference model is good (needs high-quality SFT). DPO can also underperform PPO on tasks requiring exploration (the policy needs to try new responses not in the preference dataset).</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-rlhf" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- AGENTS -->
+        <div class="depth-section" id="agents">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">🤖</div>AI Agents &amp; ReAct Pattern</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Deloitte Scenario (India, 2025)</h3>
+            <p style="font-size:0.875rem;">Deloitte's 2025 tech round: "Design an agent that uses tools to answer questions." Also asked: "RAG vs agents — what's the difference? When do you use agents?" Know the ReAct loop cold.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>What is an AI Agent?</strong> An LLM that takes actions in a loop until a goal is achieved. Unlike a chain (fixed sequence), an agent decides at each step what action to take next based on previous observations.</p>
+            <p style="margin-top:8px;"><strong>ReAct (Reason + Act) pattern</strong>: The standard agent loop:</p>
+            <div class="math">Loop:
+  1. THOUGHT: LLM reasons about current state and what to do
+  2. ACTION: LLM calls a tool (search, calculator, API, code exec)
+  3. OBSERVATION: Tool returns result
+  4. Back to 1 (or FINAL ANSWER if goal achieved)</div>
+            <p>Example: "What's the current CEO of OpenAI?" → Thought: "I need to search for this." → Action: search("OpenAI CEO 2024") → Observation: "Sam Altman" → Thought: "I have the answer." → Final Answer: "Sam Altman."</p>
+            <p style="margin-top:8px;"><strong>RAG vs Agents</strong>: RAG: single retrieval → generation. One-shot. No tool use. Fast. Agents: iterative reasoning → multiple tool calls → generation. Multi-step. Slower. More capable for complex tasks. Use agents when: multi-step reasoning required, multiple tools needed, the answer requires combining information from different sources or running code.</p>
+            <p style="margin-top:8px;"><strong>Tool calling (function calling)</strong>: Modern LLMs support structured tool use: provide a JSON schema of available functions, LLM outputs a structured call, system executes it and returns result. OpenAI function calling, LLaMA function calling, Anthropic tool use.</p>
+            <p style="margin-top:8px;"><strong>Agent failure modes</strong>: Infinite loops (agent never terminates). Hallucinated tool calls (calls tools with wrong arguments). Context window overflow (too many tool call results). Tool reliability (agent assumes tools are always correct). Planning failures (incorrect sequence of tool calls). Fix: max iteration limit, explicit stop conditions, tool result validation, ReAct with reflection.</p>
+            <p style="margin-top:8px;"><strong>Frameworks</strong>: LangGraph (graph-based, fine-grained control), LangChain agents, CrewAI (multi-agent), AutoGen (conversation-based multi-agent), Autogen Studio. For production: prefer LangGraph (stateful, observable, checkpointing).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Design an agent that answers questions about a codebase. What tools does it need, and how does the ReAct loop work? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Tools needed</strong>: (1) file_read(path) → read file contents. (2) code_search(query) → semantic search over codebase (RAG over code). (3) run_code(code_snippet) → execute and return output. (4) list_files(directory) → directory listing. (5) grep(pattern, path) → regex search.</p>
+            <p><strong>Example ReAct trace</strong> for "Why does the login function fail?":
+            <br>Thought: "I need to find the login function first."
+            <br>Action: code_search("login function")
+            <br>Observation: auth/login.py, lines 45-80
+            <br>Thought: "Let me read the full function."
+            <br>Action: file_read("auth/login.py", start=45, end=80)
+            <br>Observation: [code snippet]
+            <br>Thought: "I see a potential null check issue. Let me check how it's called."
+            <br>Action: grep("call_login(", ".")
+            <br>Observation: [calling locations]
+            <br>Thought: "The caller passes None for username. Login doesn't handle this."
+            <br>Final Answer: "The login function fails because it doesn't handle None username..."</p>
+            <p><strong>Production considerations</strong>: Add max_iterations=10 to prevent infinite loops. Validate tool inputs (don't run arbitrary code without sandboxing). Implement checkpointing (LangGraph) so long-running agents can be paused/resumed. Log every tool call and observation for debugging.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-agents" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- MEMORY -->
+        <div class="depth-section" id="mem">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">🧠</div>Agent Memory &amp; Multi-Agent Systems</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Types of agent memory</strong>:
+            <br><strong>Short-term (in-context)</strong>: Conversation history + tool results in the context window. Fast, no retrieval needed. Limited by context window size. Lost when session ends.
+            <br><strong>Long-term (external)</strong>: Stored in a database (vector store, key-value, SQL). Persists across sessions. Retrieved via semantic search or key lookup. Enables learning from past interactions.
+            <br><strong>Episodic</strong>: Records of specific past episodes (what happened in previous task runs). Retrieved when similar situation encountered.
+            <br><strong>Semantic</strong>: General facts and knowledge. Separate from task-specific history.
+            <br><strong>Procedural</strong>: In the model weights — skills learned during fine-tuning. Implicitly applied, not retrievable.</p>
+            <p style="margin-top:8px;"><strong>Deloitte asked</strong>: "How do agents share memory? How does memory sharing work in multi-agent systems?"
+            <br>Shared memory approaches: (1) Shared external store (vector DB / key-value store) all agents read/write. Simplest. (2) Orchestrator holds shared state, passes relevant context to each subagent. (3) Blackboard architecture: shared workspace all agents read/write via structured messages.</p>
+            <p style="margin-top:8px;"><strong>Multi-agent patterns</strong>:
+            <br><strong>Orchestrator-subagent</strong>: One planner agent decomposes task, delegates subtasks to specialized agents, aggregates results. Used in CrewAI, LangGraph.
+            <br><strong>Sequential pipeline</strong>: Agent A output → Agent B input. Simple but no parallelism.
+            <br><strong>Parallel fan-out</strong>: Orchestrator sends same task to multiple agents simultaneously, collects results. Good for research/verification.
+            <br><strong>Debate/adversarial</strong>: Multiple agents argue different positions, judge synthesizes. Improves reasoning quality.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you implement long-term memory in a customer service agent? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Architecture: (1) <strong>Store</strong>: After each resolved ticket, extract key facts (customer issue, resolution, product, sentiment) → store as embeddings in vector DB with metadata (customer_id, date, product, resolution_type). (2) <strong>Retrieve at query time</strong>: When customer starts new conversation, embed their query → retrieve top-k relevant past interactions for this customer. (3) <strong>Inject into context</strong>: Add retrieved memory to system prompt: "This customer previously had [issue] on [date], resolved by [method]." (4) <strong>Memory update</strong>: After each new interaction, update the store with the new episode. (5) <strong>Privacy</strong>: Only retrieve customer's own history (user-ID-scoped retrieval). TTL on sensitive memories. Option to delete (GDPR). Production consideration: memory retrieval adds latency — run retrieval in parallel with first LLM call using async to minimize perceived delay.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-mem" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- PROMPT ENGINEERING -->
+        <div class="depth-section" id="prompt">
+          <h2><div class="depth-icon" style="background:rgba(255,166,87,0.15);color:var(--c5)">💬</div>Prompt Engineering &amp; Chain-of-Thought</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Zero-shot</strong>: Direct task description, no examples. Good when the model has strong prior on the task. Fast to prototype.</p>
+            <p style="margin-top:8px;"><strong>Few-shot</strong>: Include k worked examples in the prompt. Teaches format and expected behavior. Trade-off: uses context window, examples must be representative.</p>
+            <p style="margin-top:8px;"><strong>Chain-of-Thought (CoT)</strong>: "Let's think step by step." Or: include examples with explicit reasoning chains. CoT helps with: multi-step arithmetic, logic, symbolic reasoning. Why it works: reasoning tokens constrain the next-token distribution toward correct intermediate steps. The model can't "skip" to the wrong answer without first generating the wrong intermediate step — which has lower probability given the reasoning trace. CoT doesn't help with: simple factual recall (no reasoning needed), tasks with no intermediate steps.</p>
+            <p style="margin-top:8px;"><strong>Structured output prompting</strong>: Specify output format in prompt (JSON, markdown table). Use Pydantic / JSON schema with modern APIs. Reduces parsing failures in production pipelines.</p>
+            <p style="margin-top:8px;"><strong>Context window failure modes</strong>: Lost in the middle (Shi et al., 2023): LLMs have higher attention to beginning and end of context. Middle tokens are attended to less → relevant information in the middle gets ignored. Fix: put most important context first or last, use reranker to surface most relevant chunks, reduce k.</p>
+            <p style="margin-top:8px;"><strong>System prompt vs user prompt</strong>: System prompt: role/instructions/constraints. User prompt: the actual query. Modern models (Claude, GPT-4) weigh system prompt instructions more heavily — critical for production guardrails.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> When does Chain-of-Thought hurt performance? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>CoT hurts when: (1) <strong>Simple factual tasks</strong>: "What is the capital of France?" Forcing CoT → "Let me think... France is a country in Europe, its capital city is..." → longer response, same answer, higher latency and cost. (2) <strong>Tasks that don't require sequential reasoning</strong>: Sentiment classification — a single lookup, not a chain. CoT adds noise. (3) <strong>Hallucination amplification</strong>: If the model generates an incorrect reasoning step, subsequent steps can compound the error. A wrong step 1 → wrong step 2 → wrong answer. Direct answer might have been correct. (4) <strong>Latency-critical applications</strong>: Each reasoning token = latency + cost. For a real-time autocomplete system, CoT reasoning is prohibitive. (5) <strong>Small models</strong>: CoT needs sufficient model capacity to reason correctly. In small models (&lt;7B), CoT can degrade performance — the model isn't capable of correct multi-step reasoning and generates plausible-sounding but wrong chains.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p5-prompt" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

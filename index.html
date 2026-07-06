@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI/ML Depth Study</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ---- HOME SPECIFIC ---- */
+    .home-hero {
+      padding: 48px 40px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .hero-title { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; }
+    .hero-title span { color: var(--accent); }
+    .hero-sub { color: var(--text-muted); font-size: 0.9rem; margin-top: 6px; }
+
+    .overall-progress {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      min-width: 220px;
+    }
+    .overall-progress .label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .overall-progress .pct { font-size: 1.75rem; font-weight: 700; color: var(--accent); }
+    .overall-progress .prog-bar {
+      height: 4px; background: var(--surface2);
+      border-radius: 99px; margin-top: 8px;
+      overflow: hidden;
+    }
+    .overall-progress .prog-bar-fill {
+      height: 100%; background: var(--accent);
+      border-radius: 99px; transition: width 0.5s ease;
+    }
+
+    /* ---- PILLAR GRID ---- */
+    .pillar-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 40px 40px;
+    }
+
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .pillar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: default;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .pillar-card:hover { transform: translateY(-2px); }
+    .pillar-card[data-color="1"] { border-top: 3px solid var(--c1); }
+    .pillar-card[data-color="1"]:hover { border-color: var(--c1); }
+    .pillar-card[data-color="2"] { border-top: 3px solid var(--c2); }
+    .pillar-card[data-color="2"]:hover { border-color: var(--c2); }
+    .pillar-card[data-color="3"] { border-top: 3px solid var(--c3); }
+    .pillar-card[data-color="3"]:hover { border-color: var(--c3); }
+    .pillar-card[data-color="4"] { border-top: 3px solid var(--c4); }
+    .pillar-card[data-color="4"]:hover { border-color: var(--c4); }
+    .pillar-card[data-color="5"] { border-top: 3px solid var(--c5); }
+    .pillar-card[data-color="5"]:hover { border-color: var(--c5); }
+    .pillar-card[data-color="6"] { border-top: 3px solid var(--c6); }
+    .pillar-card[data-color="6"]:hover { border-color: var(--c6); }
+
+    .pillar-header {
+      padding: 20px 20px 12px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .pillar-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .pi-1 { background: rgba(88,166,255,0.15); }
+    .pi-2 { background: rgba(63,185,80,0.15); }
+    .pi-3 { background: rgba(247,129,102,0.15); }
+    .pi-4 { background: rgba(210,168,255,0.15); }
+    .pi-5 { background: rgba(255,166,87,0.15); }
+    .pi-6 { background: rgba(121,192,255,0.15); }
+
+    .pillar-meta { flex: 1; }
+    .pillar-name { font-size: 0.95rem; font-weight: 600; }
+    .pillar-count { font-size: 0.75rem; color: var(--text-muted); }
+
+    .pillar-prog {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .pillar-prog-bar {
+      flex: 1; height: 3px; background: var(--surface2);
+      border-radius: 99px; overflow: hidden;
+    }
+    .pillar-prog-fill { height: 100%; border-radius: 99px; transition: width 0.5s; }
+    .pf-1 { background: var(--c1); }
+    .pf-2 { background: var(--c2); }
+    .pf-3 { background: var(--c3); }
+    .pf-4 { background: var(--c4); }
+    .pf-5 { background: var(--c5); }
+    .pf-6 { background: var(--c6); }
+    .pillar-prog-pct { font-size: 0.72rem; color: var(--text-muted); width: 28px; text-align: right; }
+
+    .pillar-topics {
+      padding: 0 20px 20px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .topic-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      transition: all 0.15s;
+      gap: 8px;
+    }
+    .topic-link:hover { background: var(--surface2); color: var(--text); }
+    .topic-link .tl-left { display: flex; align-items: center; gap: 8px; }
+    .topic-link .tl-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border); flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .topic-link[data-status="mastered"] .tl-dot { background: var(--accent2); }
+    .topic-link[data-status="reviewing"] .tl-dot { background: var(--accent5); }
+    .topic-link .tl-right { display: flex; align-items: center; gap: 6px; }
+
+    /* ---- MIND MAP SECTION ---- */
+    .mindmap-section {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 40px 40px;
+    }
+    .mindmap-section h2 { margin-bottom: 16px; }
+    #mindmap-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      height: 520px;
+      position: relative;
+    }
+    #mindmap-svg { width: 100%; height: 100%; }
+    .mm-controls {
+      position: absolute; bottom: 16px; right: 16px;
+      display: flex; gap: 8px;
+    }
+    .mm-btn {
+      width: 32px; height: 32px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; transition: all 0.15s;
+    }
+    .mm-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    /* ---- QUICK STATS ---- */
+    .stats-bar {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 40px 24px;
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      flex: 1; min-width: 140px;
+    }
+    .stat-chip .sc-val { font-size: 1.4rem; font-weight: 700; }
+    .stat-chip .sc-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    @media (max-width: 768px) {
+      .home-hero, .pillar-section, .mindmap-section, .stats-bar { padding-left: 16px; padding-right: 16px; }
+      .pillar-grid { grid-template-columns: 1fr; }
+      #mindmap-container { height: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Mind Map</a>
+      <a href="pages/study-plan.html">Study Plan</a>
+      <a href="pages/p1-math.html">Math</a>
+      <a href="pages/p2-classical-ml.html">Classical ML</a>
+      <a href="pages/p3-deep-learning.html">Deep Learning</a>
+      <a href="pages/p4-transformers.html">Transformers</a>
+      <a href="pages/p5-genai.html">GenAI Stack</a>
+      <a href="pages/p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+
+  <!-- SEARCH OVERLAY -->
+  <div id="search-overlay">
+    <div id="search-box">
+      <input id="search-input-big" type="text" placeholder="Search any topic, algorithm, concept…" />
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+  <div class="page">
+    <!-- HERO -->
+    <div class="home-hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-title">Your <span>AI/ML Technical Depth</span> Study Site</div>
+          <div class="hero-sub">Targeting Product MNCs · Both Tracks: AI Engineer + ML Core · 60-day plan · 1-2 hrs/day</div>
+        </div>
+        <div class="overall-progress">
+          <div class="label">Overall Progress</div>
+          <div class="pct" id="overall-pct">0%</div>
+          <div class="prog-bar"><div class="prog-bar-fill" id="overall-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-chip">
+        <div class="sc-val" style="color:var(--accent)" id="stat-mastered">0</div>
+        <div class="sc-label">Topics Mastered</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-val" style="color:var(--accent5)" id="stat-total">47</div>
+        <div class="sc-label">Total Topics</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-val" style="color:var(--accent2)" id="stat-days">60</div>
+        <div class="sc-label">Days Remaining</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-val" style="color:var(--accent4)">6</div>
+        <div class="sc-label">Pillars</div>
+      </div>
+    </div>
+
+    <!-- MIND MAP -->
+    <div class="mindmap-section">
+      <h2>Knowledge Mind Map</h2>
+      <div id="mindmap-container">
+        <svg id="mindmap-svg"></svg>
+        <div class="mm-controls">
+          <div class="mm-btn" onclick="mmZoomIn()" title="Zoom in">+</div>
+          <div class="mm-btn" onclick="mmZoomOut()" title="Zoom out">−</div>
+          <div class="mm-btn" onclick="mmReset()" title="Reset">⌖</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR CARDS -->
+    <div class="pillar-section">
+      <p class="section-label">All Pillars</p>
+      <div class="pillar-grid" id="pillar-grid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // ============================================================
+    // SITE DATA — single source of truth
+    // ============================================================
+    const PILLARS = [
+      {
+        id: 'p1', color: 1, icon: '∑', iconClass: 'pi-1', name: 'Math & Stats Foundations',
+        weight: 'medium', url: 'pages/p1-math.html',
+        topics: [
+          { id: 'p1-linalg',   title: 'Linear Algebra for ML',         badge: 'medium', url: 'pages/p1-math.html#linalg' },
+          { id: 'p1-prob',     title: 'Probability & Distributions',    badge: 'high',   url: 'pages/p1-math.html#prob' },
+          { id: 'p1-mle',      title: 'MLE / MAP / Bayesian Inference', badge: 'high',   url: 'pages/p1-math.html#mle' },
+          { id: 'p1-opt',      title: 'Optimization & Gradient Descent',badge: 'high',   url: 'pages/p1-math.html#opt' },
+          { id: 'p1-info',     title: 'Information Theory (Entropy, KL)',badge: 'high',   url: 'pages/p1-math.html#info' },
+        ]
+      },
+      {
+        id: 'p2', color: 2, icon: '🌲', iconClass: 'pi-2', name: 'Classical ML',
+        weight: 'critical', url: 'pages/p2-classical-ml.html',
+        topics: [
+          { id: 'p2-linreg',  title: 'Linear Regression (with derivations)',  badge: 'critical', url: 'pages/p2-classical-ml.html#linreg' },
+          { id: 'p2-logreg',  title: 'Logistic Regression & Loss Function',   badge: 'critical', url: 'pages/p2-classical-ml.html#logreg' },
+          { id: 'p2-trees',   title: 'Decision Trees (Entropy, Gini, IG)',    badge: 'critical', url: 'pages/p2-classical-ml.html#trees' },
+          { id: 'p2-rf',      title: 'Random Forests & Bagging',              badge: 'high',     url: 'pages/p2-classical-ml.html#rf' },
+          { id: 'p2-boost',   title: 'Gradient Boosting & XGBoost',           badge: 'critical', url: 'pages/p2-classical-ml.html#boost' },
+          { id: 'p2-svm',     title: 'SVMs & the Kernel Trick',               badge: 'high',     url: 'pages/p2-classical-ml.html#svm' },
+          { id: 'p2-cluster', title: 'Clustering (k-means, DBSCAN)',          badge: 'medium',   url: 'pages/p2-classical-ml.html#cluster' },
+          { id: 'p2-reg',     title: 'Regularization (L1, L2, Elastic Net)',  badge: 'critical', url: 'pages/p2-classical-ml.html#reg' },
+          { id: 'p2-eval',    title: 'Model Evaluation & Bias-Variance',      badge: 'critical', url: 'pages/p2-classical-ml.html#eval' },
+        ]
+      },
+      {
+        id: 'p3', color: 3, icon: '🧠', iconClass: 'pi-3', name: 'Deep Learning',
+        weight: 'critical', url: 'pages/p3-deep-learning.html',
+        topics: [
+          { id: 'p3-backprop', title: 'Backpropagation & Chain Rule',          badge: 'critical', url: 'pages/p3-deep-learning.html#backprop' },
+          { id: 'p3-opt',      title: 'Optimizers (SGD → Adam → AdamW)',       badge: 'critical', url: 'pages/p3-deep-learning.html#opt' },
+          { id: 'p3-norm',     title: 'BatchNorm vs LayerNorm',                badge: 'critical', url: 'pages/p3-deep-learning.html#norm' },
+          { id: 'p3-reg',      title: 'Dropout & Regularization in NNs',       badge: 'high',     url: 'pages/p3-deep-learning.html#reg' },
+          { id: 'p3-cnn',      title: 'CNNs (conv, pooling, receptive field)', badge: 'high',     url: 'pages/p3-deep-learning.html#cnn' },
+          { id: 'p3-rnn',      title: 'RNNs, LSTMs & Vanishing Gradients',     badge: 'high',     url: 'pages/p3-deep-learning.html#rnn' },
+          { id: 'p3-activ',    title: 'Activation Functions & Dead Neurons',   badge: 'medium',   url: 'pages/p3-deep-learning.html#activ' },
+        ]
+      },
+      {
+        id: 'p4', color: 4, icon: '⚡', iconClass: 'pi-4', name: 'Transformers & LLMs',
+        weight: 'critical', url: 'pages/p4-transformers.html',
+        topics: [
+          { id: 'p4-attn',    title: 'Attention Mechanism (Q/K/V math)',      badge: 'critical', url: 'pages/p4-transformers.html#attn' },
+          { id: 'p4-mha',     title: 'Multi-Head Attention & Why It Works',   badge: 'critical', url: 'pages/p4-transformers.html#mha' },
+          { id: 'p4-pos',     title: 'Positional Encodings (sin/cos, RoPE)',  badge: 'critical', url: 'pages/p4-transformers.html#pos' },
+          { id: 'p4-arch',    title: 'BERT vs GPT Architecture',              badge: 'critical', url: 'pages/p4-transformers.html#arch' },
+          { id: 'p4-kvcache', title: 'KV Cache & Inference Optimization',    badge: 'critical', url: 'pages/p4-transformers.html#kvcache' },
+          { id: 'p4-flash',   title: 'Flash Attention & Sparse Attention',    badge: 'high',     url: 'pages/p4-transformers.html#flash' },
+          { id: 'p4-token',   title: 'Tokenization & Vocabulary',             badge: 'medium',   url: 'pages/p4-transformers.html#token' },
+          { id: 'p4-scale',   title: 'Scaling Laws & Emergent Abilities',     badge: 'high',     url: 'pages/p4-transformers.html#scale' },
+        ]
+      },
+      {
+        id: 'p5', color: 5, icon: '🔥', iconClass: 'pi-5', name: 'GenAI Stack',
+        weight: 'critical', url: 'pages/p5-genai.html',
+        topics: [
+          { id: 'p5-rag',    title: 'RAG Architecture (end-to-end)',          badge: 'critical', url: 'pages/p5-genai.html#rag' },
+          { id: 'p5-embed',  title: 'Embeddings & Vector Databases',          badge: 'critical', url: 'pages/p5-genai.html#embed' },
+          { id: 'p5-ret',    title: 'Retrieval: Dense, Sparse & Hybrid',      badge: 'critical', url: 'pages/p5-genai.html#ret' },
+          { id: 'p5-ragfail','title': 'RAG Failure Modes & Evals',            badge: 'critical', url: 'pages/p5-genai.html#ragfail' },
+          { id: 'p5-sft',    title: 'SFT & Fine-Tuning Fundamentals',         badge: 'critical', url: 'pages/p5-genai.html#sft' },
+          { id: 'p5-lora',   title: 'LoRA / QLoRA (rank decomposition)',      badge: 'critical', url: 'pages/p5-genai.html#lora' },
+          { id: 'p5-rlhf',   title: 'RLHF, DPO & GRPO',                      badge: 'high',     url: 'pages/p5-genai.html#rlhf' },
+          { id: 'p5-agents', title: 'AI Agents & ReAct Pattern',              badge: 'critical', url: 'pages/p5-genai.html#agents' },
+          { id: 'p5-mem',    title: 'Agent Memory & Multi-Agent Systems',     badge: 'high',     url: 'pages/p5-genai.html#mem' },
+          { id: 'p5-prompt', title: 'Prompt Engineering & Chain-of-Thought',  badge: 'medium',   url: 'pages/p5-genai.html#prompt' },
+        ]
+      },
+      {
+        id: 'p6', color: 6, icon: '🏗', iconClass: 'pi-6', name: 'ML System Design',
+        weight: 'high', url: 'pages/p6-system-design.html',
+        topics: [
+          { id: 'p6-frame',  title: 'ML Design Framework (6 steps)',           badge: 'critical', url: 'pages/p6-system-design.html#frame' },
+          { id: 'p6-genai',  title: 'GenAI System Design (5 dimensions)',      badge: 'critical', url: 'pages/p6-system-design.html#genai' },
+          { id: 'p6-rec',    title: 'Design: Recommendation System',           badge: 'high',     url: 'pages/p6-system-design.html#rec' },
+          { id: 'p6-search', title: 'Design: Semantic Search',                 badge: 'high',     url: 'pages/p6-system-design.html#search' },
+          { id: 'p6-debug',  title: 'Debugging a Failing GenAI Pipeline',      badge: 'critical', url: 'pages/p6-system-design.html#debug' },
+          { id: 'p6-eval',   title: 'ML Evaluation & Metrics at Scale',        badge: 'high',     url: 'pages/p6-system-design.html#eval' },
+        ]
+      }
+    ];
+
+    // Build global TOPICS for search
+    window.TOPICS = PILLARS.flatMap(p =>
+      p.topics.map(t => ({
+        id: t.id, title: t.title, pillar: p.name,
+        url: t.url, tags: [p.name, t.badge]
+      }))
+    );
+
+    // Build PILLAR_TOPICS map for progress bars
+    window.PILLAR_TOPICS = {};
+    PILLARS.forEach(p => { PILLAR_TOPICS[p.id] = p.topics.map(t => t.id); });
+
+    // ============================================================
+    // RENDER PILLAR CARDS
+    // ============================================================
+    function renderPillars() {
+      const grid = document.getElementById('pillar-grid');
+      grid.innerHTML = PILLARS.map(p => `
+        <div class="pillar-card" data-color="${p.color}">
+          <div class="pillar-header">
+            <div class="pillar-icon ${p.iconClass}">${p.icon}</div>
+            <div class="pillar-meta">
+              <div class="pillar-name">${p.name}</div>
+              <div class="pillar-count">${p.topics.length} topics</div>
+            </div>
+          </div>
+          <div style="padding: 0 20px 12px;">
+            <div class="pillar-prog">
+              <div class="pillar-prog-bar">
+                <div class="pillar-prog-fill pf-${p.color}" id="bar-${p.id}" style="width:0%"></div>
+              </div>
+              <span class="pillar-prog-pct" id="pct-${p.id}">0%</span>
+            </div>
+          </div>
+          <div class="pillar-topics">
+            ${p.topics.map(t => `
+              <a href="${t.url}" class="topic-link" data-topic-id="${t.id}" data-status="${getTopicStatus(t.id)}">
+                <span class="tl-left">
+                  <span class="tl-dot"></span>
+                  ${t.title}
+                </span>
+                <span class="badge badge-${t.badge === 'critical' ? 'critical' : t.badge === 'high' ? 'high' : 'medium'}" style="font-size:0.65rem;height:20px;">${t.badge}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ============================================================
+    // PROGRESS UPDATE
+    // ============================================================
+    function updateHomeProgress() {
+      const p = getProgress();
+      const allTopics = PILLARS.flatMap(pl => pl.topics.map(t => t.id));
+      const mastered = allTopics.filter(id => p[id] === 'mastered').length;
+      const total = allTopics.length;
+      const pct = total ? Math.round(mastered / total * 100) : 0;
+
+      document.getElementById('overall-pct').textContent = pct + '%';
+      document.getElementById('overall-bar').style.width = pct + '%';
+      document.getElementById('stat-mastered').textContent = mastered;
+
+      // per-pillar
+      PILLARS.forEach(pl => {
+        const done = pl.topics.filter(t => p[t.id] === 'mastered').length;
+        const pp = Math.round(done / pl.topics.length * 100);
+        const bar = document.getElementById('bar-' + pl.id);
+        const pctEl = document.getElementById('pct-' + pl.id);
+        if (bar) bar.style.width = pp + '%';
+        if (pctEl) pctEl.textContent = pp + '%';
+      });
+
+      // update topic dot statuses
+      document.querySelectorAll('.topic-link[data-topic-id]').forEach(el => {
+        el.dataset.status = p[el.dataset.topicId] || 'not_started';
+      });
+    }
+
+    // ============================================================
+    // MIND MAP (SVG — no D3 dependency)
+    // ============================================================
+    function renderMindMap() {
+      const svg = document.getElementById('mindmap-svg');
+      const W = svg.clientWidth || 900;
+      const H = svg.clientHeight || 520;
+      const cx = W / 2, cy = H / 2;
+      const R1 = 120, R2 = 230;
+
+      const pillarAngles = PILLARS.map((_, i) => (i / PILLARS.length) * 2 * Math.PI - Math.PI / 2);
+      const colors = ['#58a6ff','#3fb950','#f78166','#d2a8ff','#ffa657','#79c0ff'];
+
+      let html = `
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g id="mm-root" transform="translate(0,0) scale(1)">
+      `;
+
+      // Center node
+      html += `
+        <circle cx="${cx}" cy="${cy}" r="38" fill="#161b22" stroke="#58a6ff" stroke-width="2" filter="url(#glow)"/>
+        <text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="700">AI/ML</text>
+        <text x="${cx}" y="${cy+8}" text-anchor="middle" fill="#8b949e" font-size="9">Depth Study</text>
+      `;
+
+      PILLARS.forEach((p, i) => {
+        const angle = pillarAngles[i];
+        const px = cx + R1 * Math.cos(angle);
+        const py = cy + R1 * Math.sin(angle);
+        const color = colors[i];
+
+        // line center → pillar
+        html += `<line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="${color}" stroke-width="1.5" stroke-opacity="0.4"/>`;
+
+        // pillar node (clickable)
+        const shortName = p.name.split(' ').slice(0,2).join('\n');
+        html += `
+          <a href="${p.url}">
+            <circle cx="${px}" cy="${py}" r="26" fill="#21262d" stroke="${color}" stroke-width="1.8" class="mm-node"/>
+            <text x="${px}" y="${py+3}" text-anchor="middle" fill="${color}" font-size="9.5" font-weight="600">${p.icon}</text>
+          </a>
+        `;
+
+        // label outside the node
+        const labelX = cx + (R1 + 44) * Math.cos(angle);
+        const labelY = cy + (R1 + 44) * Math.sin(angle);
+        const anchor = labelX < cx - 10 ? 'end' : labelX > cx + 10 ? 'start' : 'middle';
+        const words = p.name.split(' ');
+        const line1 = words.slice(0, Math.ceil(words.length/2)).join(' ');
+        const line2 = words.slice(Math.ceil(words.length/2)).join(' ');
+        html += `
+          <text x="${labelX}" y="${labelY - 6}" text-anchor="${anchor}" fill="${color}" font-size="9" font-weight="600">${line1}</text>
+          <text x="${labelX}" y="${labelY + 6}" text-anchor="${anchor}" fill="${color}" font-size="9" font-weight="600">${line2}</text>
+        `;
+
+        // 2-3 sub-topic nodes
+        const subTopics = p.topics.slice(0, 3);
+        subTopics.forEach((t, j) => {
+          const spread = 0.35;
+          const subAngle = angle + (j - (subTopics.length - 1) / 2) * spread;
+          const sx = cx + R2 * Math.cos(subAngle);
+          const sy = cy + R2 * Math.sin(subAngle);
+          html += `<line x1="${px}" y1="${py}" x2="${sx}" y2="${sy}" stroke="${color}" stroke-width="1" stroke-opacity="0.25" stroke-dasharray="4,3"/>`;
+          const title = t.title.length > 20 ? t.title.slice(0,18) + '…' : t.title;
+          html += `
+            <a href="${t.url}">
+              <circle cx="${sx}" cy="${sy}" r="18" fill="#161b22" stroke="${color}" stroke-width="1" stroke-opacity="0.5" class="mm-sub"/>
+              <text x="${sx}" y="${sy+3}" text-anchor="middle" fill="#8b949e" font-size="7.5">${title.split(' ')[0]}</text>
+            </a>
+          `;
+        });
+      });
+
+      html += '</g>';
+      svg.innerHTML = html;
+
+      // simple pan/zoom state
+      let scale = 1, tx = 0, ty = 0;
+      let dragging = false, lastX = 0, lastY = 0;
+
+      const root = document.getElementById('mm-root');
+
+      svg.addEventListener('mousedown', e => {
+        dragging = true; lastX = e.clientX; lastY = e.clientY;
+      });
+      window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        tx += e.clientX - lastX; ty += e.clientY - lastY;
+        lastX = e.clientX; lastY = e.clientY;
+        root.setAttribute('transform', `translate(${tx},${ty}) scale(${scale})`);
+      });
+      window.addEventListener('mouseup', () => { dragging = false; });
+
+      window.mmZoomIn  = () => { scale = Math.min(2, scale * 1.2); root.setAttribute('transform', `translate(${tx},${ty}) scale(${scale})`); };
+      window.mmZoomOut = () => { scale = Math.max(0.4, scale / 1.2); root.setAttribute('transform', `translate(${tx},${ty}) scale(${scale})`); };
+      window.mmReset   = () => { scale = 1; tx = 0; ty = 0; root.setAttribute('transform', `translate(0,0) scale(1)`); };
+    }
+
+    // ============================================================
+    // BOOT
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPillars();
+      renderMindMap();
+      updateHomeProgress();
+      if (window.TOPICS) buildSearchIndex(window.TOPICS);
+    });
+
+    // override updateAllProgressUI to also refresh home
+    const _orig = window.updateAllProgressUI || (() => {});
+    window.updateAllProgressUI = () => { _orig(); updateHomeProgress(); };
+  </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Learning · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html" class="active">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Pillar 3</div>
+        <a href="#backprop">Backpropagation</a>
+        <a href="#opt">Optimizers</a>
+        <a href="#norm">BatchNorm vs LayerNorm</a>
+        <a href="#reg">Dropout &amp; Regularization</a>
+        <a href="#cnn">CNNs</a>
+        <a href="#rnn">RNNs &amp; LSTMs</a>
+        <a href="#activ">Activation Functions</a>
+      </aside>
+
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-critical" style="margin-bottom:12px;display:inline-flex;">Pillar 3 · Deep Learning · CRITICAL</span>
+          <h1>Deep Learning Internals</h1>
+          <p style="margin-top:8px;">Most people who use PyTorch daily can't explain how computation graphs are built or why AdamW isn't the same as Adam. This is exactly what MNC interviewers probe. Master the internals, not the API.</p>
+        </div>
+
+        <!-- BACKPROP -->
+        <div class="depth-section" id="backprop">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">∂</div>Backpropagation &amp; Chain Rule</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Intuition First</h3>
+            <p style="font-size:0.875rem;">Backprop is the algorithm for computing how much each weight contributed to the loss — so we can nudge each weight in the direction that reduces loss. It's just the chain rule of calculus, applied efficiently via dynamic programming (computing gradients from output back to input).</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Forward pass</strong>: Compute predictions layer by layer: z¹ = W¹x + b¹, a¹ = σ(z¹), z² = W²a¹ + b², etc. Store intermediate values (needed for backward pass).</p>
+            <p style="margin-top:8px;"><strong>Backward pass (chain rule)</strong>: Compute ∂L/∂W at every layer by applying chain rule from output to input:</p>
+            <div class="math">∂L/∂W¹ = ∂L/∂a² · ∂a²/∂z² · ∂z²/∂a¹ · ∂a¹/∂z¹ · ∂z¹/∂W¹</div>
+            <p style="margin-top:8px;"><strong>Computational graph</strong>: DAG of operations. Forward pass builds the graph; backward pass traverses it in reverse, accumulating gradients via the chain rule. PyTorch autograd does this automatically by tracking operations on tensors with requires_grad=True.</p>
+            <p style="margin-top:8px;"><strong>Vanishing gradients</strong>: When gradients are multiplied through many layers, if each factor &lt; 1 (e.g., sigmoid derivative max = 0.25), the product → 0. Early layers receive near-zero gradient → don't learn. Solutions: ReLU (derivative = 1 for positive inputs), residual connections (gradient flows around layers), BatchNorm (re-scales activations), proper weight initialization (Xavier/He).</p>
+            <p style="margin-top:8px;"><strong>Exploding gradients</strong>: Product of factors &gt; 1 → gradient → ∞. Fix: gradient clipping (clip gradient norm to a threshold, e.g., 1.0). Common in RNNs.</p>
+            <p style="margin-top:8px;"><strong>Weight initialization</strong>: If initialized too small → vanishing. Too large → exploding. Xavier: std = √(2/(n_in + n_out)) — for tanh/sigmoid. He: std = √(2/n_in) — for ReLU. Goal: keep activation variance ~constant across layers.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Trace the gradient through a single sigmoid neuron from loss to weight. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Setup: z = wᵀx + b, a = σ(z), L = (a - y)²/2.</p>
+              <div class="math">∂L/∂a = (a - y)
+∂a/∂z = σ(z)·(1-σ(z))   [sigmoid derivative]
+∂z/∂w = x
+∂L/∂w = ∂L/∂a · ∂a/∂z · ∂z/∂w = (a-y)·σ(z)(1-σ(z))·x</div>
+              <p>Note: σ(z)·(1-σ(z)) ≤ 0.25. With 10 sigmoid layers: 0.25^10 ≈ 10^-6. This is the vanishing gradient problem. With ReLU: ∂a/∂z = 1 (for z &gt; 0) → gradient flows through unattenuated.</p>
+            </div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why do residual connections help with vanishing gradients? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Residual connection: output = F(x) + x (identity shortcut). Gradient through this block:</p>
+            <div class="math">∂L/∂x = ∂L/∂output · (∂F/∂x + 1)</div>
+            <p>The "+1" ensures gradient always has a direct path: even if ∂F/∂x → 0 (vanishing), ∂L/∂x ≥ ∂L/∂output. The identity shortcut is a "gradient highway" that bypasses the transformation. This is why ResNets can train with 100+ layers without vanishing gradient problems. The same principle operates in Transformers: every sub-layer (attention, FFN) has a residual connection.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-backprop" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- OPTIMIZERS -->
+        <div class="depth-section" id="opt">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">▽</div>Optimizers: SGD → Adam → AdamW</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Quote (2025)</h3>
+            <p style="font-size:0.875rem;">"Don't just say 'I used AdamW.' Explain why — specifically, weight decay decoupling." This is a direct quote from an Amazon Applied Scientist interview. Know what AdamW does differently from Adam.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>SGD with momentum</strong>: v ← β·v - α·∇L; θ ← θ + v. Momentum accumulates velocity in the direction of consistent gradients → faster convergence in shallow dimensions, dampens oscillations. Nesterov: compute gradient at look-ahead position → slightly better theoretical convergence.</p>
+            <p style="margin-top:8px;"><strong>RMSprop</strong>: Adapts learning rate per-parameter. Maintains v = β·v + (1-β)·(∇L)². Update: θ ← θ - α·∇L/√(v+ε). Parameters with large gradients get smaller effective learning rate → prevents explosive updates. ε for numerical stability.</p>
+            <p style="margin-top:8px;"><strong>Adam</strong> = Momentum + RMSprop. First moment (m) = exponential moving avg of gradient. Second moment (v) = exponential moving avg of squared gradient. Bias correction: m̂ = m/(1-β₁ᵗ), v̂ = v/(1-β₂ᵗ) (corrects for initialization bias at t=0). Update: θ ← θ - α·m̂/√(v̂+ε). Default: β₁=0.9, β₂=0.999, ε=1e-8.</p>
+            <div class="math">m_t = β₁·m_{t-1} + (1-β₁)·g_t
+v_t = β₂·v_{t-1} + (1-β₂)·g_t²
+θ_t = θ_{t-1} - α·m̂_t / (√v̂_t + ε)</div>
+            <p style="margin-top:8px;"><strong>Adam with L2 (naive weight decay)</strong>: Loss = L + λ·‖θ‖². Gradient = ∇L + λ·θ. The L2 penalty gets included in m and v — it's scaled by the adaptive learning rate. This means features with large gradients get more weight decay than features with small gradients — inconsistent regularization.</p>
+            <p style="margin-top:8px;"><strong>AdamW (decoupled weight decay)</strong>: Separate the weight decay from the gradient update: θ ← θ·(1-α·λ) - α·m̂/√(v̂+ε). Weight decay is applied directly to θ, not through the gradient — unaffected by m and v. This is <em>correct</em> weight decay. In Adam with L2, high-gradient parameters get less actual regularization because v̂ scales it down. AdamW is now the default for training Transformers.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> What exactly is wrong with Adam + L2 regularization, and how does AdamW fix it? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>In Adam + L2: the regularization term λ·θ is added to the gradient → it goes into m_t and v_t. For parameters with large gradient history (large v_t), the adaptive learning rate α/√v_t is small. This small effective learning rate applies equally to both the task gradient AND the regularization gradient. So parameters that already have large gradients (important weights) get both small task updates AND small regularization updates. The regularization is inconsistent across parameters. In AdamW: weight decay is applied directly: θ ← θ - α·[m̂/√v̂] - α·λ·θ. The regularization step is separate from the adaptive gradient step. Every parameter gets exactly α·λ·θ weight decay regardless of its gradient history. This is theoretically correct decoupling and is why AdamW generalizes better for transformers.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-opt" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- BATCHNORM vs LAYERNORM -->
+        <div class="depth-section" id="norm">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">≡</div>BatchNorm vs LayerNorm</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Amazon Asked This (2025)</h3>
+            <p style="font-size:0.875rem;">"When does BatchNorm fail? Why do LLMs always use LayerNorm?" — Both questions appeared in Amazon's 2025 ML Deep Dive. Know the failure modes, not just the definitions.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Why normalize at all?</strong> Internal covariate shift: as weights update, the distribution of each layer's inputs changes, forcing later layers to constantly adapt. Normalization stabilizes these distributions → allows higher learning rates → faster training.</p>
+            <p style="margin-top:8px;"><strong>BatchNorm</strong>: Normalizes across the <em>batch dimension</em>. For a feature j: μ_j = mean over batch, σ_j = std over batch. Then: x̂ = (x - μ_j)/σ_j, output = γ·x̂ + β (learnable scale/shift). At inference: uses running mean/std accumulated during training.</p>
+            <div class="math">BatchNorm: normalize over N (batch size) for each feature dimension</div>
+            <p style="margin-top:8px;"><strong>BatchNorm failure modes</strong>:
+            (1) <strong>Small batch sizes</strong>: With batch=1, μ and σ are estimated from 1 sample — meaningless statistics. Gradient through these estimates is also noisy.
+            (2) <strong>Sequence models / variable length</strong>: Different positions in a sequence shouldn't be normalized together.
+            (3) <strong>Inference with different distribution</strong>: Running stats from training may not match test distribution (domain shift → bad normalization).
+            (4) <strong>Recurrent networks</strong>: Each timestep would need different BatchNorm stats.
+            (5) <strong>Multi-GPU training</strong>: Statistics must be synchronized across GPUs — expensive communication overhead.</p>
+            <p style="margin-top:8px;"><strong>LayerNorm</strong>: Normalizes across the <em>feature dimension</em> for each individual sample. For sample i: μ_i = mean over all features, σ_i = std over all features. No dependence on batch size, no running stats needed. Works identically at training and inference. Perfect for: Transformers (variable length sequences), RNNs, small or variable batch sizes.</p>
+            <div class="math">LayerNorm: normalize over D (features/channels) for each sample</div>
+            <p style="margin-top:8px;"><strong>Why Transformers use LayerNorm (not BatchNorm)</strong>: (1) NLP batch sizes can be small (memory constrained by long sequences). (2) Sequences are variable length — BatchNorm can't normalize across padding. (3) LayerNorm is computed independently per token — consistent across sequence positions. (4) No running statistics needed → simpler deployment.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Explain BatchNorm at inference time — how is it different from training? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>At training: BatchNorm normalizes using the current mini-batch's μ and σ. Simultaneously, it maintains running averages: μ_run = α·μ_run + (1-α)·μ_batch. At inference: you typically have batch_size=1 — can't compute meaningful batch statistics. So BatchNorm uses the running averages from training (μ_run, σ_run) instead of the current batch. The network is set to eval mode (model.eval() in PyTorch), which switches from batch statistics to running statistics. Bug: if you forget to call model.eval(), BatchNorm normalizes using the single test sample's statistics (useless with batch=1) → poor inference performance. Second bug: if test distribution differs from training distribution (covariate shift), running stats are wrong → use test-time BatchNorm or LayerNorm instead.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-norm" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- DROPOUT -->
+        <div class="depth-section" id="reg">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">⊗</div>Dropout &amp; Regularization in NNs</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Dropout</strong>: Randomly zero out each neuron with probability p during training. Forces the network to learn redundant representations — no single neuron can be relied upon. At test time: scale activations by (1-p) to maintain expected value (inverted dropout: scale by 1/(1-p) at train time → no scaling needed at test time — modern standard).</p>
+            <p style="margin-top:8px;"><strong>Ensemble interpretation</strong>: With n neurons and dropout probability p, you train 2^n different thinned networks simultaneously (one per subset of active neurons). At inference, using all neurons with scaled weights is an approximation of averaging all these networks (model averaging).</p>
+            <p style="margin-top:8px;"><strong>Bayesian interpretation</strong>: Dropout is equivalent to approximate variational inference in a Bayesian neural network. Each dropout mask corresponds to sampling from a distribution over network weights. Test-time dropout (MC Dropout) gives uncertainty estimates by averaging multiple stochastic forward passes.</p>
+            <p style="margin-top:8px;"><strong>Where to use dropout</strong>: After dense layers (typically p=0.5). Rarely in conv layers (p=0.2 if used). NOT inside attention layers in Transformers (attention dropout is separate). NOT between BatchNorm and its following layer (causes variance shift).</p>
+            <p style="margin-top:8px;"><strong>Other NN regularization</strong>: Weight decay (L2 on weights), early stopping (track validation loss, stop when it starts increasing), data augmentation (effectively increases dataset size), label smoothing (replace hard targets 0/1 with 0.1/0.9 → prevents overconfidence).</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why does dropout need to scale activations at test time? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>During training with dropout p: each neuron is active with probability (1-p). Expected output of a neuron = (1-p)·actual output. At test time with no dropout: all neurons are active, so output = actual output > expected training output. This breaks the scale of the next layer's inputs. Fix 1 (classic dropout): at test time, multiply all activations by (1-p) to restore expected value. Fix 2 (inverted dropout, modern standard): at training time, divide active activations by (1-p) → expected output at training = actual output. At test time: no scaling needed. PyTorch uses inverted dropout — the model works correctly at test time without any scaling, making deployment simpler.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-reg" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- CNN -->
+        <div class="depth-section" id="cnn">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">⊞</div>CNNs (conv, pooling, receptive field)</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Convolution operation</strong>: Slide a kernel K of size k×k over input X, computing dot product at each position. Output(i,j) = Σ Σ K(m,n)·X(i+m, j+n). This is cross-correlation (not true convolution) but called conv in DL.</p>
+            <p style="margin-top:8px;"><strong>Output size formula</strong>: (W - K + 2P)/S + 1, where W=input width, K=kernel size, P=padding, S=stride. Internalize this: if W=32, K=3, P=1, S=1 → (32-3+2)/1+1 = 32. Same padding preserves spatial size.</p>
+            <p style="margin-top:8px;"><strong>Parameter sharing</strong>: Same kernel weights applied at every position → massive reduction in parameters vs fully connected. A conv layer with 64 filters of 3×3 = 64·3·3·in_channels parameters, regardless of input image size. Vs FC: would be 64·H·W·in_channels — grows with image size.</p>
+            <p style="margin-top:8px;"><strong>Receptive field</strong>: The region of the input a single output neuron "sees." For a 3×3 conv: receptive field = 3×3. Stacking L layers of 3×3 convs: receptive field = (2L+1)×(2L+1). Dilated conv with rate d: effectively k + (k-1)(d-1) per layer — increases receptive field without more parameters.</p>
+            <p style="margin-top:8px;"><strong>Pooling</strong>: Max pool: take max in each window → selects strongest feature, some translation invariance. Average pool: take mean → smoother. Global Average Pool: average entire feature map to a single value per channel — used before final classifier in modern CNNs (replaces massive FC layers). Stride-2 conv often replaces max pool in modern architectures.</p>
+            <p style="margin-top:8px;"><strong>Why CNNs for images</strong>: (1) Translation invariance — a cat detector works anywhere in the image. (2) Local connectivity — pixels near each other are related. (3) Parameter efficiency — shared weights. (4) Hierarchical features — early layers: edges; mid layers: textures; deep layers: objects.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Calculate the output size of: 64×64 input, 3×3 kernel, padding=0, stride=2. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <div class="math">(W - K + 2P)/S + 1 = (64 - 3 + 0)/2 + 1 = 61/2 + 1 = 30.5 + 1 → floor = 31</div>
+              <p>Output: 31×31. The floor operation is applied when (W - K + 2P) is not divisible by S. With padding=1, stride=2: (64-3+2)/2+1 = 63/2+1 = 32.5 → floor = 32. Padding=1 with stride=2 halves the spatial dimensions cleanly.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-cnn" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- RNN -->
+        <div class="depth-section" id="rnn">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">↻</div>RNNs, LSTMs &amp; Vanishing Gradients</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Vanilla RNN</strong>: h_t = tanh(W_h·h_{t-1} + W_x·x_t + b). The same weights W_h are applied at every timestep. Long-range dependencies: for gradient to flow from t=T to t=0, it must pass through T applications of W_h·diag(tanh'(·)).</p>
+            <p style="margin-top:8px;"><strong>Vanishing gradient in RNNs</strong>: If ‖W_h‖ &lt; 1 or tanh' &lt; 1, then the gradient product → 0 as T increases. The network can't learn that a word at position 1 influences the output at position 100. Exploding: if ‖W_h‖ &gt; 1 → gradient → ∞ → NaN. Fix: gradient clipping.</p>
+            <p style="margin-top:8px;"><strong>LSTM (Long Short-Term Memory)</strong>: Adds a cell state c_t (highway) and three gates:
+            <br>• Forget gate: f_t = σ(W_f·[h_{t-1}, x_t]) — what fraction of c_{t-1} to keep
+            <br>• Input gate: i_t = σ(W_i·[h_{t-1}, x_t]) — what new info to write to cell state
+            <br>• Cell candidate: c̃_t = tanh(W_c·[h_{t-1}, x_t]) — new content to write
+            <br>• Cell update: c_t = f_t ⊙ c_{t-1} + i_t ⊙ c̃_t
+            <br>• Output gate: o_t = σ(W_o·[h_{t-1}, x_t]); h_t = o_t ⊙ tanh(c_t)</p>
+            <p style="margin-top:8px;"><strong>Why LSTM solves vanishing gradients</strong>: Gradient through the cell state path: ∂c_t/∂c_{t-1} = f_t. If forget gate ≈ 1 (sigmoid output near 1), gradient flows through unattenuated. This is a learned, adaptive gradient highway — the model can learn to keep relevant information indefinitely. The gates are trained to open/close as needed.</p>
+            <p style="margin-top:8px;"><strong>LSTM vs Transformer</strong>: LSTMs can't be parallelized (each timestep depends on previous hidden state). Transformers process all positions in parallel using attention. For most NLP tasks, Transformers have replaced RNNs. LSTMs still used for: streaming data, low-latency requirements, or very long sequences where attention is too expensive.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Explain precisely why LSTM's cell state solves vanishing gradients that RNN's hidden state doesn't. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>RNN gradient path: ∂h_T/∂h_0 = Π_{t=1}^{T} W_h·diag(tanh'(·)). Each factor ≤ ‖W_h‖·max(tanh') = ‖W_h‖·1. If ‖W_h‖ &lt; 1, product → 0 exponentially. LSTM cell state gradient path: ∂c_t/∂c_{t-1} = f_t (elementwise, no matrix multiply through a saturating nonlinearity). The forget gate f_t = σ(·) ∈ (0,1). If the network learns to set f_t ≈ 1 (keep everything), gradient ≈ 1 at each step → no vanishing. The key difference: the cell state has a direct, multiplicative skip connection through time (c_t = f_t⊙c_{t-1} + ...) unlike the hidden state which goes through tanh and W_h at every step. This is the same intuition as residual connections in CNNs — a direct path for gradients.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-rnn" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ACTIVATIONS -->
+        <div class="depth-section" id="activ">
+          <h2><div class="depth-icon" style="background:rgba(247,129,102,0.15);color:var(--c3)">ƒ</div>Activation Functions &amp; Dead Neurons</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Sigmoid / tanh</strong>: Saturate at extremes → near-zero gradient → vanishing gradients. Sigmoid also not zero-centered (outputs 0 to 1) → all gradients for weights are same sign → zig-zag gradient descent. Tanh is zero-centered but still saturates.</p>
+            <p style="margin-top:8px;"><strong>ReLU</strong>: max(0, x). Non-saturating for x&gt;0 → gradient = 1 → no vanishing for positive inputs. Fast to compute. Problem: <strong>Dead ReLU</strong> — if a neuron's input is always negative, output is always 0, gradient is always 0 → weight never updates → neuron "dies." Causes: large learning rate (overshoot into dead zone), poor initialization (biases too negative). Fix: Leaky ReLU (max(0.01x, x)), ELU, or proper initialization.</p>
+            <p style="margin-top:8px;"><strong>GELU (Gaussian Error Linear Unit)</strong>: x·Φ(x) where Φ is the Gaussian CDF. GELU(x) = x·0.5·(1+erf(x/√2)). Smooth approximation to ReLU. Stochastic interpretation: randomly zero out x with probability 1-Φ(x). Used in BERT, GPT, most modern Transformers. Why over ReLU: (1) Smooth (differentiable everywhere) → cleaner gradients. (2) Can have small negative outputs near 0 → richer representation. (3) Empirically better performance on NLP tasks.</p>
+            <p style="margin-top:8px;"><strong>SiLU / Swish</strong>: x·σ(x). Used in newer models (LLaMA 2/3 uses SwiGLU = SiLU gated linear unit in FFN). Similar properties to GELU.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why did GELU replace ReLU in Transformers — and what does it actually compute? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>ReLU has two problems for Transformers: (1) Hard threshold at 0 → non-smooth → gradient discontinuity at x=0. (2) Strictly non-negative output → can't represent negative information. GELU: x·Φ(x). At large negative x: Φ(x)→0 → output→0. At large positive x: Φ(x)→1 → output≈x. Near x=0: smooth transition. This is like a "soft ReLU" that stochastically gates activation — for each neuron with input x, GELU computes "let x pass through with probability Φ(x)." This means: small positive values are partially gated (not fully passed), small negative values are partially negative (not fully zeroed). This richer, smooth gating empirically helps Transformers learn more nuanced representations. The smoothness also makes optimization easier. BERT paper (Devlin 2018) used GELU; GPT-2 used GELU; it's become the default for Transformers unless replaced by SwiGLU.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p3-activ" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>

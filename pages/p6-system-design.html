@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ML System Design · AI/ML Depth</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html" class="active">System Design</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Pillar 6</div>
+        <a href="#frame">ML Design Framework</a>
+        <a href="#genai">GenAI System Design</a>
+        <a href="#rec">Design: Recommendation</a>
+        <a href="#search">Design: Semantic Search</a>
+        <a href="#debug">Debug Failing Pipeline</a>
+        <a href="#eval">ML Evaluation at Scale</a>
+      </aside>
+
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-high" style="margin-bottom:12px;display:inline-flex;">Pillar 6 · ML System Design · HIGH</span>
+          <h1>ML System Design</h1>
+          <p style="margin-top:8px;">2025-26 shift: <em>"Evaluation methodology is the new system design."</em> Interviewers now grade cost, latency, guardrails, and monitoring over pretty architecture diagrams. Know the framework AND be able to answer "how would you debug this in prod?"</p>
+        </div>
+
+        <!-- FRAMEWORK -->
+        <div class="depth-section" id="frame">
+          <h2><div class="depth-icon" style="background:rgba(121,192,255,0.15);color:var(--c6)">⬡</div>ML Design Framework (6 Steps)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">The Framework That Works in Any ML Design Round</h3>
+            <p style="font-size:0.875rem;">A 45-minute ML system design round has roughly 8 minutes per step. Candidates who follow a structured framework cover more ground, make better trade-offs, and signal senior thinking. Candidates who just draw boxes fail.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Step 1 — Problem Definition (8 min)</strong>: Clarify the business objective. What metric defines success? What's the ML task (classification, ranking, generation, retrieval)? Constraints: latency SLA, throughput, budget, privacy. Scope: what's in/out. Say: "Before I design anything — what's the business objective and the key metric we're optimizing?"</p>
+            <p style="margin-top:8px;"><strong>Step 2 — Data Pipeline (8 min)</strong>: Where does data come from? Collection, labeling strategy (manual, weak supervision, LLM-labeled, active learning). Features: what features matter, any feature engineering, real-time vs batch. Data freshness requirements. Class imbalance. Privacy/PII handling.</p>
+            <p style="margin-top:8px;"><strong>Step 3 — Model Architecture (8 min)</strong>: Start simple. Baseline first, then complexity. Justify each complexity addition with the problem requirements. For GenAI: LLM choice (size/latency/cost tradeoff), RAG vs fine-tuning decision, architecture of the pipeline.</p>
+            <p style="margin-top:8px;"><strong>Step 4 — Training &amp; Evaluation (8 min)</strong>: Loss function and why. Offline evaluation: metrics (precision/recall/AUC/NDCG/BLEU/RAGAS). Training compute, hardware, batch size. Online evaluation: A/B testing design, holdback group, guardrails. How do you know the model is working in production?</p>
+            <p style="margin-top:8px;"><strong>Step 5 — Serving &amp; Deployment (8 min)</strong>: Batch vs online inference. Latency budget (p50/p99). Scaling: horizontal, model quantization (INT8/FP16), distillation. Model versioning, rollback strategy. Caching (embedding cache, response cache). Load balancing.</p>
+            <p style="margin-top:8px;"><strong>Step 6 — Monitoring, Failure Modes &amp; Trade-offs (5 min)</strong>: Data drift detection. Model performance degradation alerts. Feedback loop design. Failure modes and how to recover. Trade-offs you made (and what you'd change with more time/budget). This is where senior thinking shows.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Your interviewer asks "design an ML system" and gives you zero other constraints. What's the first thing you say? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Say: <strong>"Before I dive into the architecture, I want to make sure I understand what we're actually optimizing for."</strong> Then ask: (1) What's the business objective? (user engagement, revenue, safety, latency?) (2) What scale are we operating at? (users/day, requests/second) (3) What's the latency requirement? (real-time &lt;100ms, batch overnight?) (4) What data do we have? (labeled, unlabeled, historical behavior?) (5) Any compliance constraints? (GDPR, PII, regulated industry?) <strong>Why this matters</strong>: Interviewers reward candidates who don't just start drawing boxes. An interviewer who says "design a recommendation system" might mean: a feed ranker for 1B users (ads-adjacent, latency critical), or a product recommender for a 1000-user SaaS (simple CF is fine). These require completely different solutions. Asking scope questions is how you signal that you think like a senior engineer, not a textbook answer machine.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p6-frame" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- GENAI SYSTEM DESIGN -->
+        <div class="depth-section" id="genai">
+          <h2><div class="depth-icon" style="background:rgba(121,192,255,0.15);color:var(--c6)">🏗</div>GenAI System Design (5 Dimensions)</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">2025-26 Key Insight</h3>
+            <p style="font-size:0.875rem;">"Evaluation methodology is the new system design." Interviewers grade cost-conscious architecture, guardrails, and monitoring over diagrams. Generic textbook answers no longer pass.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p>GenAI system design interviews evaluate on 5 dimensions:</p>
+            <p style="margin-top:8px;"><strong>1. LLM Awareness</strong>: Can you articulate differences between model families? When to use GPT-4o vs GPT-4o-mini vs LLaMA-3-8B vs Claude Haiku? Trade-offs: cost per token, context window, speed, quality, privacy (self-hosted vs API). Don't say "use GPT-4" without justifying the cost/latency/quality trade-off for this use case.</p>
+            <p style="margin-top:8px;"><strong>2. Modular Pipeline Thinking</strong>: Break the system into components that can be independently optimized, monitored, and replaced. Input processing → retrieval → reranking → generation → post-processing → output validation. Each stage has its own latency budget, failure mode, and metric. Don't treat it as a black box.</p>
+            <p style="margin-top:8px;"><strong>3. Cost-Conscious Architecture</strong>: LLM inference is expensive. Show you think about: token count (shorter prompts = lower cost), caching (semantic cache for repeated queries), model tier selection (use GPT-4o-mini for cheap classification, GPT-4o only when needed), batching (async batch API for non-real-time tasks is 50% cheaper on OpenAI). Quantify: "This design costs $X/1M queries."</p>
+            <p style="margin-top:8px;"><strong>4. Safety &amp; Governance</strong>: Input guardrails: classify query before routing (off-topic, malicious, PII). Output guardrails: detect hallucination, PII in output, harmful content. Audit logging: every LLM call logged with input/output for compliance. Content moderation pipeline. Rate limiting per user. Role-based access control for different tiers of the system.</p>
+            <p style="margin-top:8px;"><strong>5. Communication</strong>: Explain trade-offs, not just architecture. "I chose RAG over fine-tuning because X, though fine-tuning would be better if Y." This is how senior engineers communicate — they acknowledge what they're trading away.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Design a production RAG system that answers internal HR policy questions for 50k employees. Include cost, latency, and guardrails. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p><strong>Clarifications first</strong>: SLA: &lt;3s response. Scale: 50k users, maybe 10k queries/day. Data: 500 policy docs (static, quarterly updates). Privacy: no PII in queries/answers, responses must be auditable.</p>
+              <p><strong>Architecture</strong>:
+              <br>1. <strong>Indexing</strong>: Parse PDFs → semantic chunking (300 tokens, 50 overlap) → embed with text-embedding-3-small ($0.02/1M tokens) → Qdrant (self-hosted on k8s) with metadata (policy_type, date, department, version). Re-index on each quarterly update.
+              <br>2. <strong>Input guardrails</strong>: Classify query: HR-related vs off-topic (lightweight classifier or GPT-4o-mini). Detect PII in query (regex + spaCy NER). If off-topic → deflect. If PII → strip before retrieval.
+              <br>3. <strong>Retrieval</strong>: Hybrid search (dense + BM25), top-10 → BGE cross-encoder reranker → top-3 chunks. Semantic cache: embed query, check if similar query answered in last 24h (cosine sim &gt; 0.95) → return cached response (saves LLM cost for repeated questions).
+              <br>4. <strong>Generation</strong>: GPT-4o-mini (cheaper, fast, good enough for policy Q&A). System prompt: "Answer only from the provided context. Cite the policy section. If uncertain, say 'Please contact HR directly.'" Max output: 500 tokens.
+              <br>5. <strong>Output guardrails</strong>: Faithfulness check (GPT-4o-mini judge: "is this claim in the context?"). PII detection in output. Confidence score: if retrieval score is low, append "This may not be complete — please verify with HR."
+              <br>6. <strong>Audit logging</strong>: Log every query, retrieved chunks, response, user_id (hashed), timestamp to data warehouse. HR team can review any flagged interaction.
+              <br>7. <strong>Cost estimate</strong>: 10k queries/day × 2k tokens avg = 20M tokens/day. GPT-4o-mini: $0.15/1M input tokens → $3/day for generation. Embedding: ~$0.20/day. Reranker: self-hosted (fixed cost). Total: ~$100/month. With 50% cache hit rate: ~$50/month.
+              <br>8. <strong>Monitoring</strong>: Weekly RAGAS eval on 100 sampled queries. Alert if faithfulness score drops below 0.85. Thumbs up/down per response. Monthly HR team review of flagged/low-confidence answers.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p6-genai" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- RECOMMENDATION -->
+        <div class="depth-section" id="rec">
+          <h2><div class="depth-icon" style="background:rgba(121,192,255,0.15);color:var(--c6)">⭐</div>Design: Recommendation System</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Classic design interview prompt</strong>: "Design a recommendation system for a video streaming platform / e-commerce site."</p>
+            <p style="margin-top:8px;"><strong>Two-stage architecture (standard for scale)</strong>:
+            <br><strong>Stage 1 — Candidate Generation (retrieval)</strong>: Filter billions → hundreds. Speed matters. Methods: matrix factorization (ALS, SVD), collaborative filtering, content-based retrieval (item embeddings), popularity-based, or approximate nearest neighbor on user/item embeddings. Recall metric here: does the candidate set contain the eventually relevant items?
+            <br><strong>Stage 2 — Ranking</strong>: Score hundreds → dozens. Quality matters. Methods: GBDT (LightGBM), deep learning rankers (two-tower, wide & deep), LLM-based reranking. Features: user history, item features, context (time, device), cross-features (user × item interactions). Metrics: AUC, NDCG@k, calibration.</p>
+            <p style="margin-top:8px;"><strong>Collaborative Filtering (CF)</strong>: User-based CF: find similar users, recommend what they liked. Item-based CF: find similar items to what user liked. Matrix factorization: decompose user-item matrix R ≈ U·Vᵀ, embed users and items in latent space. ALS (Alternating Least Squares): optimize U holding V fixed, then V holding U fixed. Implicit feedback (clicks) vs explicit (ratings).</p>
+            <p style="margin-top:8px;"><strong>Cold start problem</strong>: New user: no history → can't do CF. Solutions: onboarding survey (collect explicit preferences), popularity-based recommendations, content-based (metadata of items user browsed), cross-context signals (device, time of day, location). New item: no interactions → content-based embedding, editorial boost, limited random exploration.</p>
+            <p style="margin-top:8px;"><strong>Evaluation</strong>: Offline: precision@k, recall@k, NDCG@k (normalized discounted cumulative gain — penalizes good items ranked lower). Online: A/B test click-through rate, watch time, conversion, long-term retention. Never just use CTR — optimizing CTR without watch time leads to clickbait recommendations.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Why do recommendation systems use a two-stage pipeline instead of a single model over all items? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Scoring all items with a complex model is computationally infeasible. Netflix has 15k+ titles; Spotify has 100M+ tracks; Amazon has 350M+ products. A 2ms neural ranking model × 350M items = 700M ms per query → unusable. The two-stage approach manages this: Stage 1 (retrieval) uses cheap, parallelizable methods (ANN search on item embeddings) to reduce from 350M to ~500 candidates in &lt;10ms. Stage 2 (ranking) applies expensive but accurate models to only 500 items — feasible in &lt;50ms. This is a latency-accuracy trade-off managed through engineering, not a quality compromise. The key insight: the retrieval stage needs to be high-recall (don't miss relevant items), while the ranking stage needs to be high-precision (the top-k should be good). Metrics differ: retrieval uses recall@N, ranking uses NDCG@k.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p6-rec" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- SEMANTIC SEARCH -->
+        <div class="depth-section" id="search">
+          <h2><div class="depth-icon" style="background:rgba(121,192,255,0.15);color:var(--c6)">🔎</div>Design: Semantic Search</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Semantic search vs keyword search</strong>: Keyword search (BM25, Elasticsearch): exact/fuzzy term matching. Fast, interpretable, no ML needed. Fails on: synonyms ("automobile" ≠ "car"), paraphrases, intent understanding. Semantic search: embed query and documents in shared space, find similar embeddings. Handles synonyms and paraphrases. Needs embedding model. Hybrid: combine both → best of both worlds.</p>
+            <p style="margin-top:8px;"><strong>Architecture for production semantic search</strong>:
+            <br>1. Offline: embed all documents with bi-encoder (e.g., BAAI/bge-large) → HNSW index in vector DB
+            <br>2. Online: embed query → ANN search (top-100) → BM25 re-score → RRF fusion → cross-encoder rerank (top-10) → return results
+            <br>3. Caching: cache embeddings for repeated queries, cache ANN results for identical queries</p>
+            <p style="margin-top:8px;"><strong>Bi-encoder vs cross-encoder</strong>: Bi-encoder: embed query and document independently → compare embeddings. Fast (can pre-compute doc embeddings). Less accurate. Cross-encoder: take [query, doc] jointly as input → single relevance score. Slow (can't pre-compute), very accurate. Standard: bi-encoder for candidate retrieval, cross-encoder for reranking.</p>
+            <p style="margin-top:8px;"><strong>Evaluation</strong>: MRR (Mean Reciprocal Rank), NDCG@k, precision@k. Need labeled query-document pairs (click data or human annotation). Test: query expansion (do near-synonymous queries get same results?), fresh document latency (how quickly are new documents searchable?).</p>
+          </div>
+          <button class="mark-btn" data-topic-id="p6-search" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- DEBUG -->
+        <div class="depth-section" id="debug">
+          <h2><div class="depth-icon" style="background:rgba(121,192,255,0.15);color:var(--c6)">🐛</div>Debugging a Failing GenAI Pipeline</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Senior-Signal Question</h3>
+            <p style="font-size:0.875rem;">"A Senior Engineer does not guess. A Senior Engineer isolates the variable." — the framing interviewers use to distinguish surface-level vs senior-level answers on debugging scenarios.</p>
+          </div>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>The variable isolation principle</strong>: A GenAI pipeline has multiple components (retrieval, reranking, LLM prompt, parsing). When something fails, you can't debug everything at once. Isolate: hold all variables constant except one, test, then move to the next. This is how you avoid "let's try changing the prompt and the chunk size and see what happens" — which tells you nothing.</p>
+            <p style="margin-top:8px;"><strong>Common failure scenario: "RAG answers are wrong/hallucinated"</strong></p>
+            <div class="math">Diagnosis tree:
+
+1. RETRIEVE: Is the right context being retrieved?
+   Test: log retrieved chunks for failing queries.
+   → If chunks are wrong: fix retrieval (embedding, chunking, index)
+   → If chunks are correct: go to 2
+
+2. GENERATE: Does the LLM use the retrieved context faithfully?
+   Test: manually check if answer contradicts the retrieved chunks.
+   → If LLM ignores context: fix prompt ("ONLY use provided context")
+   → If LLM follows context but context is incomplete: go to 3
+
+3. COVERAGE: Is relevant info missing from the index?
+   Test: manual search — is the answer anywhere in the docs?
+   → If not indexed: fix ingestion pipeline
+   → If indexed but not retrieved: fix retrieval</div>
+            <p style="margin-top:8px;"><strong>Common failure scenario: "Latency too high (&gt;3s)"</strong>: Profile each component: embedding latency, ANN search latency, reranker latency, LLM latency, post-processing. Find the bottleneck. Solutions by component: Embedding: cache frequently-used queries. ANN: tune ef parameter (search quality vs speed trade-off). Reranker: use lighter model or reduce top-k to rerank. LLM: switch to faster model tier, reduce max_tokens, enable streaming, use speculative decoding.</p>
+            <p style="margin-top:8px;"><strong>Common failure scenario: "Model degraded after data update"</strong>: Check: did the document format change (different chunking needed)? Did embedding model change (re-embed everything with same model)? Did the LLM model version change (prompt may need updating)? Roll back to last known good configuration component by component.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-killer">Killer</span> Your RAG customer support chatbot is returning wrong answers for 15% of queries. Production. 50k users. Walk me through exactly what you do. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p><strong>Immediate (first 30 minutes):</strong></p>
+              <p>1. Pull a sample of 50-100 failing queries (from user thumbs-down, escalations, or automated low-confidence flags). Don't debug from intuition — debug from data.</p>
+              <p>2. For each failing query, look at: (a) the retrieved chunks, (b) the final answer, (c) the expected answer. This tells you: retrieval problem vs generation problem.</p>
+              <p><strong>If majority are retrieval problems (wrong chunks):</strong>
+              <br>• Check embedding similarity scores — are they low? (threshold too permissive)
+              <br>• Check chunk boundaries — are relevant sentences split across chunks?
+              <br>• Run BM25 on the same queries — does it retrieve better? → add hybrid search
+              <br>• Check if the right documents are even indexed (ingestion bug?)</p>
+              <p><strong>If majority are generation problems (hallucination):</strong>
+              <br>• Tighten the system prompt: "Answer ONLY using the provided context. Say 'I don't have information about this' if the answer isn't in the context."
+              <br>• Add a faithfulness check layer: LLM-judge every response before returning to user, flag low-faithfulness responses for human review
+              <br>• Lower temperature (reduce creative hallucination)</p>
+              <p><strong>Short-term fix:</strong> Route low-confidence queries (low retrieval score OR low faithfulness score) to a fallback: "I'm not confident about this — let me connect you to a human agent." Better to admit uncertainty than confidently hallucinate.</p>
+              <p><strong>Long-term fix:</strong> Set up automated RAGAS eval as a weekly CI job. Catch regressions before they reach 15% failure rate. Build a labeled eval set of 500 queries with known correct answers — run eval before every deploy.</p>
+            </div>
+          </div>
+          <button class="mark-btn" data-topic-id="p6-debug" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- EVAL -->
+        <div class="depth-section" id="eval">
+          <h2><div class="depth-icon" style="background:rgba(121,192,255,0.15);color:var(--c6)">📏</div>ML Evaluation &amp; Metrics at Scale</h2>
+          <div style="font-size:0.875rem;color:var(--text-muted);line-height:1.9;margin-top:16px;">
+            <p><strong>Offline vs Online evaluation</strong>: Offline: evaluate on historical data or test set. Fast, cheap, but may not reflect production behavior (distribution shift, feedback loops). Online (A/B test): expose to real users, measure real business metrics. Ground truth but slow and expensive. Both are needed.</p>
+            <p style="margin-top:8px;"><strong>A/B testing for ML models</strong>: Split traffic randomly (e.g., 90% control / 10% treatment). Measure business metrics: CTR, conversion, session length, NPS. Statistical significance: p-value &lt; 0.05, minimum detectable effect. Duration: enough traffic for power (avoid peeking problem — don't stop early when you see significance). Guardrails: monitor for negative impacts on secondary metrics (latency, engagement on adjacent features).</p>
+            <p style="margin-top:8px;"><strong>Data drift detection</strong>: Input distribution drift: monitor feature distributions over time, alert on KL divergence or Population Stability Index (PSI) above threshold. Label drift: if ground truth labels available (delayed), monitor model accuracy over time. Concept drift: the relationship between inputs and outputs changes. Most dangerous — model becomes silently wrong. Example: a recommendation model trained before COVID performs terribly after (user behavior changed completely).</p>
+            <p style="margin-top:8px;"><strong>Metrics by ML task</strong>:
+            <br>Classification: Accuracy (balanced data only), F1 (imbalanced), AUC-ROC, AUC-PR (severe imbalance), log loss (calibration)
+            <br>Regression: MAE (robust to outliers), RMSE (penalizes large errors), MAPE (relative error), R²
+            <br>Ranking: NDCG@k, MAP, MRR
+            <br>LLM / GenAI: BLEU, ROUGE (text generation, weak proxy), BERTScore (semantic similarity), human eval (gold standard), LLM-as-judge (scalable approximation of human eval), RAGAS (RAG-specific)</p>
+            <p style="margin-top:8px;"><strong>Calibration</strong>: A model is calibrated if its predicted probabilities match actual frequencies. A model that says "80% likely" should be correct 80% of the time. Measure: Reliability diagram, ECE (Expected Calibration Error). Important when predictions drive business decisions (pricing, risk, medical). Fix: Platt scaling, isotonic regression, temperature scaling.</p>
+          </div>
+          <h3 style="margin:20px 0 12px;">The Interrogation</h3>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> How would you detect that your deployed model is silently degrading without labeled ground truth? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Several signals without labels: (1) <strong>Input distribution drift</strong>: Monitor feature statistics (mean, variance, distribution) over rolling windows. Alert on PSI &gt; 0.2 or KL divergence above threshold. If input changes → model may behave differently. (2) <strong>Output distribution drift</strong>: Monitor model output distribution — if predicted probability distribution shifts significantly, something has changed. A classifier that used to output 70% positive now outputs 90% → likely drift. (3) <strong>Business proxy metrics</strong>: Click-through rate, conversion, time-on-page, escalation rate — these are leading indicators of model quality. If CTR drops → recommendation quality may have degraded. (4) <strong>Confidence/entropy monitoring</strong>: If model uncertainty (output entropy, confidence scores) increases significantly → input is out-of-distribution. (5) <strong>Delayed labels</strong>: In some systems (fraud, churn), ground truth arrives with a lag. Set up a delayed label pipeline: score at time t, get label at t+30 days, compute retrospective accuracy. Alert if it drops. (6) <strong>Canary evaluation</strong>: Maintain a small labeled "golden set" (100-500 examples). Run model on this weekly. Alert if accuracy drops more than X%. Best practice: combine all of these — no single signal is reliable alone.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="p6-eval" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="../js/app.js"></script>
+</body>
+</html>
