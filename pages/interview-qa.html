@@ -65,11 +65,16 @@
         <a href="#features">Features &amp; Data Prep</a>
         <a href="#stats">Statistics for DS</a>
         <a href="#dl">Deep Learning</a>
+        <a href="#cv">Computer Vision</a>
         <a href="#nlp">NLP &amp; Transformers</a>
         <a href="#llm">GenAI &amp; LLMs</a>
+        <a href="#genmodels">GANs, VAEs &amp; Diffusion</a>
         <a href="#rag">RAG &amp; Chunking</a>
         <a href="#agentic">Agentic AI</a>
+        <a href="#frameworks">LangChain &amp; Frameworks</a>
         <a href="#mlops">MLOps &amp; Deployment</a>
+        <a href="#deploy">Serving, Docker &amp; Cloud</a>
+        <a href="#responsible">Responsible AI</a>
       </aside>
 
       <div class="topic-content">
@@ -157,6 +162,10 @@
           <div class="qa-block">
             <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What is the curse of dimensionality? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>As the number of features grows, data becomes exponentially sparse — every point ends up far from every other point, so "nearest neighbor" stops meaning anything and models need exponentially more data to generalize. Distance-based methods (KNN, K-means) suffer most. Fixes: feature selection, PCA/dimensionality reduction, or learned embeddings that compress meaning into fewer dimensions.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are semi-supervised and self-supervised learning? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Semi-supervised</strong>: you have a little labeled data and a lot of unlabeled data — train on the labeled part, use the model to pseudo-label the rest, retrain (self-training, label propagation). <strong>Self-supervised</strong>: no human labels at all — invent the labels from the data itself: mask a word and predict it (BERT), predict the next token (GPT), or pull augmented views of the same image together (contrastive learning, SimCLR). Self-supervised pretraining is literally how every modern LLM gets its knowledge — worth saying that out loud in an interview.</p></div>
           </div>
           <button class="mark-btn" data-topic-id="qa-mlbasics" style="margin-top:16px;">Mark as Mastered</button>
         </div>
@@ -370,7 +379,51 @@
             <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is transfer learning? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>Start from a model trained on a huge general dataset, then adapt it to your task with a little data — either freeze the base and train just a new head, or fine-tune everything with a small learning rate. It works because early layers learn universal features (edges, textures, grammar) that transfer. Every modern LLM workflow is transfer learning: pretrain once, fine-tune/adapt endlessly.</p></div>
           </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> LSTM vs GRU — what's the difference and which do you pick? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Both are gated RNNs that fix vanishing gradients with a memory pathway. <strong>LSTM</strong> has three gates (forget, input, output) and a separate cell state. <strong>GRU</strong> simplifies to two gates (update, reset) and merges cell and hidden state — fewer parameters, faster to train, often equal accuracy. Rule of thumb: try GRU first for speed on smaller datasets; LSTM sometimes edges ahead on longer sequences. Honest 2026 note: for most new NLP work you'd reach for a Transformer anyway — these matter for streaming/low-latency and legacy systems.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are knowledge distillation and model pruning? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Two ways to shrink models. <strong>Distillation</strong>: train a small "student" model to imitate a big "teacher" — the student learns from the teacher's soft probability outputs (which carry richer information than hard labels, e.g. "this is 70% cat, 25% dog"). DistilBERT keeps ~97% of BERT's performance at 40% of the size this way. <strong>Pruning</strong>: delete weights that contribute least (small magnitudes, whole neurons or attention heads), then fine-tune to recover. Both compose with quantization — the standard toolbox for edge/on-device deployment.</p></div>
+          </div>
           <button class="mark-btn" data-topic-id="qa-dl" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- COMPUTER VISION -->
+        <!-- ============================== -->
+        <div class="depth-section" id="cv">
+          <h2><div class="depth-icon" style="background:rgba(3,105,161,0.1);color:var(--c6)">◫</div>Computer Vision</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">JDs ask for this</h3>
+            <p style="font-size:0.875rem;">Real AI/ML Engineer JDs (Bacancy, Gateway) list Computer Vision alongside LLMs — expect at least one detection/OCR scenario if CV is on the JD.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Image classification vs object detection vs segmentation? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Classification</strong>: one label for the whole image ("this is a cat"). <strong>Object detection</strong>: find <em>where</em> things are — bounding boxes + labels for every object (YOLO, Faster R-CNN). <strong>Segmentation</strong>: label every pixel — semantic (all "car" pixels) or instance (car #1 vs car #2; Mask R-CNN, SAM). Pick by the question: "what is it" → classify, "where is it" → detect, "exact outline" → segment.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How does YOLO work, and why is it the default for real-time detection? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>YOLO ("You Only Look Once") does detection in a <strong>single forward pass</strong>: the image is divided into a grid, and each cell directly predicts bounding boxes, confidence, and class probabilities — no separate region-proposal stage like two-stage detectors (Faster R-CNN). One pass = fast enough for video (30+ FPS). Overlapping duplicate boxes are cleaned up with <strong>non-max suppression</strong>. Trade-off: two-stage detectors edge ahead on small/crowded objects; YOLO wins on speed and deployment simplicity. In practice you fine-tune a pretrained YOLOv8/v11 on 2–5k annotated images (Roboflow/LabelImg for labeling, albumentations for augmentation).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are IoU and mAP? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>IoU (Intersection over Union)</strong>: overlap between predicted and true bounding box — area of overlap ÷ area of union, 0 to 1. A detection typically "counts" if IoU ≥ 0.5. <strong>mAP (mean Average Precision)</strong>: the standard detection metric — average precision across recall levels, per class, then averaged over classes. mAP@0.5 uses the 0.5 IoU threshold; mAP@0.5:0.95 (COCO-style) averages over stricter thresholds and rewards tighter boxes. For a defect-detection interview scenario: report mAP, but tune the confidence threshold toward <strong>recall</strong> — missing a defect costs more than a false alarm.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Walk me through an OCR pipeline for scanned invoices. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Four stages: (1) <strong>Preprocess</strong> — this dominates accuracy: deskew, denoise, binarize (Otsu thresholding) with OpenCV. (2) <strong>OCR</strong> — pick by document quality: Tesseract for clean prints, PaddleOCR/TrOCR for harder cases, or managed services (AWS Textract, Google Document AI) which also return table/form structure. (3) <strong>Extract fields</strong> — regex/NER for fixed formats, or an LLM with structured (JSON) output for messy layouts. (4) <strong>Validate</strong> — check that totals add up, dates parse, required fields exist; route failures to human review. Modern shortcut worth mentioning: multimodal LLMs can read documents directly, but cost more per page — hybrid pipelines are the production norm.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is data augmentation and why does it matter more in CV? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Creating modified copies of training images — flips, rotations, crops, brightness/color shifts, blur, cutout — so the model sees more variation than you actually collected. It's a regularizer (fights overfitting) and cheap insurance against real-world conditions (lighting, angle, occlusion). Rule: only apply transforms that preserve the label — don't horizontally flip digits, don't recolor a defect whose color <em>is</em> the signal. Libraries: albumentations, torchvision transforms.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> How do you deploy a vision model for real-time inference on a production line? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Export the trained model out of its framework into an optimized runtime: <strong>ONNX</strong> (portable, framework-agnostic) or <strong>TensorRT</strong> (NVIDIA-specific — fuses layers, quantizes to FP16/INT8, typically 3–5× faster). Serve it in a Docker container with GPU access (NVIDIA Container Toolkit), fed by the camera stream (RTSP or Kafka for multiple lines). Design decisions to mention: batch frames vs per-frame latency, confidence threshold tuned for recall, and <strong>drift monitoring</strong> — watch the confidence distribution over time; lighting changes and camera drift silently degrade vision models, so sample frames for periodic human relabeling.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-cv" style="margin-top:16px;">Mark as Mastered</button>
         </div>
 
         <!-- ============================== -->
@@ -409,6 +462,22 @@
           <div class="qa-block">
             <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is a context window? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>The maximum number of tokens the model can consider at once — its working memory. Everything (system prompt, chat history, retrieved documents, its own output) must fit inside it. Bigger windows cost more: attention memory/compute grows with sequence length (the KV cache grows linearly, and naive attention compute grows quadratically). This constraint is <em>why chunking and RAG exist</em> — you retrieve only the relevant pieces instead of stuffing everything in.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What are Bag of Words and TF-IDF, and are they still relevant? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Bag of Words</strong>: represent a document as word counts, ignoring order. <strong>TF-IDF</strong> improves it by weighting: term frequency × inverse document frequency — words frequent in <em>this</em> document but rare across the corpus score high ("the" scores ~0, "arrhythmia" scores high). No semantics — "car" and "automobile" are unrelated. Still relevant: TF-IDF/BM25 powers the <strong>sparse half of hybrid search</strong> in RAG, is a strong fast baseline for text classification, and wins on exact keyword/ID matching where embeddings fumble.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Explain Word2Vec and its famous property. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Word2Vec (2013) learns a vector per word by predicting context: <strong>Skip-gram</strong> predicts surrounding words from the center word; <strong>CBOW</strong> does the reverse. Trained efficiently with negative sampling. The famous property: vector arithmetic captures meaning — <em>king − man + woman ≈ queen</em>. Limitation that leads to the next era: vectors are <strong>static</strong> — "bank" has one vector regardless of context — which is exactly what contextual models (ELMo, BERT) fixed. GloVe (co-occurrence based) and FastText (character n-grams, handles unseen words) are the siblings to name.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Stemming vs lemmatization? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Both reduce words to a base form. <strong>Stemming</strong> chops suffixes with rules (Porter stemmer): fast but crude — "studies" → "studi" (not a word). <strong>Lemmatization</strong> uses a dictionary and part-of-speech to return the true base form: "studies" → "study", "better" → "good"; slower but correct. Use stemming for speed in search indexing, lemmatization when the output must be readable. Modern caveat worth saying: LLM pipelines skip both — subword tokenization handles morphology implicitly; these matter for classical NLP pipelines and TF-IDF/BM25 preprocessing.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is Named Entity Recognition and how is it implemented? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>NER finds and classifies entities in text — people, organizations, locations, dates, amounts ("<em>Apple</em> [ORG] hired <em>Tim</em> [PER] in <em>March</em> [DATE]"). Implementations by era: rules/regex → CRFs → BiLSTM-CRF → today's standard, a <strong>fine-tuned BERT with a token-classification head</strong> using BIO tags (B-PER, I-PER, O). Off-the-shelf: spaCy for speed and production, or an LLM with structured output for zero-shot flexibility on rare entity types. Production uses to mention: PII detection/redaction (spaCy + Presidio), invoice field extraction, metadata enrichment for RAG chunks.</p></div>
           </div>
           <button class="mark-btn" data-topic-id="qa-nlp" style="margin-top:16px;">Mark as Mastered</button>
         </div>
@@ -454,7 +523,51 @@
             <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> An LLM app is too slow and expensive. What levers do you pull? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>In rough order of ROI: (1) <strong>Smaller/faster model</strong> for easy requests — route only hard ones to the big model (model cascading). (2) <strong>Prompt caching</strong> — reuse the computed prefix for repeated system prompts/documents; major providers discount cached tokens heavily. (3) <strong>Trim the prompt</strong> — shorter context = linear cost savings; retrieve less, summarize history. (4) <strong>Streaming</strong> — perceived latency drops even if total time doesn't. (5) <strong>Batching &amp; KV-cache reuse</strong> on self-hosted inference (vLLM, continuous batching). (6) <strong>Quantize</strong> self-hosted models. (7) Cache whole responses for repeated queries (semantic caching).</p></div>
           </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is Mixture of Experts (MoE)? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Instead of one big feed-forward block, an MoE layer holds many parallel "expert" blocks and a small <strong>router</strong> that sends each token to only 1–2 of them. Result: huge total parameter count, but only a fraction <em>active</em> per token — Mixtral 8×7B has ~47B parameters but runs ~13B worth of compute per token. That's the appeal: big-model quality at small-model inference cost. Trade-offs: all experts must sit in memory, and training needs load-balancing tricks so the router doesn't favor a few experts. Most frontier models are now MoE-based.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are MQA and GQA, and why do they exist? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>They shrink the <strong>KV cache</strong> — the memory that grows with every token of context and limits serving throughput. Standard multi-head attention stores separate keys/values for every head. <strong>MQA (Multi-Query Attention)</strong>: all heads share <em>one</em> K/V set — cache shrinks ~h-fold, small quality hit. <strong>GQA (Grouped Query Attention)</strong>: middle ground — heads share K/V in groups (e.g., 32 query heads, 8 KV groups) — nearly MQA's memory savings at nearly full quality. Llama 3 and most modern LLMs use GQA; it's why they can serve long contexts affordably.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Which benchmarks and metrics are used to evaluate LLMs? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Capability benchmarks: <strong>MMLU</strong> (broad knowledge, 57 subjects), <strong>HumanEval</strong> (code — Pass@k = did any of k samples pass the unit tests), <strong>GSM8K</strong> (math word problems), MT-Bench/arena-style Elo for chat quality. Text-overlap metrics for generation tasks: <strong>BLEU</strong> (precision-oriented, translation), <strong>ROUGE</strong> (recall-oriented, summarization), <strong>BERTScore</strong> (semantic similarity via embeddings — survives paraphrasing where BLEU/ROUGE fail). Honest caveat interviewers respect: public benchmarks leak into training data over time, so teams increasingly rely on private eval sets and LLM-as-judge with human calibration.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Beyond CoT — what are self-consistency and Tree-of-Thought? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Self-consistency</strong>: sample the same CoT prompt several times at temperature &gt; 0 and take the <strong>majority-vote answer</strong> — different reasoning paths converging on one answer is strong evidence it's right; typically adds 5–20% on math/reasoning at N× the cost. <strong>Tree-of-Thought</strong>: instead of one linear chain, branch into multiple partial reasoning steps, evaluate which branches look promising, expand the best and backtrack from dead ends — search over reasoning. Also name <strong>prompt chaining</strong>: splitting a task into sequential LLM calls (extract → summarize → format), which is more reliable than one mega-prompt.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Walk me through fine-tuning Llama 3 8B on company data, end to end. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Data</strong>: 5–20k instruction→response pairs in chat format; clean PII; split 90/5/5. Quality beats quantity. (2) <strong>Method</strong>: QLoRA — 4-bit quantized frozen base + LoRA adapters (r=16–64) via HuggingFace PEFT/TRL — fits on a single A100 or even an RTX 4090. (3) <strong>Training</strong>: LR ~1e-4 (LoRA) with warmup, 3–5 epochs, early stopping on validation loss. Watch for <strong>catastrophic forgetting</strong> — the model losing general ability while learning your domain; mitigate with lower LR, fewer epochs, and mixing in general instruction data. (4) <strong>Evaluate</strong>: held-out set with LLM-as-judge + human review, plus a general-capability check to confirm nothing broke. (5) <strong>Ship</strong>: merge adapters (or hot-swap per tenant), serve via vLLM, or export GGUF for CPU/edge.</p></div>
+          </div>
           <button class="mark-btn" data-topic-id="qa-llm" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- GENERATIVE MODELS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="genmodels">
+          <h2><div class="depth-icon" style="background:rgba(109,40,217,0.1);color:var(--c4)">◈</div>GANs, VAEs &amp; Diffusion</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How does a GAN work, and what is mode collapse? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Two networks in a game: a <strong>generator</strong> turns random noise into fake samples, a <strong>discriminator</strong> tries to tell fake from real. They train against each other — the generator improves until fakes fool the discriminator. Famous failure: <strong>mode collapse</strong> — the generator finds a few outputs that reliably fool the discriminator and produces only those, ignoring the diversity of the real data (a face GAN generating the same three faces). GAN training is notoriously unstable (it's a minimax game, not a simple loss to descend), which is a key reason diffusion models displaced GANs for image generation.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is a VAE and what's the reparameterization trick? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>A Variational Autoencoder compresses inputs into a <strong>probability distribution</strong> in latent space (a mean and variance, not a single point), then decodes samples from it back to data. Loss = reconstruction error + a KL term keeping the latent space close to a standard Gaussian, which makes the space smooth — nearby latent points decode to similar outputs, so you can sample and interpolate. The <strong>reparameterization trick</strong>: you can't backprop through random sampling, so rewrite z = μ + σ·ε (with ε ~ N(0,1)) — the randomness moves into ε, and gradients flow through μ and σ. VAEs generate blurrier images than GANs/diffusion but give you a meaningful latent space — and Stable Diffusion runs its diffusion <em>inside</em> a VAE's latent space.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do diffusion models work, and why did they beat GANs? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Forward process</strong>: gradually add noise to a real image over many steps until it's pure static. <strong>Training</strong>: teach a network (usually a U-Net) to predict the noise that was added at each step. <strong>Generation</strong>: start from pure noise and iteratively denoise, step by step, into a new image. Why they won: (1) <strong>stable training</strong> — it's a simple regression loss, no adversarial game; (2) <strong>full mode coverage</strong> — no mode collapse, better diversity; (3) state-of-the-art quality. Cost: generation needs many denoising steps (slow); samplers like DDIM and distillation cut steps dramatically.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Explain how Stable Diffusion generates an image from a text prompt. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Four pieces: (1) A <strong>text encoder</strong> (CLIP) turns the prompt into embeddings. (2) The diffusion runs in a <strong>VAE's compressed latent space</strong> (~64×64 instead of 512×512 pixels) — this "latent diffusion" is the efficiency trick that made it run on consumer GPUs. (3) A <strong>U-Net</strong> iteratively denoises a random latent, attending to the text embeddings via cross-attention so the image matches the prompt. (4) <strong>Classifier-free guidance</strong>: each step predicts noise twice — with and without the prompt — and extrapolates toward the prompted direction; the guidance scale knob trades prompt-faithfulness vs naturalness. Finally the VAE decoder upscales the clean latent to the full image.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-genmodels" style="margin-top:16px;">Mark as Mastered</button>
         </div>
 
         <!-- ============================== -->
@@ -519,6 +632,14 @@
             <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Common RAG failure modes and fixes? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>(1) <strong>Right answer not retrieved</strong> → better chunking, hybrid search, query rewriting (expand/reformulate the user's terse query with an LLM), increase K + re-rank. (2) <strong>Retrieved but ignored</strong> → "lost in the middle"; put the best chunks first/last, retrieve fewer, tighten the prompt ("answer ONLY from context"). (3) <strong>Question spans multiple documents</strong> → multi-hop: decompose the query into sub-questions, retrieve per sub-question. (4) <strong>Stale index</strong> → scheduled/event-driven re-indexing. (5) <strong>Chunks lack context</strong> ("the company" — which company?) → contextual retrieval: prepend document title/summary metadata to each chunk before embedding. (6) <strong>Format questions</strong> (tables, images) → structure-aware parsing before chunking.</p></div>
           </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are query transformations — HyDE, multi-query, step-back? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Techniques that rewrite the user's query <em>before</em> retrieval, because terse user queries embed poorly. <strong>Multi-query</strong>: LLM generates 3–5 rephrasings, retrieve for all, merge results. <strong>HyDE (Hypothetical Document Embeddings)</strong>: LLM writes a <em>hypothetical answer</em> to the question, and you embed <em>that</em> for search — a fake answer looks more like the real answer-containing chunk than the question does (answer-to-answer matching beats question-to-answer). <strong>Step-back prompting</strong>: abstract the specific question to its general principle ("what's the seating capacity of a 2019 Model X?" → "Tesla Model X specifications"), retrieve for both. <strong>Query decomposition</strong>: split multi-part questions into sub-queries, retrieve per part. These are the cheapest fixes when the right chunk exists but isn't being found.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What is GraphRAG and when is it worth it over vector RAG? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>GraphRAG builds a <strong>knowledge graph</strong> from your corpus at ingestion: an LLM extracts entities and relationships, communities of related entities are detected (Leiden algorithm), and each community gets an LLM-written summary. At query time you traverse the graph and its summaries instead of (or alongside) similarity search. It wins where vector RAG structurally fails: <strong>multi-hop questions</strong> ("which suppliers of our German plants had incidents in 2024?" — the answer spans many documents connected by relationships) and <strong>global questions</strong> ("what are the main themes across all these reports?" — no single chunk contains the answer). Costs: expensive ingestion (LLM calls over the whole corpus), complex updates. Honest recommendation: hybrid vector RAG covers most use cases; reach for GraphRAG when questions are genuinely relational/aggregative.</p></div>
+          </div>
           <button class="mark-btn" data-topic-id="qa-rag" style="margin-top:16px;">Mark as Mastered</button>
         </div>
 
@@ -559,7 +680,39 @@
             <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Agentic RAG vs plain RAG? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>Plain RAG is a fixed pipeline: retrieve once → answer. <strong>Agentic RAG</strong> gives the model control over retrieval: it can rewrite the query, choose <em>which</em> source/index to search, retrieve multiple times, check whether the results actually answer the question, and search again if not (self-correcting loop). Better for multi-hop and ambiguous questions; costs more latency and tokens. Mention the middle ground: "corrective RAG" — a lightweight grader checks retrieval quality and triggers a re-search only when needed.</p></div>
           </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Name the main agent design patterns beyond ReAct. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Plan-and-Execute</strong>: draft the full step plan up front, then execute steps (optionally replanning) — better than ReAct for long-horizon tasks because it doesn't lose the plot mid-way. <strong>Reflexion / self-critique</strong>: generate → critique own output → revise; a second pass catches errors the first pass can't see. <strong>Supervisor (orchestrator-worker)</strong>: a router agent decomposes the task and delegates to specialist sub-agents (research, code, review), then synthesizes. <strong>Handoffs / swarm</strong>: decentralized — each agent can transfer the conversation to a peer (billing agent hands off to tech support). Interview answer that lands: pick the <em>simplest</em> pattern that fits — most production "agents" are Plan-and-Execute pipelines with one or two tools, not elaborate multi-agent swarms.</p></div>
+          </div>
           <button class="mark-btn" data-topic-id="qa-agentic" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- FRAMEWORKS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="frameworks">
+          <h2><div class="depth-icon" style="background:rgba(29,95,196,0.1);color:var(--c1)">⛓</div>LangChain &amp; Frameworks</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">JDs name these explicitly</h3>
+            <p style="font-size:0.875rem;">"LangChain/LangGraph experience" appears verbatim in AI/ML Engineer JDs. Know what each framework is <em>for</em> and when you'd skip them entirely.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> LangChain vs LlamaIndex vs LangGraph — which for what? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>LangChain</strong>: general-purpose LLM plumbing — chains, prompts, tool bindings, integrations with everything; fastest way to prototype. <strong>LlamaIndex</strong>: specialized for the <em>data side</em> of RAG — ingestion, indexing, and retrieval strategies (its parent-child/small-to-big retrieval is first-class). <strong>LangGraph</strong>: stateful agent orchestration as an explicit <em>graph</em> — nodes, conditional edges, loops, checkpointing (resume after crash), human-in-the-loop interrupts; the most production-ready of the three for agents. Mature answer to close with: for a simple RAG API, a framework is optional — direct SDK calls are easier to debug; frameworks earn their complexity when you need their orchestration, not their hello-world.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What memory types does LangChain offer for a long conversation? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Ordered by sophistication: <strong>Buffer</strong> — keep everything (fails at context limits); <strong>BufferWindow</strong> — keep the last k turns (cheap, forgets earlier context); <strong>Summary</strong> — LLM-summarize history as it grows (scales, loses detail); <strong>SummaryBuffer</strong> — the production default: verbatim recent turns + summary of older ones; <strong>VectorStoreRetrieverMemory</strong> — embed past turns, retrieve only relevant ones per query; <strong>Entity memory</strong> — track facts per entity (customer, vehicle, ticket). For a 20-turn support conversation: SummaryBuffer + entity memory is the standard combo — full recent fidelity, compressed history, durable facts.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> CrewAI vs AutoGen — the other multi-agent frameworks? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>CrewAI</strong>: role-based teams — you define agents by role/goal/backstory ("Researcher", "Writer", "Reviewer") and run them sequentially or hierarchically; the most approachable mental model. <strong>AutoGen</strong> (Microsoft): event-driven actor model — agents exchange async messages, strong at code-execution workflows (built-in sandboxing, human-proxy agents). <strong>LangGraph</strong> remains the pick when you need explicit state machines and checkpointing. One-liner comparison: CrewAI for readable role-play teams, AutoGen for async/code-heavy research workflows, LangGraph for controlled production graphs.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you stream LLM responses to users, and why does it matter? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Streaming sends tokens as they're generated instead of waiting for the full response. It's the single biggest <em>perceived</em>-latency win: time-to-first-token drops from many seconds to under one, even though total time is unchanged. Mechanics: the LLM API yields chunks (async iterator) → your backend forwards them via <strong>SSE (Server-Sent Events)</strong> or WebSocket (FastAPI's StreamingResponse) → the UI renders incrementally. Wrinkles worth naming: structured/JSON output needs partial-parse handling, tool-calling turns can't stream their final answer until tools finish, and voice pipelines stream <em>sentence-by-sentence</em> into TTS so audio starts in ~1–2s.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-frameworks" style="margin-top:16px;">Mark as Mastered</button>
         </div>
 
         <!-- ============================== -->
@@ -595,7 +748,79 @@
             <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What is a feature store and what problem does it solve? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
             <div class="qa-answer"><p>A central place to define a feature once and serve it both for <strong>training</strong> (historical, batch) and <strong>inference</strong> (live, low-latency). The problem it kills: <strong>training-serving skew</strong> — the classic failure where a feature is computed one way in the offline training pipeline (SQL over the warehouse) and slightly differently in the online service (application code), so the model sees subtly different inputs in production and quietly underperforms. It also enables feature reuse across teams and <em>point-in-time correct</em> training joins (no future leakage). Names: Feast (open source), Tecton, SageMaker/Vertex feature stores.</p></div>
           </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What does CI/CD look like for an ML model (vs normal software)? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Everything from software CI/CD (lint, unit tests, build) <em>plus</em> ML-specific gates: (1) <strong>data validation</strong> — schema, ranges, null rates (Great Expectations) — bad data fails the pipeline before training; (2) <strong>reproducible training</strong> — pinned data version (DVC) + code version + config; (3) <strong>evaluation gate</strong> — new model must beat the current champion on a held-out set by a margin, or the pipeline stops; (4) <strong>staged rollout</strong> — staging → canary → full, with auto-rollback on live-metric regression. The phrase that signals seniority: "the model is an artifact of code + data, so CI must version and test both."</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Model hit 94% in training but 81% in production. Diagnose it. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Work through causes in likelihood order: (1) <strong>Data leakage</strong> in training — preprocessing stats computed before the split, target-derived features, duplicates across splits — making the 94% a lie; re-audit the pipeline first. (2) <strong>Training-serving skew</strong> — features computed differently in the serving path than in training (the classic; a feature store fixes it). (3) <strong>Distribution shift</strong> — production inputs differ from training data (compare feature distributions, PSI per feature). (4) <strong>Concept drift</strong> — the world changed since the training snapshot. (5) <strong>Label quality</strong> — production "ground truth" measured differently. The structure of the answer matters as much as the content: say you'd <em>verify each hypothesis with data</em>, not guess-and-retrain.</p></div>
+          </div>
           <button class="mark-btn" data-topic-id="qa-mlops" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- SERVING, DOCKER & CLOUD -->
+        <!-- ============================== -->
+        <div class="depth-section" id="deploy">
+          <h2><div class="depth-icon" style="background:rgba(26,127,75,0.1);color:var(--c2)">🚀</div>Serving, Docker &amp; Cloud</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">The engineering half of "AI/ML Engineer"</h3>
+            <p style="font-size:0.875rem;">FastAPI, Docker, Kubernetes and one cloud platform appear in nearly every AI/ML Engineer JD. These questions test whether you can <em>ship</em>, not just train.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Key patterns for serving a model behind a FastAPI endpoint? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Load the model once at startup</strong> (lifespan handler), never per-request. (2) <strong>Pydantic models</strong> for request/response — free validation and docs. (3) Inference is CPU/GPU-bound, so don't block the async event loop — run it in an executor or use sync endpoints with multiple workers. (4) <strong>/health endpoint</strong> for orchestrators (Kubernetes probes hit it). (5) Auth + <strong>rate limiting</strong> at the edge. (6) Long jobs → background tasks/queue, return a job ID instead of holding the connection. (7) Metrics middleware (Prometheus) for latency percentiles — P99, not average, is what users feel.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What's specific about Dockerizing an ML/GPU workload? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>ML images are huge (PyTorch + CUDA ≈ 10 GB+), so: <strong>multi-stage builds</strong> (build deps in one stage, copy only runtime artifacts), strict <code>.dockerignore</code>, and <strong>mount model weights as volumes</strong> rather than baking them into the image (10 GB rebuilds per model update otherwise). GPU access needs the <strong>NVIDIA Container Toolkit</strong> (<code>--gpus all</code>) and a CUDA-matched base image. PyTorch DataLoaders need <code>--shm-size</code> raised. Add a HEALTHCHECK, run as non-root, pin every version. The theme interviewers want: images should be <em>reproducible and small</em>; artifacts and data live outside.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What does Kubernetes give an ML service, and which pieces matter? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Self-healing, scaling, and rollout management for containers. The pieces that matter for ML: <strong>Deployment</strong> (declares replicas + image), <strong>Service</strong> (stable network name), <strong>readiness probe with a long initial delay</strong> — models take a minute to load, and traffic must not arrive early — <strong>HPA</strong> (autoscale on CPU or a custom metric like queue depth; GPU pods scale on request rate since GPU isn't overcommittable), <strong>GPU scheduling</strong> via node selectors and taints (GPU nodes are expensive — keep CPU workloads off them), resource requests/limits, and Secrets/ConfigMaps for keys. Managed flavors: EKS/GKE/AKS; KServe adds ML-specific serving (scale-to-zero, canary) on top.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you roll out a new model version with zero downtime? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>RollingUpdate</strong> with maxSurge=1 / maxUnavailable=0: Kubernetes starts a new pod, waits until its <em>readiness probe</em> passes (model fully loaded), shifts traffic, then kills an old pod — repeat. The probe is the whole trick: a pod that reports ready before the model loads serves errors. For model changes you usually want <strong>canary</strong> on top: route 5% of traffic to the new version, watch error rate and latency, ramp gradually, auto-rollback on regression (Argo Rollouts automates this). And always keep the previous version's image tagged and warm — rollback should be one command, not a retrain.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What makes vLLM fast? Explain PagedAttention and continuous batching. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Two ideas. <strong>PagedAttention</strong>: the KV cache normally requires one big contiguous memory block per request, reserved for the <em>maximum</em> possible length — most of it wasted. vLLM manages the cache in small fixed-size pages, like an OS manages virtual memory — fragmentation drops from ~60–80% waste to under 4%, so far more requests fit on the GPU at once. <strong>Continuous batching</strong>: instead of waiting for a whole batch to finish (one long response holds everything hostage), finished sequences leave and new requests join the batch <em>every step</em> — the GPU never idles. Together: several-fold throughput gains over naive serving. Alternatives to name: TensorRT-LLM (max performance on fixed NVIDIA hardware), TGI.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is speculative decoding? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>A small, fast <strong>draft model</strong> proposes the next several tokens; the big model verifies them all in <em>one</em> forward pass (verification is parallel, generation isn't). Accepted tokens are kept; the first rejected one is corrected by the big model, and drafting resumes from there. Because the acceptance math preserves the big model's exact output distribution, you get <strong>2–3× faster generation with identical quality</strong> — no accuracy trade-off. It works because most tokens are "easy" (grammar, common phrases) and a small model predicts them just as well.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Serverless (Lambda) vs containers (ECS/Kubernetes) for AI services? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Lambda/serverless</strong>: pay-per-invocation, scales to zero, but 15-min runtime and ~10 GB memory limits, no GPU, and <strong>cold starts</strong> hurt large models. Right for: preprocessing, event triggers (new file in S3 → kick off ingestion), glue code, light CPU inference. <strong>Containers (ECS/Fargate/K8s)</strong>: persistent processes, GPUs, big memory, no time limits — right for model servers, streaming/stateful agents, anything latency-sensitive. Production shape: Lambda for the event-driven edges, containers for the model core. On managed ML platforms: SageMaker (AWS), Vertex AI (GCP), Azure ML — same concepts (training jobs, endpoints, registries, pipelines) with different names; say you learn the concepts, so the cloud is a detail.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-deploy" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- RESPONSIBLE AI -->
+        <!-- ============================== -->
+        <div class="depth-section" id="responsible">
+          <h2><div class="depth-icon" style="background:rgba(192,57,43,0.1);color:var(--c3)">⚖</div>Responsible AI &amp; Governance</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you handle PII in an AI application? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Layered: (1) <strong>Detect</strong> — NER-based scanners (spaCy, Microsoft Presidio, AWS Comprehend) find names, emails, phone numbers, IDs. (2) <strong>Redact or pseudonymize before the LLM sees it</strong> — replace with placeholders ("[CUSTOMER_NAME]"), optionally re-insert after generation. (3) <strong>Exclude PII from logs, embeddings, and fine-tuning data</strong> — a model fine-tuned on raw support chats can memorize and regurgitate customer data. (4) Encrypt at rest and in transit; scope retrieval per tenant so one customer's documents can't surface in another's answers. Regulations to name-drop appropriately: GDPR (EU), HIPAA (US healthcare), the EU AI Act.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you detect and measure bias in a model? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Slice performance by sensitive attribute (gender, age, region) and compare group metrics. Two standard fairness definitions — which conflict, and knowing that is the depth signal: <strong>demographic parity</strong> (equal positive-prediction rates across groups) and <strong>equal opportunity</strong> (equal true-positive rates — qualified candidates approved at the same rate regardless of group). You generally can't satisfy both; the right one depends on the harm you're preventing. Tools: IBM AIF360, Fairlearn, Google's What-If Tool; for LLMs, bias benchmarks like BBQ and WinoBias. Root cause is usually the training data — fixes range from reweighting/resampling to threshold-per-group to collecting better data.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What's a production guardrail stack for a customer-facing LLM app? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Input side</strong>: prompt-injection screening, topic filters (stay on-domain), PII redaction. <strong>Output side</strong>: toxicity/safety classifiers (Llama Guard, OpenAI Moderation API), groundedness check against retrieved context, format validation, competitor/pricing-claim filters per business rules. <strong>Process side</strong>: red-teaming before launch (deliberate adversarial attacks), model cards documenting intended use and limits, human review queues for flagged outputs, and audit logs of every prompt/response for incident forensics. Key framing: guardrails are <em>layers</em> — no single filter is reliable, so you stack cheap checks and accept some latency cost.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> A healthcare client needs an LLM feature. What changes vs a normal deployment? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Compliance boundary first</strong>: HIPAA-eligible services only, BAAs with every vendor touching PHI — including the LLM API provider; otherwise self-host. (2) <strong>Data minimization</strong>: de-identify before inference where possible; no PHI in logs, traces, or third-party analytics. (3) <strong>Human-in-the-loop is non-negotiable</strong> for anything diagnosis-adjacent — the model drafts, a clinician approves; design the approval gate into the workflow, not around it. (4) <strong>Provenance</strong>: answers must cite sources (RAG over approved clinical content, not open-ended generation). (5) <strong>Audit everything</strong> — who asked what, what was retrieved, what was answered, immutably. (6) Extra rigorous evals for the failure modes that matter (hallucinated dosages, missed contraindications) before any rollout.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-responsible" style="margin-top:16px;">Mark as Mastered</button>
         </div>
 
         <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border-soft);">
