@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Q&amp;A Bank · AI/ML Depth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .role-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px; margin: 18px 0 8px;
+    }
+    .role-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .role-card h4 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .role-card p {
+      font-family: 'IBM Plex Serif', serif;
+      font-size: 0.84rem; color: var(--text-body); line-height: 1.7;
+    }
+    .qa-code {
+      background: var(--surface2); border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm); padding: 12px 16px; margin: 10px 0;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+      color: var(--text-body); line-height: 1.8; overflow-x: auto; white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../index.html" class="nav-brand">⚡ AI/ML Depth</a>
+    <div class="nav-links">
+      <a href="../index.html">Mind Map</a>
+      <a href="study-plan.html">Study Plan</a>
+      <a href="p1-math.html">Math</a>
+      <a href="p2-classical-ml.html">Classical ML</a>
+      <a href="p3-deep-learning.html">Deep Learning</a>
+      <a href="p4-transformers.html">Transformers</a>
+      <a href="p5-genai.html">GenAI Stack</a>
+      <a href="p6-system-design.html">System Design</a>
+      <a href="interview-qa.html" class="active">Interview Q&amp;A</a>
+    </div>
+    <div class="nav-search" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search topics… (Ctrl+K)" readonly />
+    </div>
+  </nav>
+  <div id="search-overlay"><div id="search-box"><input id="search-input-big" type="text" placeholder="Search…"/><div id="search-results"></div></div></div>
+
+  <div class="page">
+    <div class="topic-layout">
+      <aside class="topic-sidebar">
+        <div class="sidebar-section">Interview Q&amp;A Bank</div>
+        <a href="#roles">Roles &amp; What They Test</a>
+        <a href="#mlbasics">ML Fundamentals</a>
+        <a href="#classical">Classical ML</a>
+        <a href="#metrics">Metrics &amp; Evaluation</a>
+        <a href="#features">Features &amp; Data Prep</a>
+        <a href="#stats">Statistics for DS</a>
+        <a href="#dl">Deep Learning</a>
+        <a href="#nlp">NLP &amp; Transformers</a>
+        <a href="#llm">GenAI &amp; LLMs</a>
+        <a href="#rag">RAG &amp; Chunking</a>
+        <a href="#agentic">Agentic AI</a>
+        <a href="#mlops">MLOps &amp; Deployment</a>
+      </aside>
+
+      <div class="topic-content">
+        <div style="margin-bottom:32px;">
+          <span class="badge badge-critical" style="margin-bottom:12px;display:inline-flex;">Interview Q&amp;A Bank · ALL ROLES</span>
+          <h1>Interview Questions &amp; Answers</h1>
+          <p style="margin-top:8px;">Rapid-fire questions with <strong>simple, plain-language answers</strong> — the kind you give in the first 30 seconds before the interviewer probes deeper. Covers AI Engineer, AI/ML Engineer, ML Engineer, and Data Science interviews, from ML-from-scratch to Generative AI and Agentic AI. For deep derivations, follow the pillar links in each section.</p>
+        </div>
+
+        <!-- ============================== -->
+        <!-- ROLES -->
+        <!-- ============================== -->
+        <div class="depth-section" id="roles">
+          <h2><div class="depth-icon" style="background:rgba(29,95,196,0.1);color:var(--c1)">☰</div>Roles &amp; What Each Interview Tests</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Know which game you're playing</h3>
+            <p style="font-size:0.875rem;">The same company interviews an "AI Engineer" and an "ML Engineer" very differently. Read the JD, map it to one of these four buckets, and weight your prep accordingly.</p>
+          </div>
+          <div class="role-grid">
+            <div class="role-card">
+              <h4 style="color:var(--c1)">AI Engineer</h4>
+              <p>Builds <em>on top of</em> LLMs. Tested on: RAG, chunking, embeddings, prompt engineering, agents, tool calling, evals, latency/cost trade-offs. Light on classical ML math.</p>
+            </div>
+            <div class="role-card">
+              <h4 style="color:var(--c2)">ML Engineer</h4>
+              <p>Trains and ships models. Tested on: classical ML depth, deep learning, feature engineering, model serving, drift, pipelines. Coding rounds are heavier.</p>
+            </div>
+            <div class="role-card">
+              <h4 style="color:var(--c5)">AI/ML Engineer (hybrid)</h4>
+              <p>Startup-style role: everything above, shallower each. Tested on breadth — expect one classical question, one DL question, one GenAI question, one system design.</p>
+            </div>
+            <div class="role-card">
+              <h4 style="color:var(--c4)">Data Scientist</h4>
+              <p>Insight and experimentation. Tested on: statistics, A/B testing, p-values, SQL, metrics design, regression/classification intuition, communicating results.</p>
+            </div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> "Walk me through a project" — what are they really asking? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>They want to hear: (1) the <strong>business problem</strong>, (2) why you chose your approach <strong>over alternatives</strong>, (3) how you <strong>measured</strong> success, (4) what <strong>failed</strong> and what you did about it. Use a 2-minute structure: problem → data → approach → metric → result → what you'd improve. The follow-up questions will drill into whichever part you sound least confident about.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-roles" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- ML FUNDAMENTALS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="mlbasics">
+          <h2><div class="depth-icon" style="background:rgba(26,127,75,0.1);color:var(--c2)">◉</div>ML Fundamentals</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is machine learning, in one sentence? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Machine learning is teaching a computer to find patterns from <strong>data</strong> instead of writing explicit rules — the algorithm adjusts its internal parameters to minimize its mistakes on examples, then applies those learned patterns to new, unseen data.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Supervised vs unsupervised vs reinforcement learning? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Supervised</strong>: data comes with labels (answer keys) — predict house prices, classify spam. <strong>Unsupervised</strong>: no labels — find structure yourself, like clustering customers or reducing dimensions. <strong>Reinforcement</strong>: an agent learns by trial and error, getting rewards or penalties — game playing, robotics, and RLHF for aligning LLMs.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is overfitting and underfitting? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Overfitting</strong>: the model memorizes the training data — including its noise — so it aces training but fails on new data. <strong>Underfitting</strong>: the model is too simple to capture the pattern at all, so it does badly on both. You detect overfitting by a large gap between training and validation performance. Fixes: more data, regularization, simpler model, early stopping, dropout (in neural nets).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Explain the bias-variance tradeoff simply. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Bias</strong> = error from being too simple (wrong assumptions — underfitting). <strong>Variance</strong> = error from being too sensitive to the specific training data (overfitting). Total error = bias² + variance + irreducible noise. Simple models: high bias, low variance. Complex models: low bias, high variance. The art of ML is finding the sweet spot — usually via cross-validation and regularization.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Why do we split data into train / validation / test? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Train</strong>: the model learns from this. <strong>Validation</strong>: used to tune hyperparameters and compare models — the model never trains on it. <strong>Test</strong>: touched exactly once at the very end for an honest estimate of real-world performance. If you tune on the test set, its score becomes optimistic and meaningless — that's a form of leakage.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is K-fold cross-validation, and what is the K here? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Split the data into <strong>K equal parts (folds)</strong>. Train on K−1 folds, validate on the remaining one, rotate K times so every fold gets a turn as validation, then average the K scores. <strong>K here is simply the number of folds</strong> — typically 5 or 10. Higher K = more reliable estimate but more compute. K = n (one sample per fold) is called leave-one-out CV. Use <em>stratified</em> K-fold for imbalanced classification so each fold keeps the class ratio.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Classification vs regression? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Classification</strong> predicts a category (spam / not spam, cat / dog). <strong>Regression</strong> predicts a continuous number (price, temperature). The giveaway in an interview problem: "how much / how many" → regression; "which one / yes-no" → classification.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Parametric vs non-parametric models? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Parametric</strong>: fixed number of parameters regardless of data size (linear regression, logistic regression, naive Bayes). Fast, needs less data, but limited flexibility. <strong>Non-parametric</strong>: complexity grows with the data (KNN, decision trees, kernel SVM). More flexible, but needs more data and can overfit. LLMs are technically parametric — huge but fixed parameter count.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Generative vs discriminative models? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Discriminative</strong> models learn the boundary between classes — they model P(y|x) directly (logistic regression, SVM). <strong>Generative</strong> models learn how the data itself is distributed — P(x, y) or P(x) — so they can <em>generate</em> new samples (naive Bayes, GANs, diffusion models, LLMs). LLMs are generative: they model the probability of the next token and can sample new text.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What is the curse of dimensionality? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>As the number of features grows, data becomes exponentially sparse — every point ends up far from every other point, so "nearest neighbor" stops meaning anything and models need exponentially more data to generalize. Distance-based methods (KNN, K-means) suffer most. Fixes: feature selection, PCA/dimensionality reduction, or learned embeddings that compress meaning into fewer dimensions.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-mlbasics" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- CLASSICAL ML -->
+        <!-- ============================== -->
+        <div class="depth-section" id="classical">
+          <h2><div class="depth-icon" style="background:rgba(26,127,75,0.1);color:var(--c2)">🌲</div>Classical ML</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Deep dive available</h3>
+            <p style="font-size:0.875rem;">These are the quick answers. Full derivations (normal equation, convexity proof, entropy calculations) live in <a href="p2-classical-ml.html">Pillar 2 · Classical ML</a>.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> How does linear regression work, simply? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>It draws the best straight line (or hyperplane) through the data by minimizing the sum of squared differences between predictions and actual values. "Best" is found either with a closed-form formula (normal equation) or gradient descent. Output is continuous, so it's for regression problems.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Why is logistic regression called "regression" if it classifies? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Because it <em>regresses a probability</em>: it fits a linear function, then squashes the output through a sigmoid to get a value between 0 and 1 — P(y=1|x). You then threshold that probability (usually at 0.5) to classify. It's trained with cross-entropy (log) loss, not squared error, because that keeps the loss convex and the gradients healthy.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How does KNN work, and how do you choose the K in KNN? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>K-Nearest Neighbors classifies a new point by looking at the <strong>K closest training points</strong> and taking a majority vote (or averaging, for regression). There's no training phase — it memorizes the data. <strong>K here = how many neighbors get to vote.</strong> Small K (1–3): very flexible, sensitive to noise (overfits). Large K: smoother, but can blur class boundaries (underfits). Choose K via cross-validation; use an odd K for binary classification to avoid tie votes. Always scale features first, since KNN is distance-based.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How does K-means work, and how do you choose the K in K-means? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>K-means groups data into <strong>K clusters</strong>: (1) place K random centroids, (2) assign each point to its nearest centroid, (3) move each centroid to the mean of its assigned points, (4) repeat until stable. <strong>K here = the number of clusters you ask for</strong> — the algorithm can't discover it. To choose K: the <strong>elbow method</strong> (plot within-cluster variance vs K, pick where the improvement flattens into an "elbow") or the <strong>silhouette score</strong> (how well each point fits its cluster vs the next-best one — pick K with the highest score). Business context often decides too, e.g. "we can only run 4 marketing segments."</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> KNN vs K-means — people confuse them. What's the difference? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Completely different algorithms that share a letter. <strong>KNN</strong> is <em>supervised</em> (needs labels) and K = number of neighbors that vote on a prediction. <strong>K-means</strong> is <em>unsupervised</em> (no labels) and K = number of clusters to form. KNN predicts for new points; K-means organizes existing points into groups.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> How does a decision tree decide where to split? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>At each node it tries every feature and threshold, and picks the split that makes the resulting groups most "pure" — measured by <strong>Gini impurity</strong> or <strong>entropy / information gain</strong>. It repeats recursively until leaves are pure or a stopping rule hits (max depth, min samples). Trees overfit easily, which is why we prune them or use ensembles.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Bagging vs boosting — what's the difference? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Bagging</strong> (Random Forest): train many models <em>in parallel</em> on random bootstrap samples, then average/vote. Reduces <strong>variance</strong> — great for unstable models like deep trees. <strong>Boosting</strong> (XGBoost, LightGBM): train models <em>sequentially</em>, each one focusing on the errors of the previous ones. Reduces <strong>bias</strong> — turns weak learners into a strong one. Boosting usually wins on accuracy for tabular data; bagging is more robust to noise and easier to parallelize.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why does Random Forest also randomize features, not just rows? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>If one feature is very strong, every bagged tree would split on it first and all trees would look alike — averaging correlated trees barely reduces variance. By giving each split only a random subset of features, trees are forced to be <strong>different from each other (decorrelated)</strong>, and averaging diverse trees cuts variance much more.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is XGBoost and why does everyone use it for tabular data? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>XGBoost is gradient boosting engineered to be fast and regularized: it adds trees that correct the current ensemble's errors using gradients of the loss, with built-in L1/L2 regularization, tree pruning, missing-value handling, and parallelized split-finding. On structured/tabular data it (and LightGBM/CatBoost) still routinely beats neural networks while being cheaper to train and tune.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What does an SVM do, and what is the kernel trick in one line? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>An SVM finds the separating boundary with the <strong>maximum margin</strong> — the widest possible gap between classes, defined by the closest points (support vectors). The <strong>kernel trick</strong>: instead of explicitly mapping data into a higher dimension where it becomes separable, use a kernel function to compute the dot products in that space directly — you get non-linear boundaries at linear cost. Common kernels: linear, polynomial, RBF.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Why is naive Bayes "naive," and why does it still work? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>It naively assumes all features are <strong>independent given the class</strong> — almost never true (words in an email are clearly not independent). But classification only needs the <em>right class to score highest</em>, not correct probabilities, so the wrong-but-consistent estimates still rank classes correctly. It's fast, needs little data, and remains a strong baseline for text classification.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> L1 vs L2 regularization — difference in one breath? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Both add a penalty on weight size to the loss to prevent overfitting. <strong>L1 (Lasso)</strong> penalizes |w| — it pushes weights to <em>exactly zero</em>, doing automatic feature selection. <strong>L2 (Ridge)</strong> penalizes w² — it shrinks all weights smoothly toward zero but rarely to zero, handling correlated features better. <strong>Elastic Net</strong> combines both. Geometric intuition: L1's diamond-shaped constraint has corners on the axes (sparse solutions); L2's circle doesn't.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-classical" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- METRICS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="metrics">
+          <h2><div class="depth-icon" style="background:rgba(192,90,0,0.1);color:var(--c5)">◔</div>Metrics &amp; Evaluation</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Explain the confusion matrix in plain words. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>A 2×2 table of what your classifier got right and wrong: <strong>True Positive</strong> (predicted yes, was yes), <strong>True Negative</strong> (predicted no, was no), <strong>False Positive</strong> (predicted yes, was no — a false alarm), <strong>False Negative</strong> (predicted no, was yes — a miss). Every classification metric — precision, recall, F1, accuracy — is computed from these four numbers.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Precision vs recall — and when do you prioritize which? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Precision</strong> = of everything I flagged positive, how many were right? TP/(TP+FP). <strong>Recall</strong> = of all the actual positives out there, how many did I catch? TP/(TP+FN). Prioritize <strong>recall</strong> when missing a positive is costly: cancer screening, fraud detection (better to over-flag). Prioritize <strong>precision</strong> when false alarms are costly: spam filters (never bin a real email), legal document flagging. There's always a tradeoff — moving the decision threshold trades one for the other.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is F1 score and when do you use it? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>F1 is the <strong>harmonic mean</strong> of precision and recall: 2PR/(P+R). The harmonic mean punishes imbalance — if either precision or recall is terrible, F1 is terrible, unlike a simple average. Use it when you need one number that respects both, especially on imbalanced data where accuracy lies.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why is accuracy misleading on imbalanced data? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>If 99% of transactions are legit, a model that predicts "legit" for <em>everything</em> scores 99% accuracy while catching zero fraud. On imbalanced problems, report precision/recall/F1 for the minority class, PR-AUC, or use a confusion matrix — never bare accuracy. This is one of the most common interview traps.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What does ROC-AUC actually measure? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>The ROC curve plots true-positive rate vs false-positive rate across all thresholds. <strong>AUC is the probability that the model ranks a random positive above a random negative</strong> — 1.0 is perfect, 0.5 is coin-flip. It's threshold-independent, good for comparing models. Caveat: on heavily imbalanced data, ROC-AUC looks optimistic; <strong>PR-AUC</strong> is more honest there because it ignores the flood of true negatives.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Which metrics for regression, and when? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>MAE</strong>: average absolute error — robust to outliers, easy to explain in business units. <strong>MSE/RMSE</strong>: squares errors, so big mistakes hurt much more — use when large errors are disproportionately bad. <strong>R²</strong>: fraction of variance explained — good for "how much signal did we capture" but can be gamed by adding features (use adjusted R²). <strong>MAPE</strong>: percentage error — intuitive but explodes near zero values.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> How do you evaluate an LLM output where there's no single right answer? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Layered approach: (1) <strong>Automatic checks</strong> where possible — exact match, unit tests for code, regex for format. (2) <strong>LLM-as-judge</strong> — a stronger model scores outputs against a rubric (correctness, groundedness, tone); calibrate the judge against human labels first. (3) <strong>Human evaluation</strong> on a sample as ground truth. (4) In production: A/B tests on user behavior (acceptance rate, thumbs up/down, task completion). Mention pairwise comparison — judges are more reliable comparing two outputs than scoring one in isolation.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-metrics" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- FEATURES & DATA PREP -->
+        <!-- ============================== -->
+        <div class="depth-section" id="features">
+          <h2><div class="depth-icon" style="background:rgba(3,105,161,0.1);color:var(--c6)">⚒</div>Features &amp; Data Prep</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Normalization vs standardization — which and when? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Normalization (min-max)</strong>: rescale to [0,1]. Good when you need bounded values (neural nets, image pixels) but sensitive to outliers. <strong>Standardization (z-score)</strong>: subtract mean, divide by std — values centered at 0. More robust to outliers; the default for distance-based models (KNN, SVM, K-means) and anything with gradient descent. Tree-based models (RF, XGBoost) don't need scaling at all — splits are order-based.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> One-hot vs label encoding for categorical features? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Label encoding</strong> maps categories to integers (red=0, green=1, blue=2) — fine for tree models, but linear models will falsely read an order into it (blue &gt; red?). <strong>One-hot</strong> makes a binary column per category — no fake order, but explodes with high-cardinality features. For many categories, use <strong>target encoding</strong> (replace category with its mean target value, carefully cross-validated to avoid leakage) or learned <strong>embeddings</strong>.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you handle missing values? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>First ask <em>why</em> they're missing — random, or informative (income missing because the person declined to say)? Options: (1) drop rows/columns if few and random, (2) impute with median/mode (robust) or model-based imputation (KNN, iterative), (3) add a "was_missing" indicator column — often the missingness itself is signal, (4) XGBoost/LightGBM handle missing values natively. Never impute using statistics computed over the full dataset — compute them on train only, or you leak.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is data leakage, and what's a sneaky example? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Leakage = information from outside the training window (usually from the future or from the target) sneaking into features, giving unrealistically good offline scores that collapse in production. Sneaky examples: scaling with statistics computed on the whole dataset before splitting; a "days_until_churn" style feature that encodes the answer; duplicate rows landing in both train and test; in time series, random shuffling instead of splitting by time. Rule: build every preprocessing step inside the CV loop, fit on train only.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you deal with imbalanced classes? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Do nothing to the data, fix the metric</strong> — use PR-AUC/F1 and tune the decision threshold; often enough. (2) <strong>Class weights</strong> — penalize minority-class mistakes more in the loss (most libraries support this). (3) <strong>Resampling</strong> — undersample majority or oversample minority (SMOTE synthesizes new minority points between neighbors). (4) Collect more minority data if possible. Warn about SMOTE on high-dimensional data — it can create unrealistic samples. And never resample the test set — it must reflect reality.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is PCA, in simple terms? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>PCA finds new axes (principal components) along which the data varies the most, and lets you keep just the top few — compressing many correlated features into a few uncorrelated ones while losing minimal information. Mechanically: eigenvectors of the covariance matrix, ranked by eigenvalue. Uses: visualization, denoising, speeding up training, fighting multicollinearity. Caveats: standardize first, and components lose human interpretability.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> How do you detect and handle outliers? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Detect: box plot / IQR rule (outside 1.5×IQR), z-score &gt; 3, or model-based (Isolation Forest, DBSCAN noise points). Handle: first determine if it's an <strong>error</strong> (fix or drop) or a <strong>real extreme value</strong> (keep — it may be the most important signal, e.g. fraud!). Options: cap/winsorize, log-transform skewed features, or use robust models (trees) and robust metrics (MAE) that shrug off outliers.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-features" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- STATISTICS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="stats">
+          <h2><div class="depth-icon" style="background:rgba(109,40,217,0.1);color:var(--c4)">μ</div>Statistics for Data Science</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is a p-value, without the textbook jargon? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Assume nothing interesting is going on (the null hypothesis). The p-value is the probability of seeing data <strong>at least as extreme as yours</strong> just by random chance under that assumption. Small p-value (&lt; 0.05 by convention) = "this would be really surprising if nothing were going on" → reject the null. It is <strong>not</strong> the probability the null is true, and not the probability your result is a fluke — those are the classic misinterpretations interviewers fish for.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Central Limit Theorem — why does everyone care? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Take averages of enough independent samples and those averages follow a <strong>normal distribution</strong>, no matter how weird the underlying data's distribution is (as long as variance is finite). This is why we can build confidence intervals and run hypothesis tests on means without knowing the true distribution — the bell curve shows up for free. Rule of thumb: n ≥ 30 is usually enough.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Type I vs Type II errors? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Type I (false positive)</strong>: you cry wolf — reject a true null. Its probability is α, your significance level (0.05). <strong>Type II (false negative)</strong>: you miss a real effect. Its probability is β; power = 1−β. They trade off: lowering α makes you stricter and increases misses. Which is worse depends on context — a Type I in medicine approves a useless drug; a Type II kills a genuinely good feature launch.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Walk me through designing an A/B test. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) Define one <strong>primary metric</strong> (e.g., conversion rate) and guardrail metrics (latency, revenue). (2) State the hypothesis and the <strong>minimum detectable effect</strong> you care about. (3) Compute required <strong>sample size</strong> from MDE, α (0.05) and power (0.8) — before starting. (4) Randomize users (not sessions — one user must stay in one bucket), run the <em>full planned duration</em> (at least one weekly cycle), no peeking-and-stopping early. (5) Run the significance test, check guardrails and segments, then decide. Bonus points: mention novelty effects and multiple-testing corrections if testing many variants.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Correlation vs causation — give an example. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Ice cream sales correlate with drowning deaths — not because ice cream kills, but because <strong>summer</strong> drives both (a confounder). Correlation says two things move together; causation says one <em>drives</em> the other. To claim causation you need a randomized experiment (A/B test) or careful causal-inference techniques (difference-in-differences, instrumental variables, propensity matching).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What does a 95% confidence interval actually mean? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>If you repeated the experiment many times and built an interval each time, <strong>95% of those intervals would contain the true value</strong>. It's a statement about the <em>procedure</em>, not "there's a 95% chance the truth is in this specific interval" (a subtle but classic trap — that phrasing belongs to Bayesian credible intervals). Practically: narrower interval = more precise estimate; if two groups' CIs for a difference exclude 0, the difference is significant.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-stats" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- DEEP LEARNING -->
+        <!-- ============================== -->
+        <div class="depth-section" id="dl">
+          <h2><div class="depth-icon" style="background:rgba(192,57,43,0.1);color:var(--c3)">🧠</div>Deep Learning</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Deep dive available</h3>
+            <p style="font-size:0.875rem;">Full backprop math, optimizer internals and normalization details live in <a href="p3-deep-learning.html">Pillar 3 · Deep Learning</a>.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Why do neural networks need activation functions? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Without them, stacking layers is pointless: a chain of linear layers collapses into one linear layer (a matrix times a matrix is still a matrix). Non-linear activations (ReLU, GELU) between layers let the network bend and compose functions, which is what lets deep nets approximate arbitrarily complex patterns.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Explain backpropagation simply. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Backprop is the <strong>chain rule, applied efficiently</strong>. Forward pass: compute the prediction and the loss. Backward pass: walk from the loss back through each layer, computing how much each weight contributed to the error (its gradient) by multiplying local derivatives along the way. Then nudge every weight a small step against its gradient (gradient descent). The trick that makes it fast: gradients computed at later layers are <em>reused</em> for earlier layers, so the whole thing costs about as much as one forward pass.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are vanishing and exploding gradients, and the fixes? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>In deep networks, gradients are products of many layer derivatives. If those are mostly &lt; 1, the product shrinks toward zero by the time it reaches early layers — they stop learning (<strong>vanishing</strong>). If mostly &gt; 1, it blows up (<strong>exploding</strong>). Fixes: ReLU-family activations (derivative 1 in the active region), careful init (He/Xavier), <strong>residual/skip connections</strong> (gradient highways — the key idea in ResNet and Transformers), normalization layers, and gradient clipping for the exploding case (standard in RNN/LLM training).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What does dropout do, and why does it work? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>During training, dropout randomly zeroes a fraction (e.g. 10–50%) of neurons each step, so the network can't rely on any single neuron — it's forced to learn redundant, robust features. It acts like training an ensemble of many thinned networks that share weights. At inference dropout is turned off. It's a regularizer: use it when overfitting, not by default everywhere.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> BatchNorm vs LayerNorm — and why do Transformers use LayerNorm? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Both normalize activations to stabilize and speed up training. <strong>BatchNorm</strong> normalizes each feature <em>across the batch</em> — it depends on batch statistics, so it breaks with tiny batches and behaves differently at inference. <strong>LayerNorm</strong> normalizes <em>across features within each single example</em> — batch-size independent, same behavior train/test. Transformers use LayerNorm because sequence lengths vary, batches can be small, and each token needs consistent normalization independent of its neighbors.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> SGD vs Adam — what's the practical difference? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>SGD</strong> uses one global learning rate for all weights. <strong>Adam</strong> keeps a running average of each weight's gradient (momentum) and of its squared gradient, giving every weight its <em>own adaptive learning rate</em> — rarely-updated weights get bigger steps. Adam converges fast with little tuning, which is why it (as <strong>AdamW</strong>, which fixes how weight decay is applied) is the default for Transformers/LLMs. SGD+momentum can generalize slightly better in vision, but needs careful LR scheduling.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Epoch vs batch vs iteration? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Epoch</strong>: one full pass over the training set. <strong>Batch</strong>: the subset of samples processed before one weight update. <strong>Iteration</strong>: one weight update (one batch). So with 10,000 samples and batch size 100, one epoch = 100 iterations. Batch size trades off: larger = stabler gradients and better GPU utilization; smaller = noisier gradients (which can help generalization) and less memory.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> CNN vs RNN — when would you use each? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>CNNs</strong> exploit spatial locality with sliding filters — images, audio spectrograms, anything grid-like. <strong>RNNs/LSTMs</strong> process sequences step by step with a hidden state as memory — they were the standard for text and time series until <strong>Transformers</strong> replaced them almost everywhere (parallel training, better long-range dependencies). Honest modern answer: CNNs still rule efficient vision; RNNs survive in low-latency streaming and small on-device models; Transformers dominate the rest.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is transfer learning? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Start from a model trained on a huge general dataset, then adapt it to your task with a little data — either freeze the base and train just a new head, or fine-tune everything with a small learning rate. It works because early layers learn universal features (edges, textures, grammar) that transfer. Every modern LLM workflow is transfer learning: pretrain once, fine-tune/adapt endlessly.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-dl" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- NLP & TRANSFORMERS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="nlp">
+          <h2><div class="depth-icon" style="background:rgba(109,40,217,0.1);color:var(--c4)">⚡</div>NLP &amp; Transformers</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">Deep dive available</h3>
+            <p style="font-size:0.875rem;">Q/K/V math, multi-head attention, RoPE, KV cache and Flash Attention live in <a href="p4-transformers.html">Pillar 4 · Transformers &amp; LLMs</a>.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is tokenization and why do LLMs use subwords? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Tokenization splits text into units (tokens) the model can process — modern LLMs use <strong>subword</strong> tokenizers (BPE, WordPiece, SentencePiece). Why subwords? Whole words give huge vocabularies and can't handle unseen words; characters make sequences too long. Subwords are the middle ground: common words stay whole ("the"), rare words split into pieces ("tokeni" + "zation"), so <em>any</em> string can be encoded with a ~50–100k vocabulary. Rule of thumb: 1 token ≈ ¾ of an English word.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What are embeddings, in simple terms? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Embeddings turn words/sentences/documents into <strong>vectors of numbers where similar meaning = nearby vectors</strong>. "King" and "queen" land close together; "king" and "toaster" far apart. This lets machines do math on meaning — search by similarity, cluster topics, feed text into models. Static embeddings (word2vec, GloVe) give one vector per word; contextual embeddings (BERT-style) give a different vector depending on the sentence — "bank" of a river vs a bank account get different vectors.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Explain attention like I'm not a mathematician. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>For each word, attention asks: <strong>"which other words in this text should I look at to understand this word, and how much?"</strong> In "The animal didn't cross the street because <em>it</em> was tired," attention lets "it" look hard at "animal." Mechanically: each token makes a <strong>query</strong> ("what am I looking for?"), a <strong>key</strong> ("what do I contain?") and a <strong>value</strong> ("what do I give you?"). Match queries against keys → weights → weighted sum of values. Multi-head = running several of these lookups in parallel, each learning a different kind of relationship (syntax, coreference, position…).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why did Transformers replace RNNs? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Three reasons: (1) <strong>Parallelism</strong> — RNNs must process tokens one at a time; Transformers see the whole sequence at once, so training scales across GPUs. (2) <strong>Long-range dependencies</strong> — in an RNN, information from 500 tokens ago must survive 500 squashing steps; attention connects any two tokens in one hop. (3) <strong>Scaling laws</strong> — Transformers keep improving predictably as you add data and parameters, which made the GPT recipe possible.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> BERT vs GPT — the core architectural difference? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>BERT</strong> is an <em>encoder</em>: every token attends to both left and right context (bidirectional), trained by masking words and guessing them. Great for <em>understanding</em> tasks — classification, NER, embeddings for retrieval. It can't naturally generate text. <strong>GPT</strong> is a <em>decoder</em>: each token attends only to previous tokens (causal mask), trained to predict the next token. That makes it a text <em>generator</em> — and it turned out next-token prediction at scale learns almost everything else too, which is why decoder-only won the LLM era.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Why do Transformers need positional encodings? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Attention is a bag-of-tokens operation — without position info, "dog bites man" and "man bites dog" look identical. Positional encodings inject order: the original paper added sine/cosine waves of different frequencies to each token; modern LLMs use <strong>RoPE</strong> (rotary embeddings), which rotate query/key vectors by an angle proportional to position so attention naturally depends on <em>relative</em> distance — this also extends better to longer contexts.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is a context window? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>The maximum number of tokens the model can consider at once — its working memory. Everything (system prompt, chat history, retrieved documents, its own output) must fit inside it. Bigger windows cost more: attention memory/compute grows with sequence length (the KV cache grows linearly, and naive attention compute grows quadratically). This constraint is <em>why chunking and RAG exist</em> — you retrieve only the relevant pieces instead of stuffing everything in.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-nlp" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- GENAI & LLMS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="llm">
+          <h2><div class="depth-icon" style="background:rgba(192,90,0,0.1);color:var(--c5)">🔥</div>Generative AI &amp; LLMs</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is an LLM actually doing when it "answers"? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Predicting the next token, over and over. Given all the text so far, it outputs a probability for every token in its vocabulary, one is sampled, appended, and the loop repeats. All the apparent reasoning, style, and knowledge emerge from doing this prediction extremely well after training on trillions of tokens. There's no database lookup and no explicit logic engine — which explains both its flexibility and its failure modes (hallucination).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Pretraining vs fine-tuning vs RLHF — the three stages? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Pretraining</strong>: next-token prediction on massive raw text → a base model with knowledge but no manners (it completes text, doesn't follow instructions). (2) <strong>Supervised fine-tuning (SFT)</strong>: train on curated instruction→response pairs → it learns to be an assistant. (3) <strong>Preference alignment (RLHF/DPO)</strong>: humans rank outputs, the model is optimized toward preferred ones → helpful, safer, better-formatted answers. Stages 2–3 cost a tiny fraction of stage 1.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What do temperature, top-k and top-p do? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>They control sampling randomness. <strong>Temperature</strong> rescales the probability distribution: &lt;1 sharpens it (safe, repetitive, good for code/facts), &gt;1 flattens it (creative, riskier), 0 = always pick the top token (greedy, deterministic-ish). <strong>Top-k</strong>: only sample among the k most likely tokens (note: this K is again just "how many candidates," like K everywhere else in ML). <strong>Top-p (nucleus)</strong>: sample from the smallest set of tokens whose probabilities add up to p (e.g. 0.9) — the candidate pool adapts to the model's confidence, which usually beats a fixed k. Production default: temperature ~0–0.3 for factual tasks, ~0.7–1.0 for creative ones.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Why do LLMs hallucinate, and how do you reduce it? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Because the model is trained to produce <em>plausible</em> next tokens, not <em>verified</em> ones — when it lacks knowledge, the most statistically plausible continuation is a confident-sounding invention. Reductions: (1) <strong>RAG</strong> — ground answers in retrieved documents and instruct "answer only from context," (2) allow and reward <strong>"I don't know"</strong> in prompts/training, (3) lower temperature, (4) verification layers — self-check prompts, citations that are programmatically validated, LLM-as-judge grading groundedness, (5) fine-tune on domain data. You manage hallucination; you don't eliminate it.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Zero-shot vs few-shot vs chain-of-thought prompting? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Zero-shot</strong>: just ask ("Classify this review's sentiment"). <strong>Few-shot</strong>: include 2–5 worked examples in the prompt — the model imitates the pattern; the single cheapest accuracy boost for format-sensitive tasks. <strong>Chain-of-thought</strong>: ask the model to reason step-by-step before answering — dramatically improves math/logic/multi-step tasks. Modern "reasoning models" bake CoT in, doing it internally before answering.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Fine-tuning vs RAG — how do you decide? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Ask what you're trying to change. <strong>Knowledge that updates</strong> (docs, policies, product data) → <strong>RAG</strong>: update the index, get citations, no retraining. <strong>Behavior/style/format</strong> (tone, domain jargon, strict JSON output, a specialized skill) → <strong>fine-tuning</strong>: it bakes the behavior in. They compose: many production systems fine-tune for format+style AND use RAG for facts. Also weigh: RAG is cheaper to iterate and auditable; fine-tuning needs training data, evals, and re-runs on every base-model upgrade. Start with prompting → RAG → fine-tune only when the first two plateau.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is LoRA and why is it everywhere? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>LoRA (Low-Rank Adaptation) freezes the base model and trains only tiny <strong>low-rank matrices</strong> added beside the weight matrices: instead of updating a d×d matrix, learn two skinny matrices A (d×r) and B (r×d) with rank r ≈ 8–64, so ΔW = BA. You train &lt;1% of the parameters, which means one GPU instead of a cluster, and adapters are megabytes you can swap per customer/task on one shared base model. <strong>QLoRA</strong> pushes further: quantize the frozen base to 4-bit, train LoRA on top — fine-tune a 70B model on a single high-memory GPU. Quality is usually close to full fine-tuning for behavior/style tasks.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is quantization? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Storing model weights in fewer bits — FP16 → INT8 → 4-bit — so the model needs 2–4× less memory and runs faster, with small accuracy loss. It's the main lever for running big models on small hardware (a 7B model in 4-bit fits in ~4 GB). Formats you can name-drop: GGUF (llama.cpp, CPU-friendly), AWQ/GPTQ (GPU). Trade-off: aggressive quantization degrades quality, hitting reasoning-heavy tasks first.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> An LLM app is too slow and expensive. What levers do you pull? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>In rough order of ROI: (1) <strong>Smaller/faster model</strong> for easy requests — route only hard ones to the big model (model cascading). (2) <strong>Prompt caching</strong> — reuse the computed prefix for repeated system prompts/documents; major providers discount cached tokens heavily. (3) <strong>Trim the prompt</strong> — shorter context = linear cost savings; retrieve less, summarize history. (4) <strong>Streaming</strong> — perceived latency drops even if total time doesn't. (5) <strong>Batching &amp; KV-cache reuse</strong> on self-hosted inference (vLLM, continuous batching). (6) <strong>Quantize</strong> self-hosted models. (7) Cache whole responses for repeated queries (semantic caching).</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-llm" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- RAG & CHUNKING -->
+        <!-- ============================== -->
+        <div class="depth-section" id="rag">
+          <h2><div class="depth-icon" style="background:rgba(192,90,0,0.1);color:var(--c5)">⌕</div>RAG &amp; Chunking</h2>
+          <div class="concept-box">
+            <h3 style="margin-bottom:6px;font-size:0.95rem;">The AI Engineer interview core</h3>
+            <p style="font-size:0.875rem;">If the JD says "AI Engineer" or mentions LLMs, you WILL get chunking and retrieval questions. This section covers them exhaustively. Architecture deep-dive: <a href="p5-genai.html">Pillar 5 · GenAI Stack</a>.</p>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is RAG and why do we need it? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Retrieval-Augmented Generation</strong>: before the LLM answers, fetch the most relevant pieces of your own data and paste them into the prompt as context. Why: LLMs don't know your private/recent data, context windows can't hold everything, and fine-tuning for every document update is impractical. RAG gives current, private, <em>citable</em> answers — and updating knowledge is just re-indexing, no retraining. Pipeline: <strong>ingest → chunk → embed → store in vector DB → (query) retrieve top-K → optionally re-rank → stuff into prompt → generate</strong>.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is chunking and why is it needed? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Chunking is splitting documents into smaller pieces before embedding them. It's needed because: (1) embedding models have input limits and one vector can't faithfully represent a 100-page document, (2) retrieval precision — you want to fetch the exact paragraph that answers the question, not the whole PDF, (3) context budget — small relevant chunks let more distinct sources fit into the prompt. Chunking quality is often <em>the</em> biggest lever in RAG performance — bad chunks mean the right answer is never retrieved, and no prompt engineering can fix that.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What are the types of chunking? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer">
+              <p>Know these six, from simplest to smartest:</p>
+              <p style="margin-top:8px;"><strong>1. Fixed-size chunking</strong> — cut every N tokens/characters (e.g. 500 tokens). Simple, fast, predictable; but cuts sentences and ideas mid-thought.</p>
+              <p style="margin-top:8px;"><strong>2. Sliding window (overlap) chunking</strong> — fixed-size, but consecutive chunks share an overlap (10–20%), so a sentence cut at a boundary survives intact in the neighboring chunk.</p>
+              <p style="margin-top:8px;"><strong>3. Recursive chunking</strong> — split by a priority list of separators: paragraphs first, then sentences, then words, only cutting deeper when a piece is still too big. Respects natural text structure; the practical default (LangChain's RecursiveCharacterTextSplitter).</p>
+              <p style="margin-top:8px;"><strong>4. Document-based / structure-aware chunking</strong> — split along the document's own structure: Markdown headers, HTML sections, code functions/classes, table rows. Best when documents have reliable structure.</p>
+              <p style="margin-top:8px;"><strong>5. Semantic chunking</strong> — embed sentences, walk through the document, and start a new chunk where the <em>topic shifts</em> (embedding similarity between adjacent sentences drops). Chunks = coherent ideas; costs more compute at ingestion.</p>
+              <p style="margin-top:8px;"><strong>6. Agentic / LLM-based chunking</strong> — ask an LLM to split the document the way a human would (by propositions or logical units). Highest quality, highest cost; used when documents are messy and value-per-document is high.</p>
+              <p style="margin-top:8px;">Interview-safe recommendation: <em>start with recursive chunking at ~300–512 tokens with 10–15% overlap, evaluate retrieval quality, then get fancier only if needed.</em></p>
+            </div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What's the "K" in RAG / chunking retrieval (top-K)? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>K = how many of the highest-scoring chunks you retrieve</strong> from the vector store and hand to the LLM (top-K retrieval, typically K = 3–10). Small K: cheaper, less noise, but you might miss the chunk that actually holds the answer (recall drops). Large K: better recall, but more cost/latency, and irrelevant chunks distract the model — plus "lost in the middle": LLMs pay less attention to the middle of long contexts. Common production pattern: <strong>retrieve a generous K (20–50), then re-rank and keep the top 3–5.</strong> Tune K empirically with a retrieval eval set (does the gold chunk appear in top-K? — that's recall@K). Note the same "K" convention appears across ML: neighbors in KNN, clusters in K-means, folds in cross-validation, candidates in top-k sampling — it always just means "how many."</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do you choose chunk size and overlap? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>It's a precision-vs-context tradeoff. <strong>Small chunks (100–300 tokens)</strong>: precise retrieval — the vector represents one focused idea — but each hit carries little surrounding context. <strong>Large chunks (800–1500+)</strong>: rich context, but the embedding averages several topics, so retrieval gets blurry and noise rides along. Sensible starting point: <strong>~300–512 tokens with 10–20% overlap</strong>. Adjust by content type: FAQs/chat logs → small; legal/technical prose → larger; code → split by function/class. Power move to mention: <strong>parent-document retrieval</strong> (a.k.a. small-to-big) — embed small chunks for precise <em>search</em>, but hand the LLM the larger parent section for <em>context</em>. And always decide with an eval set, not vibes.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is a vector database and how does it search so fast? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>A database that stores embeddings and answers "which stored vectors are closest to this query vector?" Comparing against millions of vectors one-by-one is too slow, so they use <strong>ANN (Approximate Nearest Neighbor)</strong> indexes — most famously <strong>HNSW</strong>, a multi-layer graph you navigate greedily from coarse to fine, finding near-neighbors in logarithmic-ish time at ~95–99% recall. Names to know: Pinecone, Weaviate, Qdrant, Milvus, Chroma, pgvector (Postgres extension — often the pragmatic choice since your data is already there), FAISS (library, not a DB).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Cosine similarity vs dot product vs Euclidean distance? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Cosine similarity</strong> measures the <em>angle</em> between vectors — direction only, magnitude ignored; the default for text embeddings (a long and short document about the same topic should match). <strong>Dot product</strong> = cosine × magnitudes — magnitude matters, used when embeddings are trained for it. <strong>Euclidean</strong> = straight-line distance. Key practical fact: <strong>on normalized (unit-length) vectors, all three rank results identically</strong> — which is why most embedding APIs ship normalized vectors and the choice rarely matters in practice. Just match the metric your embedding model was trained with.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Dense vs sparse retrieval, and what is hybrid search? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Sparse (keyword)</strong>: BM25/TF-IDF — matches exact words. Great for IDs, error codes, names, jargon; blind to synonyms ("car" ≠ "automobile"). <strong>Dense (semantic)</strong>: embeddings — matches meaning; great for paraphrases, but can fumble exact strings ("error TX-4491"). <strong>Hybrid search</strong> runs both and merges the ranked lists — typically with <strong>Reciprocal Rank Fusion (RRF)</strong>, which combines rankings without needing the scores to be comparable. This is the production default because real queries mix both needs. Follow-up they love: "user searches an exact product code and dense retrieval misses it — fix?" Answer: hybrid with BM25.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What is re-ranking and why add it? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>First-stage retrieval (bi-encoder) embeds the query and documents <em>separately</em> — fast but coarse, since the two never see each other. A <strong>re-ranker (cross-encoder)</strong> takes the query and each candidate chunk <em>together</em> through one model and scores true relevance — far more accurate, but too slow to run on millions of docs. So: <strong>retrieve top 20–100 fast, re-rank, keep the best 3–5</strong>. Typically the single biggest precision boost you can add to a RAG stack (Cohere Rerank, BGE-reranker, etc.).</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> How do you evaluate a RAG system? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Evaluate the two stages separately — retrieval bugs masquerade as generation bugs. <strong>Retrieval metrics</strong>: recall@K (is the gold chunk in the top K?), precision@K, MRR/nDCG (is it ranked high?). Build a small eval set of (question → known correct chunk) pairs. <strong>Generation metrics</strong>: <em>faithfulness/groundedness</em> (is every claim supported by the retrieved context? — catches hallucination), <em>answer relevance</em> (does it address the question?), <em>context relevance</em> (was the retrieved context actually useful?). These usually use LLM-as-judge (frameworks: RAGAS, TruLens). Debugging rule: if faithfulness is high but answers are wrong → fix retrieval; if retrieval is right but answers are wrong → fix the prompt/model.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> Common RAG failure modes and fixes? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Right answer not retrieved</strong> → better chunking, hybrid search, query rewriting (expand/reformulate the user's terse query with an LLM), increase K + re-rank. (2) <strong>Retrieved but ignored</strong> → "lost in the middle"; put the best chunks first/last, retrieve fewer, tighten the prompt ("answer ONLY from context"). (3) <strong>Question spans multiple documents</strong> → multi-hop: decompose the query into sub-questions, retrieve per sub-question. (4) <strong>Stale index</strong> → scheduled/event-driven re-indexing. (5) <strong>Chunks lack context</strong> ("the company" — which company?) → contextual retrieval: prepend document title/summary metadata to each chunk before embedding. (6) <strong>Format questions</strong> (tables, images) → structure-aware parsing before chunking.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-rag" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- AGENTIC AI -->
+        <!-- ============================== -->
+        <div class="depth-section" id="agentic">
+          <h2><div class="depth-icon" style="background:rgba(192,57,43,0.1);color:var(--c3)">🤖</div>Agentic AI</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What makes an AI system an "agent" and not just an LLM call? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>An agent runs a <strong>loop</strong>: the LLM decides an action → executes a tool (search, code, API) → observes the result → decides the next action → repeats until the goal is done. A plain LLM call is one-shot text-in/text-out. The defining ingredients: <strong>tool use, a feedback loop, and autonomy over the path</strong> (the model chooses which steps to take, not the developer). A workflow with hardcoded steps that happens to call an LLM twice is a pipeline, not an agent — good interviews reward knowing that distinction and knowing that simpler pipelines are often the better engineering choice.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Explain the ReAct pattern. <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Re</strong>asoning + <strong>Act</strong>ing, interleaved. Each turn the model produces: <strong>Thought</strong> ("I need the 2024 revenue — I should search") → <strong>Action</strong> (search("Acme 2024 revenue")) → <strong>Observation</strong> (the tool's result) → next Thought… until it emits a final answer. The explicit reasoning step makes tool choice better and the whole trajectory debuggable — you can read exactly where its logic went wrong. It's the conceptual backbone of most modern agent frameworks, even when the "thought" is now hidden inside native tool-calling APIs.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How does function/tool calling actually work? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>You send the model a list of tool definitions — name, description, and a JSON Schema of parameters. When the model decides a tool is needed, it doesn't <em>run</em> anything: it outputs a structured request like <code>{"name": "get_weather", "arguments": {"city": "Pune"}}</code>. <strong>Your code</strong> executes the real function and sends the result back as a new message; the model then continues with that information. Key insight to state: the model only ever <em>requests</em> calls — execution, validation, and permissions are entirely your responsibility, which is where all the security concerns live. Tool <em>descriptions</em> matter as much as prompts — vague descriptions cause wrong tool choice and bad arguments.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What is MCP (Model Context Protocol)? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>An open standard (from Anthropic, 2024, since adopted broadly) for connecting AI apps to tools and data. Instead of every app writing custom integrations for every service, a service exposes one <strong>MCP server</strong> (tools, resources, prompts) and any MCP-capable client — Claude, IDEs, custom agents — can use it. Think "USB-C for AI integrations": one connector standard, N×M integrations become N+M. Worth knowing the components: servers expose <em>tools</em> (functions), <em>resources</em> (data), and <em>prompts</em> (templates); clients discover them at runtime.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> How do agents handle memory? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Two layers. <strong>Short-term</strong> = the context window: the current conversation and tool results; managed by trimming or summarizing older turns when it fills up (context management). <strong>Long-term</strong> = external storage the agent reads/writes across sessions: typically a vector store of past interactions (retrieved by similarity — RAG over your own history), plus structured stores like user-preference files or knowledge graphs. Production pattern: after a session, extract durable facts ("user prefers Python") and save them; retrieve relevant memories into context at the start of the next session.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> When do multi-agent systems beat a single agent? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>When the task exceeds one context window or benefits from <strong>separation of concerns</strong>: parallel research over many sources, a generator + independent critic/reviewer (adversarial checking catches errors self-review misses), or specialists with different tools/prompts (orchestrator-worker pattern: a lead agent decomposes and delegates). Costs to acknowledge: multiplied token spend, coordination complexity, and inter-agent miscommunication — so the honest answer is "single agent until it demonstrably can't." That answer signals engineering maturity.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> How do you make an agent safe and reliable in production? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>(1) <strong>Bound autonomy</strong>: max iterations/budget caps, restricted tool permissions (read-only by default), human approval gates for irreversible actions (payments, deletes, emails). (2) <strong>Sandbox execution</strong> — code tools run in isolated environments. (3) <strong>Guard against prompt injection</strong> — treat all retrieved/tool-returned content as untrusted data, not instructions; this is the #1 agent-specific attack. (4) <strong>Observability</strong> — log full trajectories (every thought/tool call/result) so failures are debuggable; trace token costs. (5) <strong>Evals</strong> — a suite of scripted tasks with success criteria, run on every prompt/model change; agents regress silently otherwise. (6) <strong>Graceful failure</strong> — timeouts, retries with backoff, and "escalate to human" as a designed path, not an afterthought.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Agentic RAG vs plain RAG? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Plain RAG is a fixed pipeline: retrieve once → answer. <strong>Agentic RAG</strong> gives the model control over retrieval: it can rewrite the query, choose <em>which</em> source/index to search, retrieve multiple times, check whether the results actually answer the question, and search again if not (self-correcting loop). Better for multi-hop and ambiguous questions; costs more latency and tokens. Mention the middle ground: "corrective RAG" — a lightweight grader checks retrieval quality and triggers a re-search only when needed.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-agentic" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- MLOPS -->
+        <!-- ============================== -->
+        <div class="depth-section" id="mlops">
+          <h2><div class="depth-icon" style="background:rgba(3,105,161,0.1);color:var(--c6)">🏗</div>MLOps &amp; Deployment</h2>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> What are the main ways to serve a model? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Batch</strong>: score everything on a schedule (nightly churn scores) — simplest, no latency pressure. <strong>Online/real-time</strong>: model behind an API, responds per request (fraud check at checkout) — needs low latency, autoscaling, monitoring. <strong>Streaming</strong>: score events as they flow through a queue (Kafka). <strong>Edge/on-device</strong>: model ships inside the app (phone keyboard) — privacy and offline wins, but size-constrained (quantization matters here). Choose by: how fresh must predictions be, and at what request rate?</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Data drift vs concept drift? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Data drift</strong>: the <em>inputs</em> change distribution — new demographics sign up, a sensor recalibrates, marketing attracts different users. The X changed. <strong>Concept drift</strong>: the <em>relationship</em> between inputs and target changes — the same features now mean something different (spending patterns pre- vs post-pandemic; fraudsters adapting). The P(y|X) changed. Detection: monitor input distributions (PSI, KL divergence) for data drift; monitor live model performance against delayed ground-truth labels for concept drift. Both degrade models silently — which is why monitoring exists.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> What do you monitor for a deployed model? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Four layers: (1) <strong>System health</strong> — latency, throughput, error rate, cost (standard SRE stuff). (2) <strong>Input data quality</strong> — schema violations, missing-value spikes, drift scores per feature. (3) <strong>Prediction behavior</strong> — output distribution shifts (suddenly predicting 90% positive?), confidence trends. (4) <strong>Business performance</strong> — actual accuracy once delayed labels arrive, plus the downstream KPI the model exists to move. For LLM apps add: token cost per request, hallucination/groundedness sampling, refusal rate, and user feedback signals.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> When and how do you retrain a model? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Triggers: on a <strong>schedule</strong> (weekly/monthly — simple, predictable), on <strong>drift alerts</strong> (retrain when monitoring fires — efficient), or on <strong>performance drop</strong> below a threshold (most direct, but needs labels). The retraining pipeline should be fully automated and reproducible: fetch fresh data → validate it → train → evaluate against the <em>current champion</em> model on a held-out set → deploy only if better (champion/challenger), ideally behind a canary or shadow rollout. Bonus term: "continual training" pipelines vs full retrains.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-mid">Mid</span> Shadow deployment vs canary vs A/B — rolling out a new model? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p><strong>Shadow</strong>: new model receives real traffic and its predictions are logged but <em>never shown to users</em> — zero risk, validates behavior at scale first. <strong>Canary</strong>: new model serves a small slice (1–5%) of real traffic; watch metrics, expand gradually, auto-rollback on regression. <strong>A/B test</strong>: statistically rigorous comparison on the <em>business metric</em> with proper randomization — answers "is it actually better for users," not just "does it work." Mature rollout: shadow → canary → A/B → full. Always keep the old model warm for instant rollback.</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-surface">Surface</span> Why version models and data, not just code? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>Because a model's behavior = code + data + hyperparameters + preprocessing — reproduce a bug or audit a decision and you need <em>all four</em> as they were. Tools: a <strong>model registry</strong> (MLflow, W&amp;B) stores each trained model with its metrics, lineage and stage (staging/production); <strong>data versioning</strong> (DVC, lakehouse snapshots) pins the exact training set; experiment tracking ties them together. Also required for compliance ("why was this loan denied?") and for safe rollbacks — you redeploy a known-good artifact, not "retrain and hope."</p></div>
+          </div>
+          <div class="qa-block">
+            <div class="qa-question"><span class="q-depth depth-probe">Depth Probe</span> What is a feature store and what problem does it solve? <span class="qa-toggle" style="margin-left:auto;color:var(--text-dim)">▼</span></div>
+            <div class="qa-answer"><p>A central place to define a feature once and serve it both for <strong>training</strong> (historical, batch) and <strong>inference</strong> (live, low-latency). The problem it kills: <strong>training-serving skew</strong> — the classic failure where a feature is computed one way in the offline training pipeline (SQL over the warehouse) and slightly differently in the online service (application code), so the model sees subtly different inputs in production and quietly underperforms. It also enables feature reuse across teams and <em>point-in-time correct</em> training joins (no future leakage). Names: Feast (open source), Tecton, SageMaker/Vertex feature stores.</p></div>
+          </div>
+          <button class="mark-btn" data-topic-id="qa-mlops" style="margin-top:16px;">Mark as Mastered</button>
+        </div>
+
+        <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border-soft);">
+          <p style="font-family:'IBM Plex Serif',serif;color:var(--text-muted);font-size:0.9rem;line-height:1.8;">These are the openers. Interviewers escalate from any of them — when they do, you want the derivations and internals from the six pillars: <a href="p1-math.html">Math</a> · <a href="p2-classical-ml.html">Classical ML</a> · <a href="p3-deep-learning.html">Deep Learning</a> · <a href="p4-transformers.html">Transformers</a> · <a href="p5-genai.html">GenAI Stack</a> · <a href="p6-system-design.html">System Design</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

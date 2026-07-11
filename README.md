@@ -18,6 +18,7 @@ Personal technical depth guide built for FAANG/AI-startup interviews. Covers the
 | P4 — NLP & LLMs | [/pages/p4-nlp-llm.html](https://deeprohit-2163.github.io/ai-ml-depth-study/pages/p4-nlp-llm.html) |
 | P5 — GenAI & MLOps | [/pages/p5-genai.html](https://deeprohit-2163.github.io/ai-ml-depth-study/pages/p5-genai.html) |
 | P6 — System Design | [/pages/p6-system-design.html](https://deeprohit-2163.github.io/ai-ml-depth-study/pages/p6-system-design.html) |
+| Interview Q&A Bank | [/pages/interview-qa.html](https://deeprohit-2163.github.io/ai-ml-depth-study/pages/interview-qa.html) |
 
 ---
 

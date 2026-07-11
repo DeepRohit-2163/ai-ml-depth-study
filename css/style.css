@@ -103,8 +103,10 @@ nav {
 
 .nav-links {
   display: flex; gap: 2px; align-items: center; flex: 1;
-  overflow: hidden;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.nav-links::-webkit-scrollbar { display: none; }
 .nav-links a {
   font-family: 'Syne', sans-serif;
   color: var(--text-muted);

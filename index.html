@@ -266,6 +266,7 @@
       <a href="pages/p4-transformers.html">Transformers</a>
       <a href="pages/p5-genai.html">GenAI Stack</a>
       <a href="pages/p6-system-design.html">System Design</a>
+      <a href="pages/interview-qa.html">Interview Q&amp;A</a>
     </div>
     <div class="nav-search" onclick="openSearch()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -317,6 +318,20 @@
         <div class="sc-val" style="color:var(--accent4)">6</div>
         <div class="sc-label">Pillars</div>
       </div>
+    </div>
+
+    <!-- INTERVIEW Q&A BANNER -->
+    <div class="mindmap-section" style="padding-top:0;">
+      <a href="pages/interview-qa.html" style="text-decoration:none;display:block;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent3);border-radius:var(--radius-lg);padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 28px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent3);margin-bottom:6px;">New · All Roles</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;color:var(--text);">Interview Q&amp;A Bank</div>
+            <div style="font-family:'IBM Plex Serif',serif;font-size:0.88rem;color:var(--text-muted);margin-top:4px;">90+ rapid-fire questions with simple answers — ML fundamentals to RAG, chunking &amp; Agentic AI. For AI Engineer, ML Engineer &amp; Data Science interviews.</div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--accent);white-space:nowrap;">Open →</div>
+        </div>
+      </a>
     </div>
 
     <!-- MIND MAP -->
@@ -437,6 +452,27 @@
         url: t.url, tags: [p.name, t.badge]
       }))
     );
+
+    // Interview Q&A Bank sections (search only — not part of pillar progress)
+    const QA_SECTIONS = [
+      { id: 'qa-roles',    title: 'Roles & What Each Interview Tests',      hash: '#roles' },
+      { id: 'qa-mlbasics', title: 'ML Fundamentals Q&A',                    hash: '#mlbasics' },
+      { id: 'qa-classical',title: 'Classical ML Q&A (KNN, K-means, trees)', hash: '#classical' },
+      { id: 'qa-metrics',  title: 'Metrics & Evaluation Q&A',               hash: '#metrics' },
+      { id: 'qa-features', title: 'Features & Data Prep Q&A',               hash: '#features' },
+      { id: 'qa-stats',    title: 'Statistics for Data Science Q&A',        hash: '#stats' },
+      { id: 'qa-dl',       title: 'Deep Learning Q&A',                      hash: '#dl' },
+      { id: 'qa-nlp',      title: 'NLP & Transformers Q&A',                 hash: '#nlp' },
+      { id: 'qa-llm',      title: 'GenAI & LLMs Q&A',                       hash: '#llm' },
+      { id: 'qa-rag',      title: 'RAG & Chunking Q&A (top-K, chunk types)',hash: '#rag' },
+      { id: 'qa-agentic',  title: 'Agentic AI Q&A (ReAct, MCP, tools)',     hash: '#agentic' },
+      { id: 'qa-mlops',    title: 'MLOps & Deployment Q&A',                 hash: '#mlops' },
+    ];
+    QA_SECTIONS.forEach(s => window.TOPICS.push({
+      id: s.id, title: s.title, pillar: 'Interview Q&A',
+      url: 'pages/interview-qa.html' + s.hash,
+      tags: ['interview', 'questions', 'q&a']
+    }));
 
     // Build PILLAR_TOPICS map for progress bars
     window.PILLAR_TOPICS = {};
