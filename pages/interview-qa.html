@@ -1075,18 +1075,53 @@
     </div><!-- end topic-layout -->
   </div><!-- end page -->
 
+  <script>
+    // Intercept app.js's IntersectionObserver so its scroll-spy doesn't fight ours.
+    // We wrap the constructor: any observer whose first observed target is a .depth-section
+    // gets immediately disconnected after app.js calls .observe() on it.
+    (function () {
+      const NativeIO = window.IntersectionObserver;
+      window.IntersectionObserver = function (cb, opts) {
+        const io = new NativeIO(cb, opts);
+        const origObserve = io.observe.bind(io);
+        io.observe = function (el) {
+          origObserve(el);
+          if (el && el.classList && el.classList.contains('depth-section')) {
+            // This is app.js's scroll-spy observer — kill it so it won't interfere
+            io.disconnect();
+            io.observe = origObserve; // restore for any future legit use
+          }
+        };
+        return io;
+      };
+      window.IntersectionObserver.prototype = NativeIO.prototype;
+    })();
+  </script>
   <script src="../js/app.js"></script>
   <script>
-    // Smooth scroll helper — offsets for fixed nav bar (58px) + small buffer
+    // ── Prevent html scroll-behavior:smooth from interfering with instant hash jumps
+    document.documentElement.style.scrollBehavior = 'auto';
+
+    // ── Scroll helper: instant-position then smooth-scroll to target, nav-offset aware
+    // While scrolling programmatically we pause the spy so it doesn't snap back to Roles
+    let scrolling = false;
+    let scrollTimer = null;
+
     function scrollToSection(id) {
       const el = document.getElementById(id);
       if (!el) return;
-      const navH = 58 + 12; // nav height + buffer
-      const top = el.getBoundingClientRect().top + window.pageYOffset - navH;
-      window.scrollTo({ top, behavior: 'smooth' });
+      const NAV = 58 + 16;
+      const targetY = el.getBoundingClientRect().top + window.pageYOffset - NAV;
+
+      scrolling = true;
+      clearTimeout(scrollTimer);
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+
+      // Re-enable spy after scroll animation finishes (~600ms is enough for any section)
+      scrollTimer = setTimeout(() => { scrolling = false; }, 700);
     }
 
-    // Depth filter
+    // ── Depth filter
     document.querySelectorAll('.f-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('on'));
@@ -1095,44 +1130,40 @@
         document.querySelectorAll('.qa-block').forEach(block => {
           if (d === 'all') { block.classList.remove('hide-card'); return; }
           const badge = block.querySelector('.q-depth');
-          const show = badge && badge.classList.contains('depth-' + d);
-          block.classList.toggle('hide-card', !show);
+          block.classList.toggle('hide-card', !(badge && badge.classList.contains('depth-' + d)));
         });
       });
     });
 
-    // Tab click → smooth scroll (no anchor jump)
+    // ── Tab pill clicks
     const tabs = document.querySelectorAll('.s-tab[data-sec]');
-    tabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        scrollToSection(btn.dataset.sec);
-      });
-    });
+    tabs.forEach(btn => btn.addEventListener('click', () => scrollToSection(btn.dataset.sec)));
 
-    // Mind map node clicks — use data-sec for smooth offset scroll
-    document.querySelectorAll('.mm-node[data-sec]').forEach(node => {
-      node.addEventListener('click', () => scrollToSection(node.dataset.sec));
-    });
+    // ── Mind map node clicks
+    document.querySelectorAll('.mm-node[data-sec]').forEach(node =>
+      node.addEventListener('click', () => scrollToSection(node.dataset.sec))
+    );
 
-    // Sidebar links → smooth scroll (prevent anchor jump)
+    // ── Sidebar links — prevent default anchor jump, use offset scroll instead
     document.querySelectorAll('.topic-sidebar a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
         e.preventDefault();
-        const id = a.getAttribute('href').slice(1);
-        scrollToSection(id);
+        scrollToSection(a.getAttribute('href').slice(1));
       });
     });
 
-    // Tab scroll-spy
+    // ── Tab + sidebar scroll-spy (paused while programmatic scroll is in flight)
     const spyIO = new IntersectionObserver(entries => {
+      if (scrolling) return; // ignore observer fires during our own scroll
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          tabs.forEach(t => t.classList.remove('active'));
-          const t = document.querySelector(`.s-tab[data-sec="${e.target.id}"]`);
-          if (t) { t.classList.add('active'); t.scrollIntoView({block:'nearest',inline:'center'}); }
-        }
+        if (!e.isIntersecting) return;
+        // Update tab pills
+        tabs.forEach(t => t.classList.remove('active'));
+        const t = document.querySelector(`.s-tab[data-sec="${e.target.id}"]`);
+        if (t) { t.classList.add('active'); t.scrollIntoView({ block: 'nearest', inline: 'center' }); }
       });
-    }, { rootMargin: '-15% 0px -70% 0px' });
+    }, { rootMargin: '-10% 0px -75% 0px' });
+
     document.querySelectorAll('.depth-section[id]').forEach(s => spyIO.observe(s));
   </script>
 </body>
