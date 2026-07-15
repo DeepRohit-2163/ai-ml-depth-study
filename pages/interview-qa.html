@@ -34,7 +34,7 @@
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
       margin-bottom: 12px;
     }
-    #mm-svg { width: 100%; min-width: 680px; height: 330px; display: block; }
+    #mm-svg { width: 100%; min-width: 680px; height: auto; display: block; }
     .mm-node { cursor: pointer; }
     .mm-node rect { transition: fill 0.15s, stroke-width 0.15s; }
     .mm-node:hover rect { stroke-width: 2.5 !important; }
@@ -166,7 +166,7 @@
         <div id="mindmap-wrap">
           <h3>Knowledge Map — click any node to jump to that section</h3>
           <div style="overflow-x:auto;">
-          <svg id="mm-svg" viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+          <svg id="mm-svg" viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
                 <polygon points="0 0, 7 3.5, 0 7" fill="#c8c2b8"/>
@@ -206,101 +206,101 @@
 
             <!-- ── NODES ── -->
             <!-- Row 1: Roles (y=40) -->
-            <g class="mm-node" onclick="document.getElementById('roles').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="roles">
               <rect x="393" y="22" width="114" height="34" rx="8" fill="rgba(29,95,196,0.08)" stroke="#1d5fc4" stroke-width="1.5"/>
               <text x="450" y="35" text-anchor="middle" font-size="9.5" fill="#1d5fc4" font-weight="600">ROLES</text>
               <text x="450" y="48" text-anchor="middle" font-size="8.5" fill="#1d5fc4">What They Test</text>
             </g>
 
             <!-- Row 2: y=104 -->
-            <g class="mm-node" onclick="document.getElementById('mlbasics').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="mlbasics">
               <rect x="188" y="104" width="114" height="32" rx="8" fill="rgba(26,127,75,0.08)" stroke="#1a7f4b" stroke-width="1.5"/>
               <text x="245" y="116" text-anchor="middle" font-size="9.5" fill="#1a7f4b" font-weight="600">ML BASICS</text>
               <text x="245" y="128" text-anchor="middle" font-size="8" fill="#1a7f4b">Fundamentals</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('stats').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="stats">
               <rect x="393" y="104" width="114" height="32" rx="8" fill="rgba(109,40,217,0.08)" stroke="#6d28d9" stroke-width="1.5"/>
               <text x="450" y="116" text-anchor="middle" font-size="9.5" fill="#6d28d9" font-weight="600">STATISTICS</text>
               <text x="450" y="128" text-anchor="middle" font-size="8" fill="#6d28d9">for Data Science</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('metrics').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="metrics">
               <rect x="598" y="104" width="114" height="32" rx="8" fill="rgba(109,40,217,0.08)" stroke="#6d28d9" stroke-width="1.5"/>
               <text x="655" y="116" text-anchor="middle" font-size="9.5" fill="#6d28d9" font-weight="600">METRICS</text>
               <text x="655" y="128" text-anchor="middle" font-size="8" fill="#6d28d9">Evaluation</text>
             </g>
 
             <!-- Row 3: y=174 -->
-            <g class="mm-node" onclick="document.getElementById('classical').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="classical">
               <rect x="98" y="174" width="114" height="32" rx="8" fill="rgba(26,127,75,0.08)" stroke="#1a7f4b" stroke-width="1.5"/>
               <text x="155" y="186" text-anchor="middle" font-size="9.5" fill="#1a7f4b" font-weight="600">CLASSICAL ML</text>
               <text x="155" y="198" text-anchor="middle" font-size="8" fill="#1a7f4b">Trees, SVM, etc.</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="features">
               <rect x="213" y="174" width="114" height="32" rx="8" fill="rgba(26,127,75,0.08)" stroke="#1a7f4b" stroke-width="1.5"/>
               <text x="270" y="186" text-anchor="middle" font-size="9.5" fill="#1a7f4b" font-weight="600">FEATURES</text>
               <text x="270" y="198" text-anchor="middle" font-size="8" fill="#1a7f4b">Data Prep</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('dl').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="dl">
               <rect x="373" y="174" width="114" height="32" rx="8" fill="rgba(192,57,43,0.08)" stroke="#c0392b" stroke-width="1.5"/>
               <text x="430" y="186" text-anchor="middle" font-size="9.5" fill="#c0392b" font-weight="600">DEEP LEARNING</text>
               <text x="430" y="198" text-anchor="middle" font-size="8" fill="#c0392b">NN, CNN, RNN</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('cv').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="cv">
               <rect x="543" y="174" width="114" height="32" rx="8" fill="rgba(3,105,161,0.08)" stroke="#0369a1" stroke-width="1.5"/>
               <text x="600" y="186" text-anchor="middle" font-size="9.5" fill="#0369a1" font-weight="600">COMP. VISION</text>
               <text x="600" y="198" text-anchor="middle" font-size="8" fill="#0369a1">YOLO, OCR</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('nlp').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="nlp">
               <rect x="683" y="174" width="114" height="32" rx="8" fill="rgba(192,57,43,0.08)" stroke="#c0392b" stroke-width="1.5"/>
               <text x="740" y="186" text-anchor="middle" font-size="9.5" fill="#c0392b" font-weight="600">NLP</text>
               <text x="740" y="198" text-anchor="middle" font-size="8" fill="#c0392b">Transformers</text>
             </g>
 
             <!-- Row 4: y=244 -->
-            <g class="mm-node" onclick="document.getElementById('genmodels').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="genmodels">
               <rect x="198" y="234" width="114" height="32" rx="8" fill="rgba(192,57,43,0.08)" stroke="#c0392b" stroke-width="1.5"/>
               <text x="255" y="246" text-anchor="middle" font-size="9.5" fill="#c0392b" font-weight="600">GAN/VAE</text>
               <text x="255" y="258" text-anchor="middle" font-size="8" fill="#c0392b">Diffusion</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('llm').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="llm">
               <rect x="603" y="264" width="114" height="32" rx="8" fill="rgba(192,90,0,0.08)" stroke="#c05a00" stroke-width="1.5"/>
               <text x="660" y="276" text-anchor="middle" font-size="9.5" fill="#c05a00" font-weight="600">GenAI &amp; LLMs</text>
               <text x="660" y="288" text-anchor="middle" font-size="8" fill="#c05a00">Fine-tune, RAG</text>
             </g>
 
             <!-- Row 5: y=304 -->
-            <g class="mm-node" onclick="document.getElementById('rag').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="rag">
               <rect x="503" y="294" width="114" height="32" rx="8" fill="rgba(192,90,0,0.08)" stroke="#c05a00" stroke-width="1.5"/>
               <text x="560" y="306" text-anchor="middle" font-size="9.5" fill="#c05a00" font-weight="600">RAG</text>
               <text x="560" y="318" text-anchor="middle" font-size="8" fill="#c05a00">Chunking, Vector DB</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('frameworks').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="frameworks">
               <rect x="703" y="294" width="114" height="32" rx="8" fill="rgba(192,90,0,0.08)" stroke="#c05a00" stroke-width="1.5"/>
               <text x="760" y="306" text-anchor="middle" font-size="9.5" fill="#c05a00" font-weight="600">FRAMEWORKS</text>
               <text x="760" y="318" text-anchor="middle" font-size="8" fill="#c05a00">LangChain/Graph</text>
             </g>
 
             <!-- Row 6 -->
-            <g class="mm-node" onclick="document.getElementById('agentic').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="agentic">
               <rect x="443" y="334" width="114" height="32" rx="8" fill="rgba(192,57,43,0.08)" stroke="#c0392b" stroke-width="1.5"/>
               <text x="500" y="346" text-anchor="middle" font-size="9.5" fill="#c0392b" font-weight="600">AGENTIC AI</text>
               <text x="500" y="358" text-anchor="middle" font-size="8" fill="#c0392b">ReAct, MCP</text>
             </g>
 
             <!-- Row 7 -->
-            <g class="mm-node" onclick="document.getElementById('mlops').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="mlops">
               <rect x="313" y="374" width="114" height="32" rx="8" fill="rgba(3,105,161,0.08)" stroke="#0369a1" stroke-width="1.5"/>
               <text x="370" y="386" text-anchor="middle" font-size="9.5" fill="#0369a1" font-weight="600">MLOps</text>
               <text x="370" y="398" text-anchor="middle" font-size="8" fill="#0369a1">CI/CD, Drift</text>
             </g>
-            <g class="mm-node" onclick="document.getElementById('deploy').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="deploy">
               <rect x="553" y="374" width="114" height="32" rx="8" fill="rgba(26,127,75,0.08)" stroke="#1a7f4b" stroke-width="1.5"/>
               <text x="610" y="386" text-anchor="middle" font-size="9.5" fill="#1a7f4b" font-weight="600">SERVING</text>
               <text x="610" y="398" text-anchor="middle" font-size="8" fill="#1a7f4b">Docker, K8s, vLLM</text>
             </g>
 
             <!-- Row 8 -->
-            <g class="mm-node" onclick="document.getElementById('responsible').scrollIntoView({behavior:'smooth'})">
+            <g class="mm-node" data-sec="responsible">
               <rect x="433" y="414" width="134" height="32" rx="8" fill="rgba(192,57,43,0.08)" stroke="#c0392b" stroke-width="1.5"/>
               <text x="500" y="426" text-anchor="middle" font-size="9.5" fill="#c0392b" font-weight="600">RESPONSIBLE AI</text>
               <text x="500" y="438" text-anchor="middle" font-size="8" fill="#c0392b">Bias, PII, Guardrails</text>
@@ -312,23 +312,23 @@
 
         <!-- ── Section tabs ── -->
         <div id="section-tabs">
-          <a class="s-tab" href="#roles" data-sec="roles">Roles</a>
-          <a class="s-tab" href="#mlbasics" data-sec="mlbasics">ML Basics</a>
-          <a class="s-tab" href="#classical" data-sec="classical">Classical ML</a>
-          <a class="s-tab" href="#metrics" data-sec="metrics">Metrics</a>
-          <a class="s-tab" href="#features" data-sec="features">Features</a>
-          <a class="s-tab" href="#stats" data-sec="stats">Statistics</a>
-          <a class="s-tab" href="#dl" data-sec="dl">Deep Learning</a>
-          <a class="s-tab" href="#cv" data-sec="cv">CV</a>
-          <a class="s-tab" href="#nlp" data-sec="nlp">NLP</a>
-          <a class="s-tab" href="#llm" data-sec="llm">GenAI &amp; LLMs</a>
-          <a class="s-tab" href="#genmodels" data-sec="genmodels">GANs/VAEs</a>
-          <a class="s-tab" href="#rag" data-sec="rag">RAG</a>
-          <a class="s-tab" href="#agentic" data-sec="agentic">Agentic AI</a>
-          <a class="s-tab" href="#frameworks" data-sec="frameworks">Frameworks</a>
-          <a class="s-tab" href="#mlops" data-sec="mlops">MLOps</a>
-          <a class="s-tab" href="#deploy" data-sec="deploy">Serving</a>
-          <a class="s-tab" href="#responsible" data-sec="responsible">Responsible AI</a>
+          <button class="s-tab" data-sec="roles">Roles</button>
+          <button class="s-tab" data-sec="mlbasics">ML Basics</button>
+          <button class="s-tab" data-sec="classical">Classical ML</button>
+          <button class="s-tab" data-sec="metrics">Metrics</button>
+          <button class="s-tab" data-sec="features">Features</button>
+          <button class="s-tab" data-sec="stats">Statistics</button>
+          <button class="s-tab" data-sec="dl">Deep Learning</button>
+          <button class="s-tab" data-sec="cv">CV</button>
+          <button class="s-tab" data-sec="nlp">NLP</button>
+          <button class="s-tab" data-sec="llm">GenAI &amp; LLMs</button>
+          <button class="s-tab" data-sec="genmodels">GANs/VAEs</button>
+          <button class="s-tab" data-sec="rag">RAG</button>
+          <button class="s-tab" data-sec="agentic">Agentic AI</button>
+          <button class="s-tab" data-sec="frameworks">Frameworks</button>
+          <button class="s-tab" data-sec="mlops">MLOps</button>
+          <button class="s-tab" data-sec="deploy">Serving</button>
+          <button class="s-tab" data-sec="responsible">Responsible AI</button>
         </div>
 
         <!-- ── Depth filter ── -->
@@ -1077,6 +1077,15 @@
 
   <script src="../js/app.js"></script>
   <script>
+    // Smooth scroll helper — offsets for fixed nav bar (58px) + small buffer
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const navH = 58 + 12; // nav height + buffer
+      const top = el.getBoundingClientRect().top + window.pageYOffset - navH;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+
     // Depth filter
     document.querySelectorAll('.f-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1092,8 +1101,29 @@
       });
     });
 
-    // Tab scroll-spy
+    // Tab click → smooth scroll (no anchor jump)
     const tabs = document.querySelectorAll('.s-tab[data-sec]');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        scrollToSection(btn.dataset.sec);
+      });
+    });
+
+    // Mind map node clicks — use data-sec for smooth offset scroll
+    document.querySelectorAll('.mm-node[data-sec]').forEach(node => {
+      node.addEventListener('click', () => scrollToSection(node.dataset.sec));
+    });
+
+    // Sidebar links → smooth scroll (prevent anchor jump)
+    document.querySelectorAll('.topic-sidebar a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        scrollToSection(id);
+      });
+    });
+
+    // Tab scroll-spy
     const spyIO = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
