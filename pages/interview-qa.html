@@ -1160,7 +1160,7 @@
         // Update tab pills
         tabs.forEach(t => t.classList.remove('active'));
         const t = document.querySelector(`.s-tab[data-sec="${e.target.id}"]`);
-        if (t) { t.classList.add('active'); t.scrollIntoView({ block: 'nearest', inline: 'center' }); }
+        if (t) t.classList.add('active');
       });
     }, { rootMargin: '-10% 0px -75% 0px' });
 
